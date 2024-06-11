@@ -1,0 +1,54 @@
+.user-navbar {
+    background-color: #333E48;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 40px;
+
+    .left {
+       
+        display: flex;
+        align-items: center;
+        color: white;
+        font-size: 25px;
+        font-weight: bold;
+        letter-spacing: 1.2px;
+    }
+
+    .right
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        color: #B9B9B9;
+
+        .user-picture {
+            border-radius: 50%;
+            background-image: linear-gradient(to bottom, #00427F 0%, #0D99FF 100%);
+            height: 40px;
+            width: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                border-radius: 50%;
+                height: 85%;
+                width: 85%;
+            } 
+            
+            }
+                .drop-menu-icon {
+                    cursor: pointer;
+                    font-size: 35px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+    
+                .drop-menu-icon:hover {
+                    color: #e6e6e6 ;
+                }
+    }
+}

@@ -1,12 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserBarComponent } from './components/user-bar/user-bar.component';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    UserBarComponent,
+
+  ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatIconModule
+  ],
+  exports: [
+    UserBarComponent
   ]
 })
 export class SharedModule { }

@@ -1,0 +1,42 @@
+.container {
+   
+    .survey-menu {
+        height: 140px;
+
+        .bottom-section {
+            padding: 0px 40px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 0.2px solid #b2b2b2;
+
+            .search-box {
+               
+                position: relative;
+                width: 50%;
+                input {
+                    width: 100%;
+                    height: 35px;
+                    border-radius: 6px;
+                    border: 0.2px solid #b2b2b2;
+                    padding: 0px 5px;
+                }
+
+                input:focus {
+                    border: 0.5px solid #0D99FF;
+                    outline: none;
+                }
+
+                .search-bar-icon {
+                    position: absolute;
+                    top: 5px;
+                    right: 0;
+                    color: #b2b2b2;
+                    font-size: 30px;
+                }
+                
+            }
+        }
+    }
+}

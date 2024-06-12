@@ -1,0 +1,7 @@
+
+<div class="form-box">
+        <select name="filter">
+            <li>-- seleccionar --</li>
+            <li *ngFor="let option of options" [value]="option">{{option}}</li>
+        </select>
+</div>

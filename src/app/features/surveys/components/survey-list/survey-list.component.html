@@ -1,1 +1,48 @@
-<app-user-bar></app-user-bar>
+<div class="container">
+    <div class="survey-menu">
+        <div class="top-section">
+            <app-user-bar></app-user-bar>
+        </div>
+        <div class="bottom-section">
+            <app-confirm-button text="Crear Encuesta"></app-confirm-button>
+            <div class="search-box">
+                <input type="text">
+                <mat-icon class="search-bar-icon">search</mat-icon>
+            </div>
+            <app-filter-select [options]="options"></app-filter-select>
+        </div>
+    </div>
+    <main>
+        <div class="main-tittle">
+            Encuestas
+        </div>
+        <div class="survey-container">
+            <div class="survey-colums-box">
+                <ul>
+                    <li>Nombre y Fecha de Modificacción</li>
+                    <li>Preguntas</li>
+                    <li>Clonar</li>
+                    <li>Estado</li>
+                    <li>Acciones</li>
+                </ul>
+            </div>
+            <div class="survey-rows-box">
+                <div class="survey-box">
+                    <div class="title-box">
+                        <span class="survey-title">test</span>
+                        <span class="survey-update">Modificado 03/07/89</span>
+                    </div>
+                    <span class="survey-number">8</span>
+                    <span class="btn-clon"></span>
+                    <span class="state-section">Publicada</span>
+                    <div class="actions-box">
+                        <span class="btn-delete"></span>
+                        <span class="btn-edit"></span>
+                        <span class="btn-info"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

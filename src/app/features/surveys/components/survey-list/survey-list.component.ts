@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
 })
 export class SurveyListComponent {
 
+options : string[] = ["Estado","Fecha de modificación"];
 
 }

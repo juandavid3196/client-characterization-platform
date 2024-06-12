@@ -1,6 +1,6 @@
 .user-navbar {
     background-color: #333E48;
-    height: 50px;
+    height: 40px;
     display: flex;
     justify-content: space-between;
     padding: 10px 40px;
@@ -38,6 +38,10 @@
                 width: 85%;
             } 
             
+            }
+
+            span {
+                font-size: 13px;
             }
                 .drop-menu-icon {
                     cursor: pointer;

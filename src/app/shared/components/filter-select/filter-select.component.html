@@ -1,7 +1,11 @@
 
 <div class="form-box">
-        <select name="filter">
-            <li>-- seleccionar --</li>
-            <li *ngFor="let option of options" [value]="option">{{option}}</li>
-        </select>
+        <div class="select-container">
+            <select name="filter">
+                <option >--</option>
+                <option *ngFor="let option of options" [value]="option">{{option}}</option>
+            </select>
+            <mat-icon class="select-icon">keyboard_arrow_down</mat-icon>
+        </div>
+       
 </div>

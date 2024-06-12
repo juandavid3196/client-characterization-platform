@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { SurveysModule } from './features/surveys/surveys.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { SurveysModule } from './features/surveys/surveys.module';
     CoreModule,
     SharedModule,
     SurveysModule,
+    HttpClientModule
 
   ],
   providers: [],

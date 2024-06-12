@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { Observable } from 'rxjs';
+import { Survey } from '../models/survey.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,20 +11,20 @@ export class SurveyService {
 
   constructor(private apiService: ApiService) {}
 
-  getSurveys(): Observable<any[]> {
-    return this.apiService.get<any>(this.endpoint);
+  getSurveys(): Observable<Survey[]> {
+    return this.apiService.get<Survey>(this.endpoint);
   }
 
-  getSurveyById(id: number): Observable<any> {
-    return this.apiService.getById<any>(this.endpoint, id);
+  getSurveyById(id: number): Observable<Survey> {
+    return this.apiService.getById<Survey>(this.endpoint, id);
   }
 
-  createSurvey(survey: any): Observable<any> {
-    return this.apiService.create<any>(this.endpoint, survey);
+  createSurvey(survey: Survey): Observable<Survey> {
+    return this.apiService.create<Survey>(this.endpoint, survey);
   }
 
-  updateSurvey(id: number, survey: any): Observable<any> {
-    return this.apiService.update<any>(this.endpoint, id, survey);
+  updateSurvey(id: number, survey: Survey): Observable<Survey> {
+    return this.apiService.update<Survey>(this.endpoint, id, survey);
   }
 
   deleteSurvey(id: number): Observable<void> {

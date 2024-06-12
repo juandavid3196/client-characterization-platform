@@ -6,6 +6,7 @@ import { SurveysRoutingModule } from './surveys-routing.module';
 import { SurveyService } from './services/survey.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -18,7 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     SurveysRoutingModule,
     SharedModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule
   ],
   providers: [
     SurveyService

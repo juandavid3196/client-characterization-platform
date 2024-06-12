@@ -12,10 +12,24 @@
             align-items: center;
             justify-content: space-between;
 
-            .menu-bottom-box {
-                width: 120px;
+            .btn-confirm {
+                padding: 0 10px;
+                width: 140px;
+                color: white;
+                height: 35px;
+                background-color: #0D99FF;
+                border-radius: 6px;
+                border: none;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: "Poppins";
+                cursor: pointer;
             }
-
+            
+            .btn-confirm:hover {
+                background-color: #0076ca;
+                transition: background-color  0.2s ease-in;
+            }
             .search-box {
                
                 position: relative;

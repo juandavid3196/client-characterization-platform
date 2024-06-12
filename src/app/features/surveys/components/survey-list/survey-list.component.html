@@ -1,18 +1,15 @@
-<app-survey-form></app-survey-form>
+<app-survey-form *ngIf="isFormVisible" [survey]="selectedSurvey"  (formClose)="closeForm()" (surveySaved)="onSurveySaved()" > </app-survey-form>
 <div class="container">
     <div class="survey-menu">
         <div class="top-section">
             <app-user-bar></app-user-bar>
         </div>
         <div class="bottom-section">
-            <div class="menu-buton-box">
-                <app-confirm-button text="Crear Encuesta"></app-confirm-button>
-            </div>
+            <button class="btn-confirm" (click)="openCreateSurveyForm()">Crear Encuesta</button>
             <div class="search-box">
                 <input type="text">
                 <mat-icon class="search-bar-icon">search</mat-icon>
             </div>
-
             <div class="menu-select-box">
                 <app-filter-select [options]="options"></app-filter-select>
             </div>
@@ -36,7 +33,7 @@
                     </span>
                 </ul>
             </div>
-            <div class="survey-rows-box">
+            <div class="survey-rows-box" *ngFor="let survey of surveys" >
                 <div class="left-section">
                     <div class="title-box">
                         <span class="survey-title">test</span>
@@ -55,8 +52,8 @@
                     </div>
                     <div class="row-box">
                         <div class="actions-box">
-                            <span class="btn-delete btn"> <mat-icon class="btn-icon">delete</mat-icon> </span>
-                            <span class="btn-edit btn"> <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="btn-delete btn" (click)="openEditSurveyForm(survey)"> <mat-icon class="btn-icon">delete</mat-icon> </span>
+                            <span class="btn-edit btn"  (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">edit</mat-icon></span>
                             <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
                         </div>
                     </div>

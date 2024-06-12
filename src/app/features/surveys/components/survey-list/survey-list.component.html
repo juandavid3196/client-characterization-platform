@@ -13,34 +13,47 @@
         </div>
     </div>
     <main>
-        <div class="main-tittle">
+        <div class="main-title">
             Encuestas
         </div>
         <div class="survey-container">
             <div class="survey-colums-box">
                 <ul>
-                    <li>Nombre y Fecha de Modificacción</li>
-                    <li>Preguntas</li>
-                    <li>Clonar</li>
-                    <li>Estado</li>
-                    <li>Acciones</li>
+                    <span class="left-menu">
+                        <li>Nombre y Fecha de Modificacción</li>
+                    </span>
+                    <span class="right-menu">
+                        <li>Preguntas</li>
+                        <li>Clonar</li>
+                        <li>Estado</li>
+                        <li>Acciones</li>
+                    </span>
                 </ul>
             </div>
             <div class="survey-rows-box">
-                <div class="survey-box">
+                <div class="left-section">
                     <div class="title-box">
                         <span class="survey-title">test</span>
                         <span class="survey-update">Modificado 03/07/89</span>
                     </div>
-                    <span class="survey-number">8</span>
-                    <span class="btn-clon"></span>
-                    <span class="state-section">Publicada</span>
-                    <div class="actions-box">
-                        <span class="btn-delete"></span>
-                        <span class="btn-edit"></span>
-                        <span class="btn-info"></span>
+                </div>
+                <div class="right-section">
+                    <div class="row-box">
+                        <span class="survey-number">8</span>
                     </div>
-
+                    <div class="row-box">
+                        <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon> </span>
+                    </div>
+                    <div class="row-box">
+                        <span class="survey-state">Publicada</span>
+                    </div>
+                    <div class="row-box">
+                        <div class="actions-box">
+                            <span class="btn-delete btn"> <mat-icon class="btn-icon">delete</mat-icon> </span>
+                            <span class="btn-edit btn"> <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-survey-form',
@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./survey-form.component.scss']
 })
 export class SurveyFormComponent {
-
+      
+  options:string[] = []; 
 }

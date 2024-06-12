@@ -1,1 +1,26 @@
-
+<div class="form-container">
+    <div class="form-container-box">
+        <div class="top-section">
+           <span class="form-title">Ejemplo</span>
+           <mat-icon class="btn-close">close</mat-icon>
+        </div>
+        <div class="main-section">
+            <form action="">
+                <div class="form-box">
+                    <label for="survey-name">Titulo Encuesta</label>
+                    <input type="text" name="survey-name" id="">
+                </div>
+                <div class="form-box">
+                    <label for="">Categoria (Opcional)</label>
+                    <app-filter-select [options]="options"></app-filter-select>
+                </div>
+            </form>
+        </div>
+        <div class="bottom-section">
+            <button class="btn-cancel">Cancelar</button>
+            <div class="btn-bottom-box">
+                <app-confirm-button text="Crear"></app-confirm-button>
+            </div>
+        </div>
+    </div>
+</div>

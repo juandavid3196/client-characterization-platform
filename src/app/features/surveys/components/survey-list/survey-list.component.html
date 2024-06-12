@@ -1,15 +1,21 @@
+<app-survey-form></app-survey-form>
 <div class="container">
     <div class="survey-menu">
         <div class="top-section">
             <app-user-bar></app-user-bar>
         </div>
         <div class="bottom-section">
-            <app-confirm-button text="Crear Encuesta"></app-confirm-button>
+            <div class="menu-buton-box">
+                <app-confirm-button text="Crear Encuesta"></app-confirm-button>
+            </div>
             <div class="search-box">
                 <input type="text">
                 <mat-icon class="search-bar-icon">search</mat-icon>
             </div>
-            <app-filter-select [options]="options"></app-filter-select>
+
+            <div class="menu-select-box">
+                <app-filter-select [options]="options"></app-filter-select>
+            </div>
         </div>
     </div>
     <main>

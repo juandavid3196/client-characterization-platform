@@ -12,6 +12,10 @@
             align-items: center;
             justify-content: space-between;
 
+            .menu-bottom-box {
+                width: 120px;
+            }
+
             .search-box {
                
                 position: relative;
@@ -37,6 +41,10 @@
                     font-size: 30px;
                 }
                 
+            }
+
+            .menu-select-box {
+                width: 200px;
             }
         }
     }

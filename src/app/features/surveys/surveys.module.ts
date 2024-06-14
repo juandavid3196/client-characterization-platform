@@ -7,6 +7,7 @@ import { SurveyService } from './services/survey.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -20,7 +21,13 @@ import { ReactiveFormsModule } from '@angular/forms';
     SurveysRoutingModule,
     SharedModule,
     MatIconModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToastrModule.forRoot({
+      timeOut: 1700, // Duración de la notificación
+      positionClass: 'toast-top-right', // Posición de la notificación
+      preventDuplicates: true, // Evita notificaciones duplicadas
+      closeButton: true, // Mostrar botón de cierre
+    }),
   ],
   providers: [
     SurveyService

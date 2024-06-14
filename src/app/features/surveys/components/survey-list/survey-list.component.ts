@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-survey-list',
@@ -10,7 +11,9 @@ import { SurveyService } from '../../services/survey.service';
 
 export class SurveyListComponent {
 
-constructor( private surveyService : SurveyService){}
+constructor( 
+  private surveyService : SurveyService, 
+  private toastr: ToastrService){}
 
 options : string[] = ["Estado","Fecha de modificación"];
 isFormVisible: boolean = false;
@@ -38,9 +41,14 @@ openEditSurveyForm(survey: Survey): void {
 }
 
 deleteSurvey(id: number): void {
-  this.surveyService.deleteSurvey(id).subscribe(() => {
-    this.loadSurveys(); 
-  });
+  if(window.confirm("¿Desea eliminar la encuesta?")){
+    this.surveyService.deleteSurvey(id).subscribe(() => {
+      this.loadSurveys(); 
+      });
+    this.toastr.success("Encuesta Eliminada con Exito");
+  }else{
+    return;
+  }
 }
 
 closeForm(): void {

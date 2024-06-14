@@ -36,24 +36,24 @@
             <div class="survey-rows-box" *ngFor="let survey of surveys" >
                 <div class="left-section">
                     <div class="title-box">
-                        <span class="survey-title">test</span>
-                        <span class="survey-update">Modificado 03/07/89</span>
+                        <span class="survey-title">{{survey.title}}</span>
+                        <span class="survey-update">Modificado {{ survey.updated_date}}</span>
                     </div>
                 </div>
                 <div class="right-section">
                     <div class="row-box">
-                        <span class="survey-number">8</span>
+                        <span class="survey-number"> {{survey.question_count}}</span>
                     </div>
                     <div class="row-box">
-                        <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon> </span>
+                        <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon></span>
                     </div>
                     <div class="row-box">
-                        <span class="survey-state">Publicada</span>
+                        <span class="survey-state">{{survey.state}}</span>
                     </div>
                     <div class="row-box">
                         <div class="actions-box">
-                            <span class="btn-delete btn" (click)="openEditSurveyForm(survey)"> <mat-icon class="btn-icon">delete</mat-icon> </span>
-                            <span class="btn-edit btn"  (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
+                            <span class="btn-edit btn" (click)="openEditSurveyForm(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
                             <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
                         </div>
                     </div>

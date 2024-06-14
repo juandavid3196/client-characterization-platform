@@ -7,7 +7,7 @@ import { Survey } from '../models/survey.model';
   providedIn: 'root'
 })
 export class SurveyService {
-  private endpoint = 'surveys';
+  private endpoint = 'survey';
 
   constructor(private apiService: ApiService) {}
 

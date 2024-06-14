@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter} from '@angular/core';
 import { Survey } from '../../models/survey.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SurveyService } from '../../services/survey.service';
+import { format } from 'date-fns';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-survey-form',
@@ -17,9 +19,18 @@ export class SurveyFormComponent {
 
   surveyForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private surveyService: SurveyService) {
+  constructor(
+    private fb: FormBuilder, private surveyService: SurveyService,  
+    private toastr: ToastrService) {
+    
+    const currentDate = this.formatDate();
+    
     this.surveyForm = this.fb.group({
-      name: ['', Validators.required],
+      title: ['', Validators.required],
+      date_creation: currentDate,
+      updated_date: currentDate,
+      state: 'creada',
+      question_count: 0
     });
   }
 
@@ -29,20 +40,37 @@ export class SurveyFormComponent {
     }
   }
 
+ formatDate(): string {
+    const date = new Date();
+    return format(date, 'dd/MM/yyyy');
+  }
+  
+
   onSubmit(): void {
     
     if (this.surveyForm.valid) {
       
       if (this.survey) {
         // Editar encuesta existente
-        this.surveyService.updateSurvey(this.survey.id, this.surveyForm.value).subscribe(() => {
+        
+        const currentDate = this.formatDate();
+        
+        const newSurvey = {
+          id: this.survey.id,
+          title: this.surveyForm.value.title,
+          updated_date: currentDate,
+          state: 'En Progreso',
+        };
+        this.surveyService.updateSurvey(this.survey.id, newSurvey).subscribe(() => {
           this.surveySaved.emit();
         });
+        this.toastr.success("Encuesta Editada con Exito");
       } else {
         // Crear nueva encuesta
         this.surveyService.createSurvey(this.surveyForm.value).subscribe(() => {
           this.surveySaved.emit();
         });
+        this.toastr.success("Encuesta Creada con Exito");
       }
     }
   }

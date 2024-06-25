@@ -15,6 +15,7 @@ export class SurveyFormComponent {
   @Input() survey : Survey | null = null;
   @Output() formClose = new EventEmitter<void>();
   @Output() surveySaved = new EventEmitter<void>();
+  close : boolean = false;
   options:string[] = []; 
 
   surveyForm: FormGroup;
@@ -44,6 +45,13 @@ export class SurveyFormComponent {
     const date = new Date();
     return format(date, 'dd/MM/yyyy');
   }
+
+  chargeData(survey: Survey): void {
+      const currentDate = this.formatDate();
+      survey.title =  this.surveyForm.value.title,
+      survey.updated_date= currentDate,
+      survey.state= 'En Progreso';
+    }
   
 
   onSubmit(): void {
@@ -52,16 +60,8 @@ export class SurveyFormComponent {
       
       if (this.survey) {
         // Editar encuesta existente
-        
-        const currentDate = this.formatDate();
-        
-        const newSurvey = {
-          id: this.survey.id,
-          title: this.surveyForm.value.title,
-          updated_date: currentDate,
-          state: 'En Progreso',
-        };
-        this.surveyService.updateSurvey(this.survey.id, newSurvey).subscribe(() => {
+        this.chargeData(this.survey);
+        this.surveyService.updateSurvey(this.survey.id, this.survey).subscribe(() => {
           this.surveySaved.emit();
         });
         this.toastr.success("Encuesta Editada con Exito");
@@ -73,13 +73,13 @@ export class SurveyFormComponent {
         this.toastr.success("Encuesta Creada con Exito");
       }
     }
-  }
-
-  onCancel(): void {
-    this.formClose.emit();
+    this.onClose();
   }
 
   onClose():void {
-    this.formClose.emit();
+    this.close =  true;
+    setTimeout(()=>{
+      this.formClose.emit();
+    },500);
   }
 }

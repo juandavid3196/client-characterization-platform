@@ -8,6 +8,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -28,6 +29,7 @@ import { ToastrModule } from 'ngx-toastr';
       preventDuplicates: true, // Evita notificaciones duplicadas
       closeButton: true, // Mostrar botón de cierre
     }),
+    FormsModule,
   ],
   providers: [
     SurveyService

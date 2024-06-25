@@ -7,7 +7,7 @@
         <div class="bottom-section">
             <button class="btn-confirm" (click)="openCreateSurveyForm()">Crear Encuesta</button>
             <div class="search-box">
-                <input type="text">
+                <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="filterSurveys()">
                 <mat-icon class="search-bar-icon">search</mat-icon>
             </div>
             <div class="menu-select-box">
@@ -33,7 +33,7 @@
                     </span>
                 </ul>
             </div>
-            <div class="survey-rows-box" *ngFor="let survey of surveys" >
+            <div class="survey-rows-box" *ngFor="let survey of filteredSurveys" >
                 <div class="left-section">
                     <div class="title-box">
                         <span class="survey-title">{{survey.title}}</span>

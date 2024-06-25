@@ -1,8 +1,8 @@
-<div class="form-container">
-    <div class="form-container-box">
+<div class="form-container {{close ? 'close' : ''}}">
+    <div class="form-container-box {{close ? 'close' : ''}}">
         <div class="top-section">
            <span class="form-title">Ejemplo</span>
-           <mat-icon class="btn-close"  (click)="onClose()">close</mat-icon>
+           <mat-icon class="btn-close"(click)="onClose()">close</mat-icon>
         </div>
         <div class="main-section">
             <form  [formGroup]="surveyForm"  (ngSubmit)="onSubmit()">
@@ -15,7 +15,7 @@
                     <app-filter-select [options]="options"></app-filter-select>
                 </div>
                 <div class="btns-section">
-                    <button class="btn-cancel" (click)="onCancel()" >Cancelar</button>
+                    <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
                     <div class="btn-bottom-box">
                         <button class="btn-confirm" type="submit">{{survey ? "Editar" : "Crear"}}</button>
                     </div>

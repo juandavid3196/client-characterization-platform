@@ -4,9 +4,11 @@
         height: 150px;
         background-color: white;
         border-bottom: 0.2px solid #b2b2b2;
+        position: fixed;
+        width: 100%;
 
         .bottom-section {
-            padding: 0px 40px;
+            padding: 0px 50px;
             height: 90px;
             display: flex;
             align-items: center;
@@ -64,8 +66,9 @@
     }
 
     main {
+
         background-color: #FAFAFA;
-        padding: 20px 40px;
+        padding: 170px 50px  20px 50px;
 
         .main-title {
             font-size: 20px;

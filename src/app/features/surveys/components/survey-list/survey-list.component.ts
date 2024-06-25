@@ -18,16 +18,24 @@ constructor(
 options : string[] = ["Estado","Fecha de modificación"];
 isFormVisible: boolean = false;
 surveys  : Survey[] = [];
+filteredSurveys: Survey[] = [];
 selectedSurvey : Survey | null = null;
+searchTerm : string = '';
 
 ngOnInit(): void {
   this.loadSurveys();
 }
 
+ 
 loadSurveys(): void {
   this.surveyService.getSurveys().subscribe(surveys => {
     this.surveys = surveys;
+    this.filteredSurveys =surveys;
   });
+}
+
+filterSurveys(): void {
+  this.filteredSurveys = this.surveys.filter(event => event.title.toLowerCase().includes(this.searchTerm.toLowerCase()));
 }
 
 openCreateSurveyForm(): void {
@@ -52,11 +60,10 @@ deleteSurvey(id: number): void {
 }
 
 closeForm(): void {
-  this.isFormVisible = false;
+    this.isFormVisible = false;
 }
 
 onSurveySaved(): void {
-  this.isFormVisible = false;
   this.loadSurveys();
 }
 

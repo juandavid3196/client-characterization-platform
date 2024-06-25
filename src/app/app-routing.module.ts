@@ -7,6 +7,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/surveys/surveys.module').then(m => m.SurveysModule)
   },
   {
+    path: 'dashboard',
+    loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
+  {
     path: '',
     redirectTo: '/surveys',
     pathMatch: 'full'

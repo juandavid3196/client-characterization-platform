@@ -1,5 +1,6 @@
 
 <div class="container">
+    <app-questions-options *ngIf="openQuestion"  (formClose)="openQuestionsMenu()" (typeSelected)="onSelectedType($event)" ></app-questions-options>
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -27,15 +28,15 @@
             </div>
         </div>
         <div class="question-list">
-            <div class="question-box">
-                <span class="numeral">1</span>
-                <span class="question-icon"> <img src="assets/icons/options-icon.svg" alt=""></span>
-                <span class="question-text">text</span>
-                <span class="delete-icon"> <mat-icon >delete</mat-icon> </span>
+            <div class="question-box" *ngFor="let question of questions">
+                <span class="numeral">{{question.numeral}}</span>
+                <span class="question-icon"> <img src='assets/icons/{{question.icon}}.svg' alt=""></span>
+                <span class="question-text">{{question.text}}</span>
+                <span class="delete-icon"> <mat-icon (click)="deleteQuestion(question.id)" >delete</mat-icon> </span>
             </div>
             <div class="add-question-box">
                 <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>
-                <span class="add-q-text">Agregar pregunta</span>
+                <span class="add-q-text" (click)="openQuestionsMenu()">Agregar pregunta</span>
             </div>
         </div>
     </aside>

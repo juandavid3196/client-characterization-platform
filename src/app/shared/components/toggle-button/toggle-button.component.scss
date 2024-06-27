@@ -1,0 +1,63 @@
+.btn-check-container {
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .btn-check-state {
+        font-weight: 500;
+        color: #B2B2B2;
+        font-size: 16px;
+    }
+
+    .active {
+        color: #0D99FF;
+    }
+
+
+    
+     // Toggle button css
+
+    .toggle {
+        --width: 50px;
+        --height: calc(var(--width) / 2);
+        --border-radius: calc(var(--height) / 2);
+    
+        display: inline-block;
+        cursor: pointer;
+    }
+    
+    .toggle__input {
+        display: none;
+    }
+    
+    .toggle__fill {
+        position: relative;
+        width: var(--width);
+        height: var(--height);
+        border-radius: var(--border-radius);
+        background: #E4E4E4;
+        transition: background 0.2s;
+    }
+    
+    .toggle__input:checked ~ .toggle__fill::after {
+        background: #66BFFF;
+    }
+    
+    .toggle__fill::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: var(--height);
+        width: var(--height);
+        background: #B2B2B2;
+        border-radius: var(--border-radius);
+        transition: transform 0.2s;
+    }
+    
+    .toggle__input:checked ~ .toggle__fill::after {
+        transform: translateX(var(--height));
+    }
+
+}

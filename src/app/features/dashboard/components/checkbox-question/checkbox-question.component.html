@@ -1,0 +1,64 @@
+<div class="question-container">
+    <div class="question-section">
+        <div class="question-s-number">
+            <span class="number">1</span>
+        </div>
+        <div class="question-s-container">
+            <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta">
+            <input type="text" class="q-s-description" placeholder="Descripción">
+        </div>
+    </div>
+    <div class="options-section">
+        <div class="options-s-container">
+            <div class="options-form-container">
+                <input type="text">
+                <div class="actions-box">
+                    <img src="assets/icons/plus-icon.svg" alt="">
+                    <img src="assets/icons/minus-icon.svg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="settings-section">
+        <div class="settings-s-top">
+            <div class="eyelash-box">
+                Opciones
+            </div>
+        </div>
+        <div class="settings-s-container">
+            <div class="c-section">
+                <div class="container-box">
+                    <span class="label">Añadir el Campo Otro</span>
+                    <app-toggle-button  name="other-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                </div>
+                <div class="container-box">
+                    <span class="label">Adjuntar video/imagen para pregunta</span>
+                    <button class="attach-btn btn">Adjuntar</button>
+                </div>
+                <div class="container-box">
+                    <span class="label">Adjuntar video/imagen para las opciones</span>
+                    <button class="attach-btn btn">Adjuntar</button>
+                </div>
+                <div class="container-box">
+                <span class="label">Obligatorio</span>
+                <app-toggle-button name="required-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                </div>  
+            </div>
+            <div class="c-section">
+                <div class="container-box">
+                    <span class="label">Respuesta por defecto</span>
+                    <app-toggle-button name="defected-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                </div>
+                <div class="container-box">
+                    <span class="label">Añadir Nota</span>
+                    <app-toggle-button name="note-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="btn-section">
+        <button class="btn-confirm btn">Agregar</button>
+    </div>
+    
+</div>

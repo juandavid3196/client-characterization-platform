@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
 import { QuestionsOptionsComponent } from './components/questions-options/questions-options.component';
 import { CheckboxQuestionComponent } from './components/checkbox-question/checkbox-question.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -20,7 +21,8 @@ import { CheckboxQuestionComponent } from './components/checkbox-question/checkb
     CommonModule,
     SharedModule,
     MatIconModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+   ReactiveFormsModule
   ]
 })
 export class DashboardModule { }

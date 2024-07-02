@@ -1,11 +1,13 @@
 .question-container {
-    padding: 30px 8px 0 0;
-    overflow-y: auto;
-    height: 300px;
-    margin-top: 3px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    
+    form {
+        padding: 30px 8px 0 0;
+        overflow-y: auto;
+        height: 330px;
+        margin-top: 3px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
 
     .btn {
         padding: 0 20px;
@@ -79,6 +81,24 @@
         }
     }
 
+    .note-section {
+        input {
+            border: 0.5px solid #B2B2B2;
+            color: #333E48;
+            border-radius: 5px;
+            width: -webkit-fill-available;
+            height: 70px;
+            padding-left: 10px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border: 0.2px solid #0D99FF;
+            background-color: white;
+        }
+    }
+
     .options-section {
         display: flex;
         align-items: center;
@@ -125,6 +145,10 @@
                     img {
                         height: 30px;
                         cursor: pointer;
+                    }
+
+                    img:hover  {
+                        filter: brightness(0) saturate(100%) invert(67%) sepia(83%) saturate(5336%) hue-rotate(183deg) brightness(100%) contrast(102%);
                     }
                 }
             }
@@ -178,6 +202,39 @@
                     flex-direction: column;
                     gap: 5px;
 
+                    input[type="file"]{
+                        display: none;
+                    }
+
+                    label {
+                        display: inline-block;
+                        text-align: center;
+                        border: 0.2px solid #0D99FF;
+                        background-color: #D8EEFF;
+                        color: #0D99FF;
+                        font-weight: 500;
+                        font-size: 12px;
+                        padding: 8px 25px;
+                        width: fit-content;
+                        border-radius: 5px;
+                        user-select: none;
+                        cursor: pointer;
+                    }
+
+                    label:active {
+                        transform: scale(0.9);
+                    }
+
+                    .answer-box {
+                        display: flex;
+                        gap: 20px;
+                        max-width: 250px;
+
+                        .select-container {
+                            width: 200px;
+                        }
+                    }
+
                     .label {
                         font-size: 12px;
                         color: #bababa;
@@ -213,13 +270,13 @@
         } 
     }
 }
-
-.question-container::-webkit-scrollbar {
+  form::-webkit-scrollbar {
     width: 7.5px;
     background-color: #ececec;
-}
+ }
 
-.question-container::-webkit-scrollbar-thumb {
+  form::-webkit-scrollbar-thumb {
     background-color: #9b9b9b;
     border-radius: 3px;
+ }
 }

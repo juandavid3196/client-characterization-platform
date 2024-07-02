@@ -1,20 +1,25 @@
 <div class="question-container">
+    <form  [formGroup]="checkBoxForm" (ngSubmit)="onSubmit()">
     <div class="question-section">
         <div class="question-s-number">
             <span class="number">1</span>
         </div>
+        
         <div class="question-s-container">
-            <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta">
-            <input type="text" class="q-s-description" placeholder="Descripción">
+            <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta"  formControlName="text">
+            <input type="text" class="q-s-description" placeholder="Descripción" formControlName="description">
         </div>
     </div>
+    <div class="note-section" *ngIf="addNote">
+        <input type="text" placeholder="Anadir nota (Solo para el creador de la encuesta)" formControlName="note_text">
+    </div>
     <div class="options-section">
-        <div class="options-s-container">
-            <div class="options-form-container">
-                <input type="text">
+        <div formArrayName="options" class="options-s-container">
+            <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
+                <input type="text" [formControlName]="i" (change)="updateAnswer()">
                 <div class="actions-box">
-                    <img src="assets/icons/plus-icon.svg" alt="">
-                    <img src="assets/icons/minus-icon.svg" alt="">
+                    <img src="assets/icons/plus-icon.svg" alt="" (click)="addOption()">
+                    <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" *ngIf="i > 0"> 
                 </div>
             </div>
         </div>
@@ -29,36 +34,43 @@
             <div class="c-section">
                 <div class="container-box">
                     <span class="label">Añadir el Campo Otro</span>
-                    <app-toggle-button  name="other-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                    <app-toggle-button  name="another_field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
                 </div>
                 <div class="container-box">
                     <span class="label">Adjuntar video/imagen para pregunta</span>
-                    <button class="attach-btn btn">Adjuntar</button>
+                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia">
+                    <label for="question_multimedia">Adjuntar</label>
                 </div>
                 <div class="container-box">
                     <span class="label">Adjuntar video/imagen para las opciones</span>
-                    <button class="attach-btn btn">Adjuntar</button>
+                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia"> 
+                    <label for="options_multimedia">Adjuntar</label>
                 </div>
                 <div class="container-box">
                 <span class="label">Obligatorio</span>
-                <app-toggle-button name="required-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                <app-toggle-button name="required" (toggleValues)="getToggleValues($event)"></app-toggle-button>
                 </div>  
             </div>
             <div class="c-section">
-                <div class="container-box">
+                <div class="container-box mayor">
                     <span class="label">Respuesta por defecto</span>
-                    <app-toggle-button name="defected-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                    <div class="answer-box">
+                        <app-toggle-button name="defected_answer" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                        <div class="select-container" *ngIf="defectedAnswer">
+                            <app-filter-select [options]="optionsAnswer"></app-filter-select>
+                        </div>
+                    </div>
                 </div>
                 <div class="container-box">
                     <span class="label">Añadir Nota</span>
-                    <app-toggle-button name="note-field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                    <app-toggle-button name="add_note" (toggleValues)="getToggleValues($event)"></app-toggle-button>
                 </div>
             </div>
         </div>
 
     </div>
     <div class="btn-section">
-        <button class="btn-confirm btn">Agregar</button>
+        <button class="btn-confirm btn" type="submit">Agregar</button>
     </div>
-    
+</form>
 </div>

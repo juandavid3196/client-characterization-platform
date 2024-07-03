@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="note-section" *ngIf="addNote">
-        <input type="text" placeholder="Anadir nota (Solo para el creador de la encuesta)" formControlName="note_text">
+        <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
     </div>
     <div class="options-section">
         <div formArrayName="options" class="options-s-container">
@@ -57,7 +57,7 @@
                     <div class="answer-box">
                         <app-toggle-button name="defected_answer" (toggleValues)="getToggleValues($event)"></app-toggle-button>
                         <div class="select-container" *ngIf="defectedAnswer">
-                            <app-filter-select [options]="optionsAnswer"></app-filter-select>
+                            <app-filter-select  [options]="optionsAnswer"  (optionValue)="getOptionValue($event)"></app-filter-select>
                         </div>
                     </div>
                 </div>

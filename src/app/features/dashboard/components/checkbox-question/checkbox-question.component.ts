@@ -35,9 +35,6 @@ export class CheckboxQuestionComponent {
     });
 
   }
-
-
-  
  
   getToggleValues(values : any) {
 
@@ -53,6 +50,15 @@ export class CheckboxQuestionComponent {
 
       settings.patchValue({ [values.name]: values.state }); // modify value
     } 
+  }
+
+  getOptionValue(option : string) {
+
+    let settings = this.checkBoxForm.get('settings') as FormGroup;   
+    
+    if (settings.controls.hasOwnProperty('answer_value')) {
+      settings.patchValue({ ['answer_value']: option });
+     }
   }
 
   get options(): FormArray {

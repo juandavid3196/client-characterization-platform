@@ -43,14 +43,14 @@
     <div class="main-panel">
         <div class="main-container">
             <div class="options-section">
-                <span>Editar</span>
-                <span>Vista</span>
+                <span (click)="onChangeSection('edit')" class="{{changeSection == 'edit' ?'section-active' : ''}} ">Editar</span>
+                <span (click)="onChangeSection('view')" class="{{changeSection == 'view' ?'section-active' : ''}} ">Vista</span>
             </div>
-            <div class="edit-section">
+            <div class="edit-section" *ngIf="changeSection == 'edit'">
                 <app-checkbox-question></app-checkbox-question>
             </div>
-            <div class="view-section">
-    
+            <div class="view-section"  *ngIf="changeSection == 'view'">
+                <app-checkbox-question-view></app-checkbox-question-view>
             </div>
         </div>
     </div>

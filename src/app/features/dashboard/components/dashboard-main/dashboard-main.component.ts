@@ -12,6 +12,7 @@ export class DashboardMainComponent {
   selectedType : string = '';
   questions : QuestionConfig[]=[];
   questionConfigs = questionConfigs; 
+  changeSection: string = 'edit';
 
 
   openQuestionsMenu() : void {
@@ -33,5 +34,9 @@ export class DashboardMainComponent {
   deleteQuestion(id:number | null){
     const index = this.questions.findIndex(s => s.id === id);
     this.questions.splice(index, 1);
+  }
+
+  onChangeSection(section:string):void {
+    this.changeSection = section;
   }
 }

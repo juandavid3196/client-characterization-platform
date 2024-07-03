@@ -257,10 +257,15 @@
                         border-bottom: 3px solid #B9B9B9;
                         padding-bottom: 10px;
                     }
-
+                    
                     span:hover{
                         color: #333E48;
                         border-color: #333E48;
+                    }
+                    
+                    .section-active {
+                        color: black;
+                        border-bottom: 3px solid black;
                     }
                 }
             }

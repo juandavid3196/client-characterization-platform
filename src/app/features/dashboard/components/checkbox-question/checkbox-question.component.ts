@@ -12,7 +12,9 @@ export class CheckboxQuestionComponent {
   addNote: boolean = false;
   defectedAnswer: boolean = false;
   optionsAnswer : string[] = [];
-  
+  qMessage : boolean = false;
+  aMessage : boolean = false;
+
   constructor(private fb:FormBuilder){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
@@ -63,6 +65,31 @@ export class CheckboxQuestionComponent {
 
   get options(): FormArray {
     return this.checkBoxForm.get('options') as FormArray;
+  }
+
+
+  onFileChange(event: any, controlName: string): void {
+    const file = event.target.files[0];
+    if (file) {
+      const settings = this.checkBoxForm.get('settings') as FormGroup;
+      settings.patchValue({ [controlName]: file });
+
+      if(controlName == 'question_multimedia'){
+        this.qMessage = !this.qMessage;
+      }else if(controlName == 'options_multimedia'){
+        this.aMessage = !this.aMessage;
+      }
+    }
+  }
+
+  resetInputFile(controlName:string) {
+    const settings = this.checkBoxForm.get('settings') as FormGroup;
+    settings.patchValue({ [controlName]: '' });
+    if(controlName == 'question_multimedia'){
+      this.qMessage = !this.qMessage;
+    }else if(controlName == 'options_multimedia'){
+      this.aMessage = !this.aMessage;
+    }
   }
 
   addOption(): void {

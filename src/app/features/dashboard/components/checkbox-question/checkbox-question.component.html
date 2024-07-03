@@ -38,13 +38,29 @@
                 </div>
                 <div class="container-box">
                     <span class="label">Adjuntar video/imagen para pregunta</span>
-                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia">
-                    <label for="question_multimedia">Adjuntar</label>
+                    <div class="answer-box">
+                        <div class="file-container">
+                            <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
+                            <label for="question_multimedia">Adjuntar</label>
+                            <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
+                        </div>
+                        <div class="clean-file-container" *ngIf="qMessage">
+                            <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="container-box">
                     <span class="label">Adjuntar video/imagen para las opciones</span>
-                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia"> 
-                    <label for="options_multimedia">Adjuntar</label>
+                    <div class="answer-box">
+                        <div class="file-container">
+                            <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia" (change)="onFileChange($event, 'options_multimedia')"> 
+                            <label for="options_multimedia">Adjuntar</label>
+                            <span class="file-message" *ngIf="aMessage">Archivo cargado</span>
+                        </div>
+                        <div class="clean-file-container" *ngIf="aMessage">
+                            <span class="btn-clean-file" (click)="resetInputFile('options_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="container-box">
                 <span class="label">Obligatorio</span>

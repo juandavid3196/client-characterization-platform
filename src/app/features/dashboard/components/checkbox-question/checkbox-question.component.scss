@@ -225,13 +225,45 @@
                         transform: scale(0.9);
                     }
 
+                    .file-message {
+                        color: #333E48;
+                        font-size: 12px;
+                    }
+
                     .answer-box {
                         display: flex;
                         gap: 20px;
-                        align-items: center;
 
                         .select-container {
                             width: 200px;
+                        }
+
+                        .file-container {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 3px;
+                        }
+
+                        .clean-file-container {
+
+                            .btn-clean-file {
+                                border-radius: 3px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                border: 1px solid #B2B2B2;
+                                padding: 6px;
+                                cursor: pointer;
+
+                                img {
+                                    height: 23px;
+                                }
+                            }
+
+                            .btn-clean-file:hover {
+                                border: 1px solid #0D99FF;
+                                transition: border 0.2s ease-out;
+                            }
                         }
                     }
 

@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { QuestionsOptionsComponent } from './components/questions-options/questions-options.component';
 import { CheckboxQuestionComponent } from './components/checkbox-question/checkbox-question.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CheckboxQuestionViewComponent } from './components/checkbox-question-view/checkbox-question-view.component';
 
 
 
@@ -17,7 +16,6 @@ import { CheckboxQuestionViewComponent } from './components/checkbox-question-vi
     DashboardMainComponent,
     QuestionsOptionsComponent,
     CheckboxQuestionComponent,
-    CheckboxQuestionViewComponent,
   ],
   imports: [
     CommonModule,

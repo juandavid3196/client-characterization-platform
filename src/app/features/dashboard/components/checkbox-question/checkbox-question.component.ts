@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
@@ -11,9 +11,13 @@ export class CheckboxQuestionComponent {
   checkBoxForm : FormGroup;
   addNote: boolean = false;
   defectedAnswer: boolean = false;
+  anotherField: boolean = false;
+  required :boolean = false;
   optionsAnswer : string[] = [];
   qMessage : boolean = false;
   aMessage : boolean = false;
+  changeSection: string = 'edit';
+
 
   constructor(private fb:FormBuilder){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
@@ -37,6 +41,8 @@ export class CheckboxQuestionComponent {
     });
 
   }
+
+ 
  
   getToggleValues(values : any) {
 
@@ -46,8 +52,12 @@ export class CheckboxQuestionComponent {
 
       if(values.name === 'add_note'){
         this.addNote = values.state;
-      }else if( values.name == 'defected_answer'){
+      }else if( values.name === 'defected_answer'){
         this.defectedAnswer = values.state;
+      }else if(values.name === 'another_field'){
+        this.anotherField = values.state;
+      }else if(values.name === 'required'){
+        this.required = values.state;
       }
 
       settings.patchValue({ [values.name]: values.state }); // modify value
@@ -103,6 +113,10 @@ export class CheckboxQuestionComponent {
   removeOption(index: number): void {
     this.options.removeAt(index);
     this.optionsAnswer.splice(index, 1);  
+  }
+
+  onChangeSection(section:string):void {
+    this.changeSection = section;
   }
 
   onSubmit() : void {

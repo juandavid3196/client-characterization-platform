@@ -8,7 +8,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ToggleButtonComponent {
 
 toggleState : boolean = false;
-
 @Input() name : string = '';
 @Output() toggleValues = new EventEmitter<any>();
 

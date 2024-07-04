@@ -1,92 +1,130 @@
-<div class="question-container">
-    <form  [formGroup]="checkBoxForm" (ngSubmit)="onSubmit()">
-    <div class="question-section">
-        <div class="question-s-number">
-            <span class="number">1</span>
-        </div>
+<div class="main-container">
+    <div class="top-options-section">
+        <span (click)="onChangeSection('edit')" class="{{changeSection == 'edit' ?'section-active' : ''}} ">Editar</span>
+        <span (click)="onChangeSection('view')" class="{{changeSection == 'view' ?'section-active' : ''}} ">Vista</span>
+    </div>
+    <div class="edit-section" *ngIf="changeSection == 'edit'">
+        <div class="question-container">
+            <form  [formGroup]="checkBoxForm" (ngSubmit)="onSubmit()">
+            <div class="question-section">
+                <div class="question-s-number">
+                    <span class="number">1</span>
+                </div>
+                
+                <div class="question-s-container">
+                    <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta"  formControlName="text">
+                    <input type="text" class="q-s-description" placeholder="Descripción" formControlName="description">
+                </div>
+            </div>
+            <div class="note-section" *ngIf="addNote">
+                <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
+            </div>
+            <div class="options-section">
+                <div formArrayName="options" class="options-s-container">
+                    <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
+                        <input type="text" [formControlName]="i" (change)="updateAnswer()">
+                        <div class="actions-box">
+                            <img src="assets/icons/plus-icon.svg" alt="" (click)="addOption()">
+                            <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" *ngIf="i > 0"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <div class="settings-s-top">
+                    <div class="eyelash-box">
+                        Opciones
+                    </div>
+                </div>
+                <div class="settings-s-container">
+                    <div class="c-section">
+                        <div class="container-box">
+                            <span class="label">Añadir el Campo Otro</span>
+                            <app-toggle-button  name="another_field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Adjuntar video/imagen para pregunta</span>
+                            <div class="answer-box">
+                                <div class="file-container">
+                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
+                                    <label for="question_multimedia">Adjuntar</label>
+                                    <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
+                                </div>
+                                <div class="clean-file-container" *ngIf="qMessage">
+                                    <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Adjuntar video/imagen para las opciones</span>
+                            <div class="answer-box">
+                                <div class="file-container">
+                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia" (change)="onFileChange($event, 'options_multimedia')"> 
+                                    <label for="options_multimedia">Adjuntar</label>
+                                    <span class="file-message" *ngIf="aMessage">Archivo cargado</span>
+                                </div>
+                                <div class="clean-file-container" *ngIf="aMessage">
+                                    <span class="btn-clean-file" (click)="resetInputFile('options_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                        <span class="label">Obligatorio</span>
+                        <app-toggle-button name="required" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                        </div>  
+                    </div>
+                    <div class="c-section">
+                        <div class="container-box mayor">
+                            <span class="label">Respuesta por defecto</span>
+                            <div class="answer-box">
+                                <app-toggle-button name="defected_answer" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                                <div class="select-container" *ngIf="defectedAnswer">
+                                    <app-filter-select  [options]="optionsAnswer"  (optionValue)="getOptionValue($event)"></app-filter-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Añadir Nota</span>
+                            <app-toggle-button name="add_note" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                        </div>
+                    </div>
+                </div>
         
-        <div class="question-s-container">
-            <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta"  formControlName="text">
-            <input type="text" class="q-s-description" placeholder="Descripción" formControlName="description">
-        </div>
-    </div>
-    <div class="note-section" *ngIf="addNote">
-        <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
-    </div>
-    <div class="options-section">
-        <div formArrayName="options" class="options-s-container">
-            <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
-                <input type="text" [formControlName]="i" (change)="updateAnswer()">
-                <div class="actions-box">
-                    <img src="assets/icons/plus-icon.svg" alt="" (click)="addOption()">
-                    <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" *ngIf="i > 0"> 
-                </div>
             </div>
+            <div class="btn-section">
+                <button class="btn-confirm btn" type="submit">Guardar</button>
+            </div>
+        </form>
         </div>
     </div>
-    <div class="settings-section">
-        <div class="settings-s-top">
-            <div class="eyelash-box">
-                Opciones
-            </div>
-        </div>
-        <div class="settings-s-container">
-            <div class="c-section">
-                <div class="container-box">
-                    <span class="label">Añadir el Campo Otro</span>
-                    <app-toggle-button  name="another_field" (toggleValues)="getToggleValues($event)"></app-toggle-button>
-                </div>
-                <div class="container-box">
-                    <span class="label">Adjuntar video/imagen para pregunta</span>
-                    <div class="answer-box">
-                        <div class="file-container">
-                            <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
-                            <label for="question_multimedia">Adjuntar</label>
-                            <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
+    <div class="view-section"  *ngIf="changeSection == 'view'" >
+        <div class="checkbox-view-container">
+            <div class="checkbox-view-box">
+                <span class="q-number">pregunta #</span>
+                <span class="q-text">text</span>
+                <div class="q-description"> <span class="dark-description">Descripción</span> descripción</div>
+                <div class="options-container">
+                    <div class="option-box">
+                        <div class="checkbox-box">
+                            <input type="checkbox" id="myCheckbox">
+                            <label for="myCheckbox"></label>
                         </div>
-                        <div class="clean-file-container" *ngIf="qMessage">
-                            <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
-                        </div>
+                        <span class="option-text">Opción 1</span>
                     </div>
                 </div>
-                <div class="container-box">
-                    <span class="label">Adjuntar video/imagen para las opciones</span>
-                    <div class="answer-box">
-                        <div class="file-container">
-                            <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia" (change)="onFileChange($event, 'options_multimedia')"> 
-                            <label for="options_multimedia">Adjuntar</label>
-                            <span class="file-message" *ngIf="aMessage">Archivo cargado</span>
-                        </div>
-                        <div class="clean-file-container" *ngIf="aMessage">
-                            <span class="btn-clean-file" (click)="resetInputFile('options_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
-                        </div>
-                    </div>
+                <div class="another-field-container">
+                   <span class="af-text">Otra (Especifique)</span>
+                   <input type="text" class="af-input" >
                 </div>
-                <div class="container-box">
-                <span class="label">Obligatorio</span>
-                <app-toggle-button name="required" (toggleValues)="getToggleValues($event)"></app-toggle-button>
-                </div>  
-            </div>
-            <div class="c-section">
-                <div class="container-box mayor">
-                    <span class="label">Respuesta por defecto</span>
-                    <div class="answer-box">
-                        <app-toggle-button name="defected_answer" (toggleValues)="getToggleValues($event)"></app-toggle-button>
-                        <div class="select-container" *ngIf="defectedAnswer">
-                            <app-filter-select  [options]="optionsAnswer"  (optionValue)="getOptionValue($event)"></app-filter-select>
-                        </div>
-                    </div>
-                </div>
-                <div class="container-box">
-                    <span class="label">Añadir Nota</span>
-                    <app-toggle-button name="add_note" (toggleValues)="getToggleValues($event)"></app-toggle-button>
-                </div>
-            </div>
+                <span class="note-message"><span class="dark-message">Nota  </span>mensaje</span>
+                <div class="required-message">
+                    <img src="assets/icons/warning-icon.svg" alt=""> Esta pregunta es obligatoria</div>
+        </div>    
         </div>
-
     </div>
-    <div class="btn-section">
-        <button class="btn-confirm btn" type="submit">Agregar</button>
-    </div>
-</form>
 </div>
+
+
+
+
+

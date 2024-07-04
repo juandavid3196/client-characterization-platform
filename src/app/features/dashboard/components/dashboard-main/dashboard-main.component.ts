@@ -1,5 +1,6 @@
 import { Component} from '@angular/core';
 import { QuestionConfig,questionConfigs } from '../../models/questionsConfig.model';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -12,7 +13,12 @@ export class DashboardMainComponent {
   selectedType : string = '';
   questions : QuestionConfig[]=[];
   questionConfigs = questionConfigs; 
-  changeSection: string = 'edit';
+  formData !: FormGroup;
+
+
+  setFormData(form:FormGroup):void{
+    this.formData = form;
+  }
 
 
   openQuestionsMenu() : void {
@@ -36,7 +42,4 @@ export class DashboardMainComponent {
     this.questions.splice(index, 1);
   }
 
-  onChangeSection(section:string):void {
-    this.changeSection = section;
-  }
 }

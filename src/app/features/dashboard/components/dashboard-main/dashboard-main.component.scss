@@ -241,7 +241,7 @@
                 padding: 0px 15px;
                 
                 .options-section {
-                    height: 40px;
+                    height: 10%;
                     display: flex;
                     justify-content: center;
                     border-bottom: 0.2px solid #B9B9B9;
@@ -267,6 +267,10 @@
                         color: black;
                         border-bottom: 3px solid black;
                     }
+                }
+
+                .view-section,.edit-section {
+                    height: 90%;
                 }
             }
         }

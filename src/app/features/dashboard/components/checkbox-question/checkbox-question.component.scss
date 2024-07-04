@@ -1,9 +1,10 @@
 .question-container {
-    
+    height: -webkit-fill-available;
+    padding: 10px 0;
     form {
         padding: 30px 8px 0 0;
         overflow-y: auto;
-        height: 330px;
+        height: -webkit-fill-available;
         margin-top: 3px;
         display: flex;
         flex-direction: column;

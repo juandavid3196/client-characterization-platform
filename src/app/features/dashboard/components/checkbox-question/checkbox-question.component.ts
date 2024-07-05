@@ -1,5 +1,6 @@
-import { Component} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 
 @Component({
   selector: 'app-checkbox-question',
@@ -8,16 +9,18 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 })
 export class CheckboxQuestionComponent {
 
+  @ViewChild('appFilterComponent') childComponent: FilterSelectComponent | undefined;
+  
   checkBoxForm : FormGroup;
-  addNote: boolean = false;
-  defectedAnswer: boolean = false;
-  anotherField: boolean = false;
-  required :boolean = false;
+  addNote !: boolean;
+  defectedAnswer !: boolean;
+  anotherField !: boolean;
+  required !:boolean;
   optionsAnswer : string[] = [];
   qMessage : boolean = false;
   aMessage : boolean = false;
-  changeSection: string = 'edit';
-
+  blocked : boolean =  false;
+  changeSection: boolean = true;
 
   constructor(private fb:FormBuilder){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
@@ -28,7 +31,7 @@ export class CheckboxQuestionComponent {
       description:'',
       icon:'check-icon',
       note_text:'',
-      options: this.fb.array([this.fb.control('')]),
+      options: this.fb.array(['']),
       settings: this.fb.group({  
         another_field: false,
         question_multimedia: '',
@@ -42,29 +45,63 @@ export class CheckboxQuestionComponent {
 
   }
 
- 
- 
-  getToggleValues(values : any) {
+  ngOnInit() {
+    this.loadFromLocalStorage();
+    this.initializeFormValues();
+    
+    this.checkBoxForm.valueChanges.subscribe(value => {
+      localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
+    });
+  }
+
+  
+
+
+  saveToLocalStorage() {
+    localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
+  }
+
+  loadFromLocalStorage() {
+    const savedForm = localStorage.getItem('checkBoxForm');
+    if(savedForm){
+      const parsedForm = JSON.parse(savedForm);
+      this.checkBoxForm.patchValue(parsedForm);
+    }
+  }
+
+  initializeFormValues(): void {
+    const settings = this.checkBoxForm.get('settings') as FormGroup;
+    this.anotherField = settings.get('another_field')?.value;
+    this.addNote = settings.get('add_note')?.value;
+    this.defectedAnswer = settings.get('defected_answer')?.value;
+    this.required = settings.get('required')?.value;
+    this.saveToLocalStorage();
+  }
+
+  getToggleValues(values : any): void {
 
     let settings = this.checkBoxForm.get('settings') as FormGroup;  // access to a specific property.   
      
      if (settings.controls.hasOwnProperty(values.name)) { // verify a property 
 
-      if(values.name === 'add_note'){
-        this.addNote = values.state;
-      }else if( values.name === 'defected_answer'){
-        this.defectedAnswer = values.state;
-      }else if(values.name === 'another_field'){
-        this.anotherField = values.state;
-      }else if(values.name === 'required'){
-        this.required = values.state;
+      if(this.checkInfo(values)){
+        settings.patchValue({ [values.name]: values.state }); // modify value
+        this.initializeFormValues();
+      }else{
+        return;
       }
-
-      settings.patchValue({ [values.name]: values.state }); // modify value
     } 
   }
 
-  getOptionValue(option : string) {
+  checkInfo(values:any):boolean {
+    if(values.name === 'add_note' && values.state === false){
+      this.checkBoxForm.patchValue({ ['note_text']: '' }); 
+    }
+    return true;
+  }
+
+
+  getOptionValue(option : string): void {
 
     let settings = this.checkBoxForm.get('settings') as FormGroup;   
     
@@ -111,12 +148,23 @@ export class CheckboxQuestionComponent {
   }
 
   removeOption(index: number): void {
-    this.options.removeAt(index);
-    this.optionsAnswer.splice(index, 1);  
+    if(index == 0 && this.optionsAnswer.length <= 1){
+      this.options.at(0).setValue('');
+      const settings = this.checkBoxForm.get('settings') as FormGroup;
+      settings.patchValue({ ['answer_value']: '' });
+      this.optionsAnswer = [];
+      settings.patchValue({ ['defected_answer']: false });
+      this.initializeFormValues();
+      this.loadFromLocalStorage();
+    }else{
+      this.options.removeAt(index);
+      this.optionsAnswer.splice(index, 1); 
+      this.childComponent?.verifySelectedOption(); 
+    }
   }
 
-  onChangeSection(section:string):void {
-    this.changeSection = section;
+  onChangeSection():void {
+    this.changeSection = !this.changeSection;
   }
 
   onSubmit() : void {

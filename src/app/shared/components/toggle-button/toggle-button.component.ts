@@ -7,17 +7,37 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ToggleButtonComponent {
 
-toggleState : boolean = false;
-@Input() name : string = '';
-@Output() toggleValues = new EventEmitter<any>();
+  @Input() name : string = '';
+  @Input() OAnswer !: number;
+  @Output() toggleValues = new EventEmitter<any>();
+  state !: boolean;
+  
+  
+  ngOnInit() {
+    this.loadFromLocalStorage();
+  }
+
+  
+  loadFromLocalStorage() {
+    const savedForm = localStorage.getItem('checkBoxForm');
+    if(savedForm){
+      const localInfo = JSON.parse(savedForm);
+      if (localInfo.hasOwnProperty('settings')) {
+        const settings = localInfo.settings;
+        if (settings.hasOwnProperty(this.name)) {
+          this.state = settings[this.name];
+        }
+      }
+    }
+   
+  }
+
 
 onChangeState(): void {
-  this.toggleState = !this.toggleState;
-  this.toggleValues.emit({
-    name:this.name,
-    state:this.toggleState
-  })
-}
-
-
+    this.state = !this.state;
+    this.toggleValues.emit({
+      name:this.name,
+      state:this.state
+    })
+  }
 }

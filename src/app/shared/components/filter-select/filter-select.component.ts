@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-filter-select',
@@ -14,6 +14,12 @@ export class FilterSelectComponent {
   caret_rotate: boolean = false;
   menu_open: boolean = false;
   selectedOption : string = '';
+
+  verifySelectedOption() : void {
+    if(!this.options.includes(this.selectedOption)){
+      this.selectedOption = '';
+    }
+  }
 
   toggleSelect() : void {
     this.select_click = !this.select_click;

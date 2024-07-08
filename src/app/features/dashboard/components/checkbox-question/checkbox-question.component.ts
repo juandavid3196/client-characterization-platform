@@ -1,4 +1,4 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
@@ -11,7 +11,8 @@ import {ToggleButtonComponent} from '../../../../shared/components/toggle-button
 export class CheckboxQuestionComponent {
 
   @ViewChild('appFilterComponent') FilterComponent: FilterSelectComponent | undefined;
-  @ViewChild('appToggleButton') ToggleComponent: ToggleButtonComponent | undefined;
+  @ViewChild('appToggleButtonDefectedA') ToggleComponent: ToggleButtonComponent | undefined;
+  @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
   checkBoxForm : FormGroup;
   addNote !: boolean;
@@ -55,8 +56,6 @@ export class CheckboxQuestionComponent {
     this.checkBoxForm.valueChanges.subscribe(value => {
       localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
     });
-
-    console.log(this.optionsAnswer);
   }
 
   saveToLocalStorage() {
@@ -77,9 +76,9 @@ export class CheckboxQuestionComponent {
       parsedForm.options.forEach((option: string) => {
         optionsArray.push(this.fb.control(option));
       });
-
-      this.optionsAnswer =  (parsedForm.options[0] != '') ? parsedForm.options : [];
       
+      this.optionsAnswer = parsedForm.options.filter((option: string | null) => option != null && option !== '') || [];      
+     
     }
 
   }
@@ -91,6 +90,16 @@ export class CheckboxQuestionComponent {
     this.defectedAnswer = settings.get('defected_answer')?.value;
     this.required = settings.get('required')?.value;
     this.saveToLocalStorage();
+  }
+
+
+  
+  reloadAllControls() {
+    if(this.toggleButtons){
+      this.toggleButtons.forEach(toggleButton => {
+        toggleButton?.reloadComponent();
+      });
+  }
   }
 
   getToggleValues(values : any): void {
@@ -214,9 +223,14 @@ export class CheckboxQuestionComponent {
           add_note: false,
         }
       });
-    
+
       this.optionsAnswer = [];
+    
       this.initializeFormValues();
+      this.loadFromLocalStorage();
+      this.ToggleComponent?.reloadComponent();
+      this.reloadAllControls();
+     
   }
 
   onSubmit() : void {

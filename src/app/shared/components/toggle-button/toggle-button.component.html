@@ -1,6 +1,6 @@
 <div class="btn-check-container">
     <label class="toggle" for="{{name}}">
-        <input class="toggle__input" name="{{name}}" type="checkbox" id="{{name}}"  [checked]="state"  [disabled]="OAnswer === 0" (click)="onChangeState()">
+        <input class="toggle__input" name="{{name}}" type="checkbox" id="{{name}}"  [checked]="state"  [disabled]="OAnswer == 0" (click)="onChangeState()">
         <div class="toggle__fill"></div>
     </label>
     <span class="btn-check-state {{state ? 'btn-toggle-active' : ''}}">{{state ? 'ON' : 'OFF'}}</span>

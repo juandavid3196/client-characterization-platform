@@ -39,7 +39,7 @@ export class ToggleButtonComponent {
   }
 
   checkOptionsLength() : void {
-    if(this.OAnswer === 0) {
+    if(this.OAnswer === 0){
       this.optionsLength.emit();
     }
   }

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-filter-select',
@@ -15,9 +16,22 @@ export class FilterSelectComponent {
   menu_open: boolean = false;
   selectedOption : string = '';
 
+  ngOnInit():void {
+     this.setSelectedOption();
+  }
+
   verifySelectedOption() : void {
     if(!this.options.includes(this.selectedOption)){
       this.selectedOption = '';
+    }
+  }
+
+  setSelectedOption() : void {
+    const savedForm = localStorage.getItem('checkBoxForm');
+    if(savedForm){
+      const parsedForm = JSON.parse(savedForm);
+      const settings = parsedForm.settings;
+      this.selectedOption = settings.answer_value;
     }
   }
 

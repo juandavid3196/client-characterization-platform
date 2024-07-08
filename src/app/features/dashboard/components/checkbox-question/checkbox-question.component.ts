@@ -1,6 +1,7 @@
 import { Component, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
+import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 
 @Component({
   selector: 'app-checkbox-question',
@@ -9,7 +10,8 @@ import {FilterSelectComponent} from '../../../../shared/components/filter-select
 })
 export class CheckboxQuestionComponent {
 
-  @ViewChild('appFilterComponent') childComponent: FilterSelectComponent | undefined;
+  @ViewChild('appFilterComponent') FilterComponent: FilterSelectComponent | undefined;
+  @ViewChild('appToggleButton') ToggleComponent: ToggleButtonComponent | undefined;
   
   checkBoxForm : FormGroup;
   addNote !: boolean;
@@ -21,6 +23,7 @@ export class CheckboxQuestionComponent {
   aMessage : boolean = false;
   blocked : boolean =  false;
   changeSection: boolean = true;
+  optionsMessage : boolean = false;
 
   constructor(private fb:FormBuilder){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
@@ -31,7 +34,7 @@ export class CheckboxQuestionComponent {
       description:'',
       icon:'check-icon',
       note_text:'',
-      options: this.fb.array(['']),
+      options: this.fb.array([this.fb.control('')]),
       settings: this.fb.group({  
         another_field: false,
         question_multimedia: '',
@@ -52,10 +55,9 @@ export class CheckboxQuestionComponent {
     this.checkBoxForm.valueChanges.subscribe(value => {
       localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
     });
+
+    console.log(this.optionsAnswer);
   }
-
-  
-
 
   saveToLocalStorage() {
     localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
@@ -66,7 +68,20 @@ export class CheckboxQuestionComponent {
     if(savedForm){
       const parsedForm = JSON.parse(savedForm);
       this.checkBoxForm.patchValue(parsedForm);
+
+       // cargar opciones
+      const optionsArray = this.checkBoxForm.get('options') as FormArray;
+      while (optionsArray.length) {
+        optionsArray.removeAt(0);
+      }
+      parsedForm.options.forEach((option: string) => {
+        optionsArray.push(this.fb.control(option));
+      });
+
+      this.optionsAnswer =  (parsedForm.options[0] != '') ? parsedForm.options : [];
+      
     }
+
   }
 
   initializeFormValues(): void {
@@ -107,6 +122,7 @@ export class CheckboxQuestionComponent {
     
     if (settings.controls.hasOwnProperty('answer_value')) {
       settings.patchValue({ ['answer_value']: option });
+      this.saveToLocalStorage();
      }
   }
 
@@ -141,10 +157,15 @@ export class CheckboxQuestionComponent {
 
   addOption(): void {
     this.options.push(this.fb.control(''));
+    this.saveToLocalStorage();
   }
 
   updateAnswer(): void {
     this.optionsAnswer = this.options.controls.map(control => control.value);
+    this.saveToLocalStorage();
+    if(this.optionsAnswer[0] === ''){
+      this.removeOption(0);
+    }
   }
 
   removeOption(index: number): void {
@@ -156,15 +177,46 @@ export class CheckboxQuestionComponent {
       settings.patchValue({ ['defected_answer']: false });
       this.initializeFormValues();
       this.loadFromLocalStorage();
+      this.ToggleComponent?.reloadComponent();
+      this.optionsMessage = false;
     }else{
       this.options.removeAt(index);
       this.optionsAnswer.splice(index, 1); 
-      this.childComponent?.verifySelectedOption(); 
+      this.FilterComponent?.verifySelectedOption(); 
     }
+  }
+
+  checkOptionsLength(): void {
+    this.optionsMessage = !this.optionsMessage;
   }
 
   onChangeSection():void {
     this.changeSection = !this.changeSection;
+  }
+
+  onResetForm():void {
+      this.checkBoxForm.reset({
+        id: null,
+        numeral: null,
+        type: 'checkbox',
+        text: '',
+        description: '',
+        icon: 'check-icon',
+        note_text: '',
+        options: this.fb.array([this.fb.control('')]),
+        settings: {
+          another_field: false,
+          question_multimedia: '',
+          options_multimedia: '',
+          required: false,
+          defected_answer: false,
+          answer_value: '',
+          add_note: false,
+        }
+      });
+    
+      this.optionsAnswer = [];
+      this.initializeFormValues();
   }
 
   onSubmit() : void {

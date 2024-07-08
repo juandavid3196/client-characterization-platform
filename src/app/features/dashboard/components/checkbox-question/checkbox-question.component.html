@@ -77,11 +77,12 @@
                         <div class="container-box mayor">
                             <span class="label">Respuesta por defecto</span>
                             <div class="answer-box">
-                                <app-toggle-button name="defected_answer" [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                                <app-toggle-button name="defected_answer"  #appToggleButton [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"  (optionsLength)="checkOptionsLength()" (click)="checkOptionsLength()" ></app-toggle-button>
                                 <div class="select-container" *ngIf="defectedAnswer">
-                                    <app-filter-select  [options]="optionsAnswer" #appFilterComponent (optionValue)="getOptionValue($event)"></app-filter-select>
+                                    <app-filter-select  [options]="optionsAnswer" #appFilterComponent   (optionValue)="getOptionValue($event)"></app-filter-select>
                                 </div>
                             </div>
+                            <span class="file-message" *ngIf="optionsMessage && optionsAnswer.length === 0">Sin respuestas</span>
                         </div>
                         <div class="container-box">
                             <span class="label">Añadir Nota</span>
@@ -92,6 +93,7 @@
         
             </div>
             <div class="btn-section">
+                <button class="btn-clean btn" type="button" (click)="onResetForm()">limpiar <mat-icon>refresh</mat-icon> </button>
                 <button class="btn-confirm btn" type="submit">Guardar</button>
             </div>
         </form>
@@ -104,9 +106,9 @@
                 <span class="q-text">{{checkBoxForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="checkBoxForm.value.description != '' " >Descripción: </span>{{checkBoxForm.value.description}}</div>
                 <div class="options-container">
-                    <div class="option-box" *ngFor="let option of optionsAnswer; let i = index">
-                        <div class="checkbox-box">
-                            <input type="checkbox" id="{{i}}" [checked]="option === checkBoxForm.value.settings.answer_value">
+                    <div class="option-box"  *ngFor="let option of optionsAnswer; let i = index">
+                        <div class="checkbox-box" *ngIf="optionsAnswer[0] != '' ">
+                            <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === checkBoxForm.value.settings.answer_value"  [disabled]="true">
                             <label for="{{i}}"></label>
                         </div>
                         <span class="option-text">{{option}}</span>
@@ -114,11 +116,11 @@
                 </div>
                 <div class="another-field-container" *ngIf="anotherField">
                    <span class="af-text">Otra (Especifique)</span>
-                   <input type="text" class="af-input" >
+                   <input type="text" class="af-input"  [disabled]="true">
                 </div>
                 <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{checkBoxForm.value.note_text}}</span>
-                <div class="required-message" *ngIf="required">
-                    <img src="assets/icons/warning-icon.svg" alt=""> Esta pregunta es obligatoria</div>
+                <div class="required-message-view" *ngIf="required">
+                    <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
                 </div>    
         </div>
     </div>

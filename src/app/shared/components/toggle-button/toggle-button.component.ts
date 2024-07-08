@@ -10,10 +10,16 @@ export class ToggleButtonComponent {
   @Input() name : string = '';
   @Input() OAnswer !: number;
   @Output() toggleValues = new EventEmitter<any>();
+  @Output() optionsLength = new EventEmitter<boolean>();
   state !: boolean;
   
   
-  ngOnInit() {
+  ngOnInit():void {
+    this.loadFromLocalStorage();
+  }
+
+
+  reloadComponent():void {
     this.loadFromLocalStorage();
   }
 
@@ -32,6 +38,11 @@ export class ToggleButtonComponent {
    
   }
 
+  checkOptionsLength() : void {
+    if(this.OAnswer === 0) {
+      this.optionsLength.emit();
+    }
+  }
 
 onChangeState(): void {
     this.state = !this.state;

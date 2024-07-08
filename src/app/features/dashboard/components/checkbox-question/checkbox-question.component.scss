@@ -326,9 +326,10 @@
             .btn-section {
                 display: flex;
                 width: 100%;
+                justify-content: end;
+                gap: 20px;  
         
                 .btn-confirm {
-                    margin-left: auto;
                     background-color: #0D99FF;
                     color: white;
                     border: none;
@@ -342,6 +343,22 @@
                     background-color: #0079cf;
         
                 } 
+
+                .btn-clean {
+                    background-color: white;
+                    color: #0D99FF;
+                    border-color: #0D99FF;
+                    display: flex;
+                    gap: 5px;
+                    align-items: center;
+                    font-weight: 600;
+                }
+
+                .btn-clean:hover {
+                    color: #0079cf;
+                    border-color: #0079cf;
+                    transition: color 0.2s ease;
+                }
             }
         }
           form::-webkit-scrollbar {
@@ -486,6 +503,20 @@
                 .dark-message {
                     font-weight: 500; 
                     font-size: 15px; 
+                }
+            }
+
+            .required-message-view {
+                color:#DD1F1F;
+                font-size: 13px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                width: fit-content;
+                gap:10px;
+
+                img {
+                    height: 20px;
                 }
             }
         

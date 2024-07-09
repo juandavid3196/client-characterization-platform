@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import { QuestionConfig,questionConfigs } from '../../models/questionsConfig.model';
 import { FormGroup } from '@angular/forms';
+import { Section } from '../../models/section.model';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -11,7 +12,9 @@ export class DashboardMainComponent {
 
   openQuestion : boolean = false;
   selectedType : string = '';
-  questions : QuestionConfig[]=[];
+  sectionSelected : Section | null = null;
+  dashboardOptions: any[]= [];
+  numeralList: number = 0;
   questionConfigs = questionConfigs; 
   formData !: FormGroup;
 
@@ -26,20 +29,47 @@ export class DashboardMainComponent {
     this.selectedType = '';
   }
 
-  onSelectedType(type:string) {
+  onSelectedType(type:string): void {
     this.selectedType = type;
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
-      const newQuestion = { ...selectedQuestion, id: this.questions.length};
-      newQuestion.numeral = newQuestion.id +1;
-      this.questions.push(newQuestion);
-      console.log(this.questions);
+      this.numeralList++;
+      const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
+      this.dashboardOptions.push(newQuestion);
     }
   }
 
-  deleteQuestion(id:number | null){
-    const index = this.questions.findIndex(s => s.id === id);
-    this.questions.splice(index, 1);
+  onSectionSelected(section:string): void {
+    this.dashboardOptions.push(section);
+    console.log(this.dashboardOptions);
+  }
+
+
+  deleteQuestion(index:number): void {
+   
+    if(index != this.dashboardOptions.length - 1){
+      for(let i = index; i < this.dashboardOptions.length; i++ ){
+        if(this.dashboardOptions[i].type != 'section'){
+          this.dashboardOptions[i].numeral  = this.dashboardOptions[i].numeral - 1;
+        }
+      }
+    }
+      this.dashboardOptions.splice(index, 1);
+    }
+    
+  addNewElement(index:number): void {
+    if(index === 0){
+
+    }else if(index === this.dashboardOptions.length -1){
+
+    }
+    else{
+      
+    }
+  }
+
+  deleteSection(index: number) : void {
+      this.dashboardOptions.splice(index, 1);  
   }
 
 }

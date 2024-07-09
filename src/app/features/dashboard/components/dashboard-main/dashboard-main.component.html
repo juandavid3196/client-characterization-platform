@@ -1,6 +1,6 @@
 
 <div class="container">
-    <app-questions-options *ngIf="openQuestion"  (formClose)="openQuestionsMenu()" (typeSelected)="onSelectedType($event)" ></app-questions-options>
+    <app-questions-options *ngIf="openQuestion"  (formClose)="openQuestionsMenu()" (typeSelected)="onSelectedType($event)"  (sectionSelected)="onSectionSelected($event)" ></app-questions-options>
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -27,12 +27,21 @@
                 <span> <img src="assets/icons/setting-icon.svg" alt=""></span>
             </div>
         </div>
-        <div class="question-list">
-            <div class="question-box" *ngFor="let question of questions">
-                <span class="numeral">{{question.numeral}}</span>
-                <span class="question-icon"> <img src='assets/icons/{{question.icon}}.svg' alt=""></span>
-                <span class="question-text">{{question.text}}</span>
-                <span class="delete-icon"> <mat-icon (click)="deleteQuestion(question.id)" >delete</mat-icon> </span>
+        <div class="element-list">
+            <span class="plus-icon" *ngIf="dashboardOptions.length > 0" ><img src="assets/icons/plus-icon-blue.svg" alt="" (click)="addNewElement(0)"></span>
+            <div class="element-box" *ngFor="let element of dashboardOptions, let i = index">
+                    <div class="question-type" *ngIf="element.type !== 'section'">
+                        <span class="numeral">{{element.numeral}}</span>
+                        <span class="element-icon"> <img src='assets/icons/{{element.icon}}.svg' alt=""></span>
+                        <span class="element-text">{{element.text}}</span>
+                        <span class="delete-icon" (click)="deleteQuestion(i)"> <mat-icon >delete</mat-icon> </span>
+                    </div>
+                    <div class="section-type" *ngIf="element.type === 'section'">
+                        <span class="element-icon"><img src='assets/icons/{{element.icon}}.svg' alt=""></span>
+                        <span class="element-text">{{element.title}}</span>
+                        <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
+                    </div>
+                    <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i)"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>
             </div>
             <div class="add-question-box">
                 <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>

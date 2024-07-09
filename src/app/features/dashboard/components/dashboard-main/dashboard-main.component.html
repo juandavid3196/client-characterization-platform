@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="element-list">
-            <span class="plus-icon" *ngIf="dashboardOptions.length > 0" ><img src="assets/icons/plus-icon-blue.svg" alt="" (click)="addNewElement(0)"></span>
+            <span class="plus-icon" *ngIf="dashboardOptions.length > 0" ><img src="assets/icons/plus-icon-blue.svg" alt="" (click)="addNewElement(0,'back')"></span>
             <div class="element-box" *ngFor="let element of dashboardOptions, let i = index">
                     <div class="question-type" *ngIf="element.type !== 'section'">
                         <span class="numeral">{{element.numeral}}</span>
@@ -41,7 +41,7 @@
                         <span class="element-text">{{element.title}}</span>
                         <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
                     </div>
-                    <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i)"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>
+                    <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>
             </div>
             <div class="add-question-box">
                 <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>

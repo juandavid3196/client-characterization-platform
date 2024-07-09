@@ -11,13 +11,13 @@ import { Section } from '../../models/section.model';
 export class DashboardMainComponent {
 
   openQuestion : boolean = false;
-  selectedType : string = '';
   sectionSelected : Section | null = null;
   dashboardOptions: any[]= [];
-  numeralList: number = 0;
+  numeralList !: number;
   questionConfigs = questionConfigs; 
   formData !: FormGroup;
-
+  questionIndex !: number | null;
+  indexPosition :string = '';
 
   setFormData(form:FormGroup):void{
     this.formData = form;
@@ -26,17 +26,48 @@ export class DashboardMainComponent {
 
   openQuestionsMenu() : void {
     this.openQuestion = !this.openQuestion;
-    this.selectedType = '';
   }
 
   onSelectedType(type:string): void {
-    this.selectedType = type;
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
-      this.numeralList++;
-      const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
-      this.dashboardOptions.push(newQuestion);
+      if(typeof this.questionIndex === 'number'){
+        if(this.questionIndex === 0  && this.indexPosition === 'back'){
+          const newQuestion = { ...selectedQuestion, numeral: 1}; 
+          for(let i = 0; i < this.dashboardOptions.length; i++){
+            if(this.dashboardOptions[i].type != 'section'){
+              this.dashboardOptions[i].numeral  += 1;
+            }
+          }
+          this.dashboardOptions.unshift(newQuestion);
+        }else {
+          const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
+          for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
+            if(this.dashboardOptions[i].type != 'section'){
+              this.dashboardOptions[i].numeral  += 1;
+            }
+          }
+          this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
+        }
+      }else{
+        
+        this.numeralListCount();
+          const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
+          this.dashboardOptions.push(newQuestion);
+      }
     }
+    this.questionIndex = null;
+    this.indexPosition = '';
+  }
+
+  numeralListCount(): void {
+    this.numeralList = 1;
+    for(let i = 0; i < this.dashboardOptions.length; i++ ){
+      if(this.dashboardOptions[i].type != 'section'){
+       this.numeralList ++;
+      }
+    }
+
   }
 
   onSectionSelected(section:string): void {
@@ -50,22 +81,17 @@ export class DashboardMainComponent {
     if(index != this.dashboardOptions.length - 1){
       for(let i = index; i < this.dashboardOptions.length; i++ ){
         if(this.dashboardOptions[i].type != 'section'){
-          this.dashboardOptions[i].numeral  = this.dashboardOptions[i].numeral - 1;
+          this.dashboardOptions[i].numeral  -= 1;
         }
       }
     }
       this.dashboardOptions.splice(index, 1);
     }
     
-  addNewElement(index:number): void {
-    if(index === 0){
-
-    }else if(index === this.dashboardOptions.length -1){
-
-    }
-    else{
-      
-    }
+  addNewElement(index:number,position:string): void {
+    this.questionIndex= index;
+    this.indexPosition = position;
+    this.openQuestionsMenu();
   }
 
   deleteSection(index: number) : void {

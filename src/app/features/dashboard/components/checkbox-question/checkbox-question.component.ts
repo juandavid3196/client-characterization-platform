@@ -125,7 +125,7 @@ export class CheckboxQuestionComponent {
   }
 
 
-  getOptionValue(option : string): void {
+getOptionValue(option : string): void {
 
     let settings = this.checkBoxForm.get('settings') as FormGroup;   
     

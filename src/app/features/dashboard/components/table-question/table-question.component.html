@@ -5,7 +5,7 @@
     </div>
     <div class="edit-section" *ngIf="changeSection">
         <div class="question-container">
-            <form  [formGroup]="checkBoxForm" (ngSubmit)="onSubmit()">
+            <form  [formGroup]="tableForm" (ngSubmit)="onSubmit()">
             <div class="question-section">
                 <div class="question-s-number">
                     <span class="number">1</span>
@@ -22,12 +22,20 @@
             <div class="options-section">
                 <div formArrayName="options" class="options-s-container">
                     <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
-                        <input type="text" [formControlName]="i" (change)="updateAnswer()">
-                        <div class="actions-box">
-                            <img src="assets/icons/plus-icon.svg" alt="" (click)="addOption()">
-                            <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
+                        <div class="option-box">
+                            <input type="text" [formControlName]="i" (change)="updateAnswer()" placeholder="columna - {{i+1}}">
+                            <app-filter-select [options]="['Texto','Radio Boton']"></app-filter-select>
                         </div>
+                        <div class="actions-box">
+                            <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
+                            <span class="plus-icon" (click)="addOption(i)"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
+                        </div>
+
                     </div>
+                </div>
+                <div class="o-buttons-container">
+                    <button class="btn" (click)="addOption(options.length - 1)">Añadir columna</button>
+                    <button class="btn">Añadir columna No visible</button>
                 </div>
             </div>
             <div class="settings-section">
@@ -38,10 +46,6 @@
                 </div>
                 <div class="settings-s-container" formGroupName="settings">
                     <div class="c-section">
-                        <div class="container-box">
-                            <span class="label">Añadir el Campo Otro</span>
-                            <app-toggle-button name="another_field" #appToggleButton (toggleValues)="getToggleValues($event)"></app-toggle-button>
-                        </div>
                         <div class="container-box">
                             <span class="label">Adjuntar video/imagen para pregunta</span>
                             <div class="answer-box">
@@ -69,62 +73,38 @@
                             </div>
                         </div>
                         <div class="container-box">
-                        <span class="label">Obligatorio</span>
-                        <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                            <span class="label">Obligatorio</span>
+                            <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)"></app-toggle-button>
                         </div>  
-                    </div>
-                    <div class="c-section">
-                        <div class="container-box mayor">
-                            <span class="label">Respuesta por defecto</span>
-                            <div class="answer-box">
-                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"  (optionsLength)="checkOptionsLength()" (click)="checkOptionsLength()" ></app-toggle-button>
-                                <div class="select-container" *ngIf="defectedAnswer">
-                                    <app-filter-select  [options]="optionsAnswer" #appFilterComponent   (optionValue)="getOptionValue($event)"></app-filter-select>
-                                </div>
-                            </div>
-                            <span class="file-message" *ngIf="optionsMessage && optionsAnswer.length === 0">Sin respuestas</span>
-                        </div>
                         <div class="container-box">
                             <span class="label">Añadir Nota</span>
                             <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)"></app-toggle-button>
                         </div>
                     </div>
                 </div>
-        
             </div>
             <div class="btn-section">
                 <button class="btn-clean btn" type="button" (click)="onResetForm()">Restaurar <mat-icon>refresh</mat-icon> </button>
                 <button class="btn-confirm btn" type="submit">Guardar</button>
             </div>
-        </form>
+            </form>
         </div>
     </div>
     <div class="view-section"  *ngIf="!changeSection" >
-        <div class="checkbox-view-container">
-            <div class="checkbox-view-box">
+        <div class="table-view-container">
+            <div class="table-view-box">
                 <span class="q-number">pregunta #</span>
-                <span class="q-text">{{checkBoxForm.value.text}}</span>
-                <div class="q-description"> <span class="dark-description" *ngIf="checkBoxForm.value.description != '' " >Descripción: </span>{{checkBoxForm.value.description}}</div>
-                <div class="options-container">
-                    <div class="option-box"  *ngFor="let option of optionsAnswer; let i = index">
-                        <div class="checkbox-box" *ngIf="optionsAnswer.length === 0">
-                            <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === checkBoxForm.value.settings.answer_value"  [disabled]="true">
-                            <label for="{{i}}"></label>
-                        </div>
-                        <span class="option-text">{{option}}</span>
-                    </div>
-                </div>
-                <div class="another-field-container" *ngIf="anotherField">
-                   <span class="af-text">Otra (Especifique)</span>
-                   <input type="text" class="af-input"  [disabled]="true">
-                </div>
-                <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{checkBoxForm.value.note_text}}</span>
+                <span class="q-text">{{tableForm.value.text}}</span>
+                <div class="q-description"> <span class="dark-description" *ngIf="tableForm.value.description != '' " >Descripción: </span>{{tableForm.value.description}}</div>
+                <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{tableForm.value.note_text}}</span>
                 <div class="required-message-view" *ngIf="required">
                     <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
                 </div>    
         </div>
     </div>
 </div>
+
+
 
 
 

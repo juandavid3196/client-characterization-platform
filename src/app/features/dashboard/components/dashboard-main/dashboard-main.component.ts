@@ -18,6 +18,7 @@ export class DashboardMainComponent {
   formData !: FormGroup;
   questionIndex !: number | null;
   indexPosition :string = '';
+  indexSelected!:number | null;
 
   setFormData(form:FormGroup):void{
     this.formData = form;
@@ -40,6 +41,7 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.unshift(newQuestion);
+          this.onElementSelected(0);
         }else {
           const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
           for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
@@ -48,14 +50,17 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
+          this.onElementSelected(this.questionIndex + 1);
         }
       }else{
         
         this.numeralListCount();
           const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
           this.dashboardOptions.push(newQuestion);
+          this.onElementSelected(this.dashboardOptions.length -1);
       }
     }
+
     this.questionIndex = null;
     this.indexPosition = '';
   }
@@ -71,8 +76,24 @@ export class DashboardMainComponent {
   }
 
   onSectionSelected(section:string): void {
-    this.dashboardOptions.push(section);
-    console.log(this.dashboardOptions);
+    
+    if(typeof this.questionIndex === 'number'){
+      if(this.questionIndex === 0  && this.indexPosition === 'back'){
+        this.dashboardOptions.unshift(section);
+        if(typeof this.questionIndex === 'number')
+          this.onElementSelected(0);
+      }else {
+        this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
+        this.onElementSelected(this.questionIndex + 1);
+      }
+    }else{
+      this.dashboardOptions.push(section);
+      this.onElementSelected(this.dashboardOptions.length - 1);
+    }
+
+    this.questionIndex = null;
+    this.indexPosition = '';
+
   }
 
 
@@ -92,6 +113,10 @@ export class DashboardMainComponent {
     this.questionIndex= index;
     this.indexPosition = position;
     this.openQuestionsMenu();
+  }
+
+  onElementSelected(index:number):void {
+    this.indexSelected = index;
   }
 
   deleteSection(index: number) : void {

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-filter-select',
@@ -15,9 +14,10 @@ export class FilterSelectComponent {
   caret_rotate: boolean = false;
   menu_open: boolean = false;
   selectedOption : string = '';
+  
 
   ngOnInit():void {
-     this.setSelectedOption();
+    this.setSelectedOption();
   }
 
   verifySelectedOption() : void {

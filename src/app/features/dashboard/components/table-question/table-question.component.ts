@@ -15,7 +15,20 @@ export class TableQuestionComponent {
   required: boolean =  false;
   qMessage : boolean = false;
   aMessage : boolean = false;
-  optionsTable : string[] = [];
+  optionsTable : String[] = [];
+  optionsInfo: any[] = [{
+    text:'',
+    type: '',
+  }]
+  optionsTypeText : string[] = [];
+  rowsInfo: any[] = [
+    {
+      text:'',
+      index: null,
+      rows : []
+    }
+  ]
+  noVisibleField : boolean =  false;
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
 
 
@@ -28,6 +41,7 @@ export class TableQuestionComponent {
       description:'',
       icon:'table-icon',
       note_text:'',
+      no_visible_title:'',
       options: this.fb.array([this.fb.control('')]),
       settings: this.fb.group({  
         question_multimedia: '',
@@ -68,7 +82,6 @@ export class TableQuestionComponent {
       });
       
       this.optionsTable = parsedForm.options.filter((option: string | null) => option != null && option !== '') || [];      
-     
     }
 
   }
@@ -77,10 +90,12 @@ export class TableQuestionComponent {
     const settings = this.tableForm.get('settings') as FormGroup;
     this.addNote = settings.get('add_note')?.value;
     this.required = settings.get('required')?.value;
+    if(this.tableForm.get('no_visible_title')?.value){
+      this.noVisibleField = true;
+    }
     this.saveToLocalStorage();
   }
-
-
+  
   
   reloadAllControls() {
     if(this.toggleButtons){
@@ -106,6 +121,21 @@ export class TableQuestionComponent {
     } 
   }
 
+  getDropDownValue(value: string, index: number): void {
+    if (index === 0 && this.optionsTable.length > 0) {
+        this.optionsInfo.unshift({
+            text: '',
+            type: value,
+        });
+
+    } else if (index > 0 && index !== this.optionsTable.length - 1) {
+        this.optionsInfo.splice(index, 0, { text: '', type: value });
+    } else {
+        this.optionsInfo[index] = { type: value };
+    }  
+}
+
+
   checkInfo(values:any):boolean {
     if(values.name === 'add_note' && values.state === false){
       this.tableForm.patchValue({ ['note_text']: '' }); 
@@ -118,15 +148,6 @@ export class TableQuestionComponent {
     this.changeSection = !this.changeSection;
   }
 
-  getOptionValue(option : string): void {
-
-    let settings = this.tableForm.get('settings') as FormGroup;   
-    
-    if (settings.controls.hasOwnProperty('answer_value')) {
-      settings.patchValue({ ['answer_value']: option });
-      this.saveToLocalStorage();
-     }
-  }
 
   get options(): FormArray {
     return this.tableForm.get('options') as FormArray;
@@ -157,32 +178,70 @@ export class TableQuestionComponent {
     }
   }
 
-  addOption(i:number): void {
-    this.options.insert(i + 1 ,this.fb.control(''));
-    this.saveToLocalStorage();
-  }
-
+  
   updateAnswer(): void {
     this.optionsTable = this.options.controls.map(control => control.value);
     this.saveToLocalStorage();
-    if(this.optionsTable[0] === ''){
+    if(this.optionsTable[0] === '' && this.options.length == 1){
       this.removeOption(0);
     }
   }
 
-  removeOption(index: number): void {
-    if(index == 0 && this.optionsTable.length <= 1){
-      this.options.at(0).setValue('');
-      this.optionsTable = [];
-      this.initializeFormValues();
-      this.loadFromLocalStorage();
-    }else{
-      this.options.removeAt(index);
-      this.optionsTable.splice(index, 1); 
+  updateNoVisibleValue():void {
+    if(this.tableForm.get('no_visible_value')?.value != ''){
+      this.saveToLocalStorage();
     }
   }
 
+  addOption(i:number,position:string | null): void {
 
+    if(i === 0 && position === 'back'){
+      this.options.insert(i,this.fb.control(''));
+    }else{
+      this.options.insert(i + 1 ,this.fb.control(''));
+    }
+    this.saveToLocalStorage();
+  }
+
+  
+  removeOption(index: number): void {
+    if (index === 0 && this.options.length <= 1) {
+      this.options.at(0).setValue('');
+      this.optionsTable = [];
+      this.optionsInfo = [];
+    } else {
+      if (index === 0) {
+        this.options.removeAt(index);
+        this.optionsInfo.splice(index, 1);
+        this.optionsTable.splice(index,1);
+        
+      } else {
+        this.options.removeAt(index);
+        this.optionsTable.pop();
+        this.optionsInfo.pop();
+      }
+    }
+
+    this.saveToLocalStorage();
+    this.loadFromLocalStorage();
+  }
+
+  getTextValues(array:any[]): string[] {
+      return array
+          .filter(item => item.type === 'Texto')
+          .map(item => item.text);
+  }
+  
+  addNoVisibleColumn() : void {
+    this.noVisibleField = true;
+  }
+
+  removeVisibleColumn():void {
+    this.noVisibleField = false;
+    this.tableForm.patchValue({ ['no_visible_title']: '' }); 
+
+  }
+  
   onResetForm():void {
     this.tableForm.reset({
       id: null,
@@ -192,6 +251,7 @@ export class TableQuestionComponent {
       description: '',
       icon: 'table-icon',
       note_text: '',
+      no_visible_title:'',
       options: this.fb.array([this.fb.control('')]),
       settings: { 
         question_multimedia: '',
@@ -210,9 +270,20 @@ export class TableQuestionComponent {
 }
 
 
+joinOptionInfo(): void {
+  if (this.optionsInfo) {
+      for (let i = 0; i < this.optionsInfo.length; i++) {
+        this.optionsInfo[i] = {...this.optionsInfo[i], text: this.optionsTable[i] };
+      }
+  }
+}
+
+
+
   onSubmit() : void {
     if(this.tableForm.valid){
-     console.log(this.tableForm.value);
+      this.joinOptionInfo();
+     console.log(this.optionsInfo);
     }
    }
 

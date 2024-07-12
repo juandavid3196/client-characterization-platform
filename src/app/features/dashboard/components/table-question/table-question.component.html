@@ -19,23 +19,51 @@
             <div class="note-section" *ngIf="addNote">
                 <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
             </div>
+            <span class="section-subtitle">Ingrese Nombre y tipo de columna</span>
             <div class="options-section">
                 <div formArrayName="options" class="options-s-container">
                     <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
                         <div class="option-box">
-                            <input type="text" [formControlName]="i" (change)="updateAnswer()" placeholder="columna - {{i+1}}">
-                            <app-filter-select [options]="['Texto','Radio Boton']"></app-filter-select>
+                            <input type="text" [formControlName]="i" (input)="updateAnswer()" placeholder="columna - {{i+1}}">
+                            <app-filter-select [options]="['Texto','Radio Boton']" (optionValue)="getDropDownValue($event,i)" ></app-filter-select>
                         </div>
                         <div class="actions-box">
+                            <span class="plus-icon-top" *ngIf="i === 0 && options.length > 1" (click)="addOption(0,'back')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
                             <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
-                            <span class="plus-icon" (click)="addOption(i)"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
+                            <span class="plus-icon"   *ngIf="i != options.length - 1" (click)="addOption(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
                         </div>
-
                     </div>
                 </div>
                 <div class="o-buttons-container">
-                    <button class="btn" (click)="addOption(options.length - 1)">Añadir columna</button>
-                    <button class="btn">Añadir columna No visible</button>
+                    <button class="btn" (click)="addOption(options.length + 1,null)">Añadir columna</button>
+                    <button class="btn {{noVisibleField ? 'disabled' : ''}}" (click)="addNoVisibleColumn()" [disabled]="noVisibleField ? true : false" >Añadir columna No visible</button>
+                </div>
+            </div>
+            <div class="no-visible-option-container"  *ngIf="noVisibleField">
+                <div class="option-box">
+                    <input type="text" placeholder="Columna no visible" (input)="updateNoVisibleValue()"  formControlName="no_visible_title">
+                    <span class="no-visible-box">No Visible</span>
+                </div>
+                <div class="actions-box">
+                    <img src="assets/icons/minus-icon.svg" alt="" (click)="removeVisibleColumn()" > 
+                </div>
+            </div>
+            <span class="section-subtitle">Seleccione la columna y añada los valores para cada fila</span>
+            <div class="columns-section">
+                <div class="dropdown-section">
+                    <app-filter-select [options]="getTextValues(optionsInfo)"></app-filter-select>
+                </div>
+                <div class="rows-section">
+                    <span class="column-index">Columna</span>
+                    <div formArrayName="options" class="options-s-container">
+                        <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
+                            <input type="text"  (change)="updateAnswer()"  placeholder="Fila">
+                            <div class="actions-box">
+                                <img src="assets/icons/plus-icon.svg" alt="">
+                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="settings-section">
@@ -96,6 +124,103 @@
                 <span class="q-number">pregunta #</span>
                 <span class="q-text">{{tableForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="tableForm.value.description != '' " >Descripción: </span>{{tableForm.value.description}}</div>
+                <div class="table-section">
+                    <div class="table-styled">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Situación</th>
+                                    <th>Si</th>
+                                    <th>No</th>
+                                    <th class="no-visible-clm">No Visible <img src="assets/icons/no-visible-icon.svg" alt=""></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ver de cerca, de lejos o alrededor (incluso cuando usas gafas).</td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="no-visible-clm">Visual</td>
+                                </tr>
+                                <tr>
+                                    <td>Oír la voz o sonidos (incluso con ayudas auditivas, audífonos, implante coclear, otros).</td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="no-visible-clm">Auditiva</td>
+                                </tr>
+                                <tr>
+                                    <td>Mover el cuerpo, caminar, subir o bajar escaleras; agarrar o mover objetos con las manos.</td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="no-visible-clm">Fisica</td>
+                                </tr>
+                                <tr>
+                                    <td>Entender, aprender, recordar o tomar decisiones por sí mismo.</td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="no-visible-clm">Intelectual</td>
+                                    
+                                </tr>
+                                <tr class="no-visible-row">
+                                    <td>Relacionarse o interactuar con las demás personas y el entorno.</td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="custom-radio-btn">
+                                            <input type="radio" name="sample">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="no-visible-clm">Psicosocial-mental</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{tableForm.value.note_text}}</span>
                 <div class="required-message-view" *ngIf="required">
                     <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>

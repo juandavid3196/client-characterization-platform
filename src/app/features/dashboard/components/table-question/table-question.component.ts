@@ -1,5 +1,5 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 
 @Component({
@@ -17,10 +17,9 @@ export class TableQuestionComponent {
   aMessage : boolean = false;
   optionsTable : String[] = [];
   optionsInfo: any[] = [{
-    text:'',
-    type: '',
+   
+    index: null
   }]
-  optionsTypeText : string[] = [];
   rowsInfo: any[] = [
     {
       text:'',
@@ -30,6 +29,7 @@ export class TableQuestionComponent {
   ]
   noVisibleField : boolean =  false;
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
+  @Input() numeral !: number;
 
 
   constructor(private fb:FormBuilder){
@@ -42,7 +42,9 @@ export class TableQuestionComponent {
       icon:'table-icon',
       note_text:'',
       no_visible_title:'',
-      options: this.fb.array([this.fb.control('')]),
+      options: this.fb.array([
+        this.createOption()
+      ]),
       settings: this.fb.group({  
         question_multimedia: '',
         options_multimedia: '',
@@ -62,6 +64,18 @@ export class TableQuestionComponent {
     });
   }
 
+  createOption(): FormGroup {
+    return this.fb.group({
+      text: new FormControl(''),
+      type: new FormControl(''),
+      selected: new FormControl(false)
+    });
+  }
+  
+  get options(): FormArray {
+    return this.tableForm.get('options') as FormArray;
+  }
+
   saveToLocalStorage() {
     localStorage.setItem('tableForm', JSON.stringify(this.tableForm.value));
   }
@@ -71,19 +85,7 @@ export class TableQuestionComponent {
     if(savedForm){
       const parsedForm = JSON.parse(savedForm);
       this.tableForm.patchValue(parsedForm);
-
-       // cargar opciones
-      const optionsArray = this.tableForm.get('options') as FormArray;
-      while (optionsArray.length) {
-        optionsArray.removeAt(0);
-      }
-      parsedForm.options.forEach((option: string) => {
-        optionsArray.push(this.fb.control(option));
-      });
-      
-      this.optionsTable = parsedForm.options.filter((option: string | null) => option != null && option !== '') || [];      
     }
-
   }
 
   initializeFormValues(): void {
@@ -121,20 +123,6 @@ export class TableQuestionComponent {
     } 
   }
 
-  getDropDownValue(value: string, index: number): void {
-    if (index === 0 && this.optionsTable.length > 0) {
-        this.optionsInfo.unshift({
-            text: '',
-            type: value,
-        });
-
-    } else if (index > 0 && index !== this.optionsTable.length - 1) {
-        this.optionsInfo.splice(index, 0, { text: '', type: value });
-    } else {
-        this.optionsInfo[index] = { type: value };
-    }  
-}
-
 
   checkInfo(values:any):boolean {
     if(values.name === 'add_note' && values.state === false){
@@ -147,11 +135,8 @@ export class TableQuestionComponent {
   onChangeSection():void {
     this.changeSection = !this.changeSection;
   }
-
-
-  get options(): FormArray {
-    return this.tableForm.get('options') as FormArray;
-  }
+  
+  
 
 
   onFileChange(event: any, controlName: string): void {
@@ -179,12 +164,19 @@ export class TableQuestionComponent {
   }
 
   
-  updateAnswer(): void {
-    this.optionsTable = this.options.controls.map(control => control.value);
+  updateAnswer(event:any,index:number): void {
+    const currentValues = this.options.at(index).value;
+    this.options.at(index).patchValue({
+      text: event.target.value, 
+      type:currentValues.type,
+      selected:currentValues.selected });
     this.saveToLocalStorage();
-    if(this.optionsTable[0] === '' && this.options.length == 1){
+   
+    if (this.options.length > 0 && this.options.at(0)?.get('text')?.value === '' && this.options.length === 1) {
       this.removeOption(0);
-    }
+    }    
+    console.log(this.options);
+    
   }
 
   updateNoVisibleValue():void {
@@ -196,9 +188,9 @@ export class TableQuestionComponent {
   addOption(i:number,position:string | null): void {
 
     if(i === 0 && position === 'back'){
-      this.options.insert(i,this.fb.control(''));
+      this.options.insert(i,this.createOption());
     }else{
-      this.options.insert(i + 1 ,this.fb.control(''));
+      this.options.insert(i + 1 ,this.createOption());
     }
     this.saveToLocalStorage();
   }
@@ -206,7 +198,11 @@ export class TableQuestionComponent {
   
   removeOption(index: number): void {
     if (index === 0 && this.options.length <= 1) {
-      this.options.at(0).setValue('');
+      this.options.at(0).setValue({
+        text: '',
+        type: '',
+        selected: false
+      });
       this.optionsTable = [];
       this.optionsInfo = [];
     } else {
@@ -224,6 +220,12 @@ export class TableQuestionComponent {
 
     this.saveToLocalStorage();
     this.loadFromLocalStorage();
+  }
+
+
+  handleOptionsType(index:number, type:string):void{
+    const currentValues = this.options.at(index).value;
+    this.options.at(index).patchValue({ text: currentValues.text, type:type, selected:true});
   }
 
   getTextValues(array:any[]): string[] {
@@ -270,20 +272,10 @@ export class TableQuestionComponent {
 }
 
 
-joinOptionInfo(): void {
-  if (this.optionsInfo) {
-      for (let i = 0; i < this.optionsInfo.length; i++) {
-        this.optionsInfo[i] = {...this.optionsInfo[i], text: this.optionsTable[i] };
-      }
-  }
-}
-
-
 
   onSubmit() : void {
     if(this.tableForm.valid){
-      this.joinOptionInfo();
-     console.log(this.optionsInfo);
+      console.log(this.tableForm.value);
     }
    }
 

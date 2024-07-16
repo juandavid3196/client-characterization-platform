@@ -25,7 +25,7 @@ export class ToggleButtonComponent {
 
   
   loadFromLocalStorage() {
-    const savedForm = localStorage.getItem('tableForm');
+    const savedForm = localStorage.getItem('checkBoxForm');
     if(savedForm){
       const localInfo = JSON.parse(savedForm);
       if (localInfo.hasOwnProperty('settings')) {

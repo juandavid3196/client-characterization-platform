@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import { QuestionConfig,questionConfigs } from '../../models/questionsConfig.model';
+import { questionConfigs } from '../../models/questionsConfig.model';
 import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
 
@@ -19,6 +19,7 @@ export class DashboardMainComponent {
   questionIndex !: number | null;
   indexPosition :string = '';
   indexSelected!:number | null;
+  elementSelected : any = {};
 
   setFormData(form:FormGroup):void{
     this.formData = form;
@@ -41,7 +42,7 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.unshift(newQuestion);
-          this.onElementSelected(0);
+          this.onElementSelected(0,null);
         }else {
           const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
           for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
@@ -50,19 +51,20 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
-          this.onElementSelected(this.questionIndex + 1);
+          this.onElementSelected(this.questionIndex + 1,null);
         }
       }else{
         
         this.numeralListCount();
           const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
           this.dashboardOptions.push(newQuestion);
-          this.onElementSelected(this.dashboardOptions.length -1);
+          this.onElementSelected(this.dashboardOptions.length -1,null);
       }
     }
 
     this.questionIndex = null;
     this.indexPosition = '';
+
   }
 
   numeralListCount(): void {
@@ -81,19 +83,18 @@ export class DashboardMainComponent {
       if(this.questionIndex === 0  && this.indexPosition === 'back'){
         this.dashboardOptions.unshift(section);
         if(typeof this.questionIndex === 'number')
-          this.onElementSelected(0);
+          this.onElementSelected(0,'section');
       }else {
         this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
-        this.onElementSelected(this.questionIndex + 1);
+        this.onElementSelected(this.questionIndex + 1,'section');
       }
     }else{
       this.dashboardOptions.push(section);
-      this.onElementSelected(this.dashboardOptions.length - 1);
+      this.onElementSelected(this.dashboardOptions.length - 1,'section');
     }
 
     this.questionIndex = null;
     this.indexPosition = '';
-
   }
 
 
@@ -115,8 +116,15 @@ export class DashboardMainComponent {
     this.openQuestionsMenu();
   }
 
-  onElementSelected(index:number):void {
+  onElementSelected(index:number, type:string | null):void {
     this.indexSelected = index;
+    if(type !== 'section'){
+      const element =  this.dashboardOptions.find(e => e.numeral == index + 1);
+      if(element.type ){
+        this.elementSelected = element;
+      }
+    }
+   
   }
 
   deleteSection(index: number) : void {

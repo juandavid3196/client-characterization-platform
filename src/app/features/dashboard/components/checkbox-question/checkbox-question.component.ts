@@ -1,4 +1,4 @@
-import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { Component, Input, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
@@ -25,6 +25,8 @@ export class CheckboxQuestionComponent {
   blocked : boolean =  false;
   changeSection: boolean = true;
   optionsMessage : boolean = false;
+
+  @Input() numeral!:number;
 
   constructor(private fb:FormBuilder){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 

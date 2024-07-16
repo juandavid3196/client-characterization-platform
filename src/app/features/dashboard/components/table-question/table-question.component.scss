@@ -163,13 +163,13 @@
 
                         .option-box {
                             display: flex;
+                            gap: 10px;
                             width: -webkit-fill-available;
                             input {
                                 min-height: 35px;
-                                border-radius: 5px 0 0 5px;
+                                border-radius: 5px;
                                 background-color: #EFEFEF;
                                 border: 0.2px solid #bababa;
-                                border-right: none;
                                 padding-left: 5px;
                                 color: #333E48;
                                 font-size: 14px;
@@ -184,24 +184,32 @@
                                 background-color: white;
                             }
 
-                            ::ng-deep .dropdown {
-                                .select {
-                                    border-radius: 0px 5px  5px  0; 
-                                    width: 140px;
-
-
-                                    span {
-                                        color: #333E48;
-                                        font-weight: 500;
-                                        text-align: center;
-                                        width: -webkit-fill-available;
-                                    }
-
-                                    .caret {
-                                        margin-left: auto;
-                                    }
-                                }
+                            .type-option {
+                                padding: 0 5px;
+                                width: 150px;
+                                color: black;
+                                 border-radius:5px;
+                                 border: 0.2px solid #B9B9B9;
+                                 font-weight: 500;
+                                 display: flex;
+                                 align-items: center;
+                                 justify-content: center;
+                                 cursor: pointer;
                             }
+
+                             .type-option:hover{
+                                background-color: #D8EEFF;
+                                color: #0D99FF;
+                                border-color: #0D99FF;
+                                transition: background-color,color 0.2s ease;
+                                
+                            }  
+
+                            .type-o-selected {
+                                background-color: #D8EEFF;
+                                color: #0D99FF;
+                                border-color: #0D99FF;
+                            }                         
 
                         }
                     

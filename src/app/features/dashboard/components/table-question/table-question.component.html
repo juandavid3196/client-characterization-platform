@@ -8,7 +8,7 @@
             <form  [formGroup]="tableForm" (ngSubmit)="onSubmit()">
             <div class="question-section">
                 <div class="question-s-number">
-                    <span class="number">1</span>
+                    <span class="number">{{numeral}}</span>
                 </div>
                 
                 <div class="question-s-container">
@@ -22,10 +22,11 @@
             <span class="section-subtitle">Ingrese Nombre y tipo de columna</span>
             <div class="options-section">
                 <div formArrayName="options" class="options-s-container">
-                    <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
+                    <div class="options-form-container" *ngFor="let option of options.controls; let i = index" [formGroupName]="i">
                         <div class="option-box">
-                            <input type="text" [formControlName]="i" (input)="updateAnswer()" placeholder="columna - {{i+1}}">
-                            <app-filter-select [options]="['Texto','Radio Boton']" (optionValue)="getDropDownValue($event,i)" ></app-filter-select>
+                            <input type="text" formControlName="text" (input)="updateAnswer($event,i)" placeholder="columna - {{i+1}}">
+                           <span class="type-option"  (click)="handleOptionsType(i,'text')">Texto</span>
+                           <span class="type-option" (click)="handleOptionsType(i,'radio button')">Radio Boton</span>
                         </div>
                         <div class="actions-box">
                             <span class="plus-icon-top" *ngIf="i === 0 && options.length > 1" (click)="addOption(0,'back')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
@@ -57,7 +58,7 @@
                     <span class="column-index">Columna</span>
                     <div formArrayName="options" class="options-s-container">
                         <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
-                            <input type="text"  (change)="updateAnswer()"  placeholder="Fila">
+                            <input type="text"  placeholder="Fila">
                             <div class="actions-box">
                                 <img src="assets/icons/plus-icon.svg" alt="">
                                 <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
@@ -121,7 +122,7 @@
     <div class="view-section"  *ngIf="!changeSection" >
         <div class="table-view-container">
             <div class="table-view-box">
-                <span class="q-number">pregunta #</span>
+                <span class="q-number">pregunta {{numeral}}</span>
                 <span class="q-text">{{tableForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="tableForm.value.description != '' " >Descripción: </span>{{tableForm.value.description}}</div>
                 <div class="table-section">

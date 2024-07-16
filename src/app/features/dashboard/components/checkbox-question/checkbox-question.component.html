@@ -8,7 +8,7 @@
             <form  [formGroup]="checkBoxForm" (ngSubmit)="onSubmit()">
             <div class="question-section">
                 <div class="question-s-number">
-                    <span class="number">1</span>
+                    <span class="number">{{numeral}}</span>
                 </div>
                 
                 <div class="question-s-container">
@@ -102,12 +102,12 @@
     <div class="view-section"  *ngIf="!changeSection" >
         <div class="checkbox-view-container">
             <div class="checkbox-view-box">
-                <span class="q-number">pregunta #</span>
+                <span class="q-number">pregunta {{numeral}}</span>
                 <span class="q-text">{{checkBoxForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="checkBoxForm.value.description != '' " >Descripción: </span>{{checkBoxForm.value.description}}</div>
                 <div class="options-container">
                     <div class="option-box"  *ngFor="let option of optionsAnswer; let i = index">
-                        <div class="checkbox-box" *ngIf="optionsAnswer.length === 0">
+                        <div class="checkbox-box" *ngIf="optionsAnswer.length > 0">
                             <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === checkBoxForm.value.settings.answer_value"  [disabled]="true">
                             <label for="{{i}}"></label>
                         </div>

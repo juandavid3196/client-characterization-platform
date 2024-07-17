@@ -25,8 +25,8 @@
                     <div class="options-form-container" *ngFor="let option of options.controls; let i = index" [formGroupName]="i">
                         <div class="option-box">
                             <input type="text" formControlName="text" (input)="updateAnswer($event,i)" placeholder="columna - {{i+1}}">
-                           <span class="type-option"  (click)="handleOptionsType(i,'text')">Texto</span>
-                           <span class="type-option" (click)="handleOptionsType(i,'radio button')">Radio Boton</span>
+                           <span class="type-option" [ngClass]="option.get('type')?.value === 'text' ? 'type-o-selected' : ''"  (click)="handleOptionsType(i,'text')">Texto</span>
+                           <span class="type-option" [ngClass]="option.get('type')?.value === 'radio button' ? 'type-o-selected' : ''" (click)="handleOptionsType(i,'radio button')">Radio Boton</span>
                         </div>
                         <div class="actions-box">
                             <span class="plus-icon-top" *ngIf="i === 0 && options.length > 1" (click)="addOption(0,'back')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
@@ -42,7 +42,7 @@
             </div>
             <div class="no-visible-option-container"  *ngIf="noVisibleField">
                 <div class="option-box">
-                    <input type="text" placeholder="Columna no visible" (input)="updateNoVisibleValue()"  formControlName="no_visible_title">
+                    <input type="text" placeholder="Columna no visible" (input)="updateNoVisibleValue($event)"  formControlName="no_visible_title">
                     <span class="no-visible-box">No Visible</span>
                 </div>
                 <div class="actions-box">
@@ -51,21 +51,54 @@
             </div>
             <span class="section-subtitle">Seleccione la columna y añada los valores para cada fila</span>
             <div class="columns-section">
-                <div class="dropdown-section">
-                    <app-filter-select [options]="getTextValues(optionsInfo)"></app-filter-select>
-                </div>
-                <div class="rows-section">
-                    <span class="column-index">Columna</span>
-                    <div formArrayName="options" class="options-s-container">
-                        <div class="options-form-container" *ngFor="let option of options.controls; let i = index">
-                            <input type="text"  placeholder="Fila">
-                            <div class="actions-box">
-                                <img src="assets/icons/plus-icon.svg" alt="">
-                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
+                <div class="c-top-section">
+                    <div class="dropdown-section">
+                        <div class="dropdown">
+                            <div class="select {{select_click ? 'select-clicked' : ''}}" (click)="toggleSelect()">
+                                <span class="selected">{{selectedOption ? selectedOption : 'Seleccionar'}}</span>
+                                <div class="caret {{caret_rotate ? 'caret-rotate' : ''}}"></div>
                             </div>
-                        </div>
+                            <ul class="menu {{select_click ? 'menu-open' : ''}}" *ngIf="DropOptions.length > 0" >
+                                <li (click)="handleOption(option,i)" *ngFor="let option of DropOptions; let i = index" >
+                                {{option.type =='text' ? option.text: ''}}</li>
+                            </ul>
+                        </div>      
                     </div>
+                    <button class="btn no-visible-btn" *ngIf="noVisibleField && tableForm.value.no_visible_title !== ''"  (click)="addNoVisibleRows()">Agregar filas columna No visible</button>
                 </div>
+                  <div class="rows-section" *ngIf="rowsSection === 'basic'">
+                    <span class="column-index">{{selectedOption}}</span>
+                    <div *ngIf="selectedOption !== ''">
+                      <div formArrayName="options">
+                        <div [formGroupName]="selectedOptionIndex">
+                          <div formArrayName="rows" class="options-s-container">
+                            <div class="options-form-container" *ngFor="let row of getRows(selectedOptionIndex).controls; let j = index">
+                              <input type="text" placeholder="Fila - {{1 + j}}" [formControlName]="j">
+                              <div class="actions-box">
+                                <img src="assets/icons/plus-icon.svg" alt="" (click)="addRow(selectedOptionIndex, j)">
+                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeRow(selectedOptionIndex, j)"> 
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="rows-section" *ngIf="rowsSection === 'no-visible' ">
+                    <span class="column-index">No Visible</span>   
+                      <div formArrayName="no_visible_rows">
+                          <div  class="options-s-container">
+                            <div class="options-form-container" *ngFor="let row of no_visible_rows.controls; let i = index">
+                              <input type="text" placeholder="Fila - {{1 + i}}" [formControlName]="i">
+                              <div class="actions-box">
+                                <img src="assets/icons/plus-icon.svg" alt="" (click)="addVisibleRow(i)">
+                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeVisibleRow(i)"> 
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+                  
             </div>
             <div class="settings-section">
                 <div class="settings-s-top">

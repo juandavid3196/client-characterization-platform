@@ -15,23 +15,19 @@ export class TableQuestionComponent {
   required: boolean =  false;
   qMessage : boolean = false;
   aMessage : boolean = false;
-  optionsTable : String[] = [];
-  optionsInfo: any[] = [{
-   
-    index: null
-  }]
-  rowsInfo: any[] = [
-    {
-      text:'',
-      index: null,
-      rows : []
-    }
-  ]
   noVisibleField : boolean =  false;
+  selectedOptionIndex : number = 0; 
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   @Input() numeral !: number;
 
-
+  //Dropdown variables
+  select_click: boolean = false;
+  caret_rotate: boolean = false;
+  menu_open: boolean = false;
+  selectedOption : string = '';
+  DropOptions : any[] = [];
+  rowsSection: string = 'basic';
+  
   constructor(private fb:FormBuilder){
     this.tableForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
@@ -42,6 +38,7 @@ export class TableQuestionComponent {
       icon:'table-icon',
       note_text:'',
       no_visible_title:'',
+      no_visible_rows: this.fb.array([this.fb.control('')]),
       options: this.fb.array([
         this.createOption()
       ]),
@@ -68,25 +65,77 @@ export class TableQuestionComponent {
     return this.fb.group({
       text: new FormControl(''),
       type: new FormControl(''),
-      selected: new FormControl(false)
+      selected: new FormControl(false),
+      rows: this.fb.array([this.fb.control('')])
     });
   }
+
   
   get options(): FormArray {
     return this.tableForm.get('options') as FormArray;
   }
 
+  get no_visible_rows(): FormArray {
+    return this.tableForm.get('no_visible_rows') as FormArray;
+  }
+
+  get rows(): FormArray {
+    return this.options.at(this.selectedOptionIndex).get('rows') as FormArray;
+  }
+  
   saveToLocalStorage() {
     localStorage.setItem('tableForm', JSON.stringify(this.tableForm.value));
   }
 
+
   loadFromLocalStorage() {
     const savedForm = localStorage.getItem('tableForm');
-    if(savedForm){
+    if (savedForm) {
       const parsedForm = JSON.parse(savedForm);
       this.tableForm.patchValue(parsedForm);
+  
+      // cargar opciones
+      const optionsArray = this.tableForm.get('options') as FormArray;
+  
+      // Limpiar opciones existentes
+      while (optionsArray.length) {
+        optionsArray.removeAt(0);
+      }
+  
+      // Cargar opciones desde el almacenamiento local
+      parsedForm.options.forEach((option: any) => {
+        const optionGroup = this.createOption(); // Crear un nuevo FormGroup para cada opción
+        optionGroup.patchValue(option); // Parchar el FormGroup con los valores guardados
+  
+        // Limpiar y cargar filas (rows) si existen
+        const rowsArray = optionGroup.get('rows') as FormArray;
+        if (option.rows && Array.isArray(option.rows)) {
+          while (rowsArray.length) {
+            rowsArray.removeAt(0);
+          }
+          option.rows.forEach((row: any) => {
+            rowsArray.push(this.fb.control(row));
+          });
+        }
+  
+        // Limpiar y cargar filas no visibles (no_visible_rows) si existen
+        const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
+       
+          while (noVisibleRowsArray.length) {
+            noVisibleRowsArray.removeAt(0);
+          }
+          parsedForm.no_visible_rows.forEach((noVisibleRow: any) => {
+            noVisibleRowsArray.push(this.fb.control(noVisibleRow));
+          });
+        
+  
+        optionsArray.push(optionGroup);
+      });
     }
   }
+  
+  
+  
 
   initializeFormValues(): void {
     const settings = this.tableForm.get('settings') as FormGroup;
@@ -138,7 +187,6 @@ export class TableQuestionComponent {
   
   
 
-
   onFileChange(event: any, controlName: string): void {
     const file = event.target.files[0];
     if (file) {
@@ -169,21 +217,19 @@ export class TableQuestionComponent {
     this.options.at(index).patchValue({
       text: event.target.value, 
       type:currentValues.type,
-      selected:currentValues.selected });
+      selected:currentValues.selected.
+      rows = currentValues.rows
+    });
     this.saveToLocalStorage();
    
     if (this.options.length > 0 && this.options.at(0)?.get('text')?.value === '' && this.options.length === 1) {
       this.removeOption(0);
     }    
-    console.log(this.options);
     
   }
 
-  updateNoVisibleValue():void {
-    if(this.tableForm.get('no_visible_value')?.value != ''){
-      this.saveToLocalStorage();
-    }
-  }
+  //Options Methods
+ 
 
   addOption(i:number,position:string | null): void {
 
@@ -195,44 +241,46 @@ export class TableQuestionComponent {
     this.saveToLocalStorage();
   }
 
-  
-  removeOption(index: number): void {
-    if (index === 0 && this.options.length <= 1) {
-      this.options.at(0).setValue({
-        text: '',
-        type: '',
-        selected: false
-      });
-      this.optionsTable = [];
-      this.optionsInfo = [];
-    } else {
-      if (index === 0) {
-        this.options.removeAt(index);
-        this.optionsInfo.splice(index, 1);
-        this.optionsTable.splice(index,1);
-        
-      } else {
-        this.options.removeAt(index);
-        this.optionsTable.pop();
-        this.optionsInfo.pop();
-      }
-    }
-
-    this.saveToLocalStorage();
-    this.loadFromLocalStorage();
-  }
-
-
   handleOptionsType(index:number, type:string):void{
     const currentValues = this.options.at(index).value;
-    this.options.at(index).patchValue({ text: currentValues.text, type:type, selected:true});
+    this.options.at(index).patchValue({ text: currentValues.text, type:type, selected:true, rows: currentValues.rows});
+    this.saveToLocalStorage();
+  }
+  
+  removeOption(index: number): void {
+    if (this.options.length === 1) {
+      const optionGroup = this.options.at(0) as FormGroup;
+      optionGroup.patchValue({
+        text: '',
+        type: '',
+        selected: false,
+      });
+      const rowsArray = optionGroup.get('rows') as FormArray;
+      while (rowsArray.length) {
+        rowsArray.removeAt(0);
+      }
+      rowsArray.push(this.fb.control(''));
+      this.DropOptions = [...this.options.value];
+    } else {
+        this.options.removeAt(index);
+        this.DropOptions = [...this.options.value];
+    }
+
+    if(this.selectedOptionIndex === index){
+      this.selectedOption = '';
+    }
+    
+    this.saveToLocalStorage();
   }
 
-  getTextValues(array:any[]): string[] {
-      return array
-          .filter(item => item.type === 'Texto')
-          .map(item => item.text);
+
+  getTextOptions(): string[] {
+    return this.options.controls
+      .filter(control => control.get('type')?.value === 'text')
+      .map(control => control.get('text')?.value);
   }
+
+  //No visible-Column Methods
   
   addNoVisibleColumn() : void {
     this.noVisibleField = true;
@@ -241,37 +289,128 @@ export class TableQuestionComponent {
   removeVisibleColumn():void {
     this.noVisibleField = false;
     this.tableForm.patchValue({ ['no_visible_title']: '' }); 
-
+    this.clearNoVisibleRows();
+    this.rowsSection = 'basic';
+    this.saveToLocalStorage();
   }
-  
-  onResetForm():void {
-    this.tableForm.reset({
-      id: null,
-      numeral: null,
-      type: 'table',
-      text: '',
-      description: '',
-      icon: 'table-icon',
-      note_text: '',
-      no_visible_title:'',
-      options: this.fb.array([this.fb.control('')]),
-      settings: { 
-        question_multimedia: '',
-        options_multimedia: '',
-        required: false,
-        add_note: false,
-      }
-    });
 
-    this.optionsTable = [];
+  clearNoVisibleRows() {
+    const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
+    while (noVisibleRowsArray.length) {
+      noVisibleRowsArray.removeAt(0);
+    }
+  }
+
+  updateNoVisibleValue(event:any):void {
+    this.tableForm.patchValue({['no_visible_title']:event.target.value});  
+    if(event.target.value === ''){
+      this.rowsSection = 'basic';
+    }  
+    this.saveToLocalStorage();
+  }
+
+  addNoVisibleRows(): void {
+      this.rowsSection = 'no-visible';
+  }
+
+  addVisibleRow(optionIndex: number): void {
+    this.no_visible_rows.insert(optionIndex + 1,this.fb.control(''));
+    this.saveToLocalStorage();
+  }
+
+  removeVisibleRow(optionIndex: number): void {
+    if (this.no_visible_rows.length === 1) {
+      this.no_visible_rows.at(0).setValue('');
+    }else{
+      this.no_visible_rows.removeAt(optionIndex);
+    }
+    this.saveToLocalStorage();
+  }
+
+  updateVisibleRow(optionIndex:number,event:any):void {
+    this.no_visible_rows.at(optionIndex).setValue(event.target.value);
+    this.saveToLocalStorage();
+  } 
   
-    this.initializeFormValues();
-    this.loadFromLocalStorage();
-    this.reloadAllControls();
-   
+
+  //Rows methods
+
+  addRow(optionIndex: number, rowIndex:number): void {
+    this.getRows(optionIndex).insert(rowIndex + 1,this.fb.control(''));
+    this.saveToLocalStorage();
+  }
+
+  removeRow(optionIndex: number, rowIndex: number): void {
+    if (this.rows.length === 1) {
+      this.rows.at(0).setValue('');
+    }else{
+      this.getRows(optionIndex).removeAt(rowIndex);
+    }
+    this.saveToLocalStorage();
+  }
+
+  updateRow(optionIndex:number,event:any):void {
+    this.getRows(optionIndex).setValue(event.target.value);
+    this.saveToLocalStorage();
+  } 
+
+  getRows(index: number): FormArray {
+    return (this.options.at(index) as FormGroup).get('rows') as FormArray;
+  }
+
+
+//Dropdow methods
+
+toggleSelect() : void {
+  this.select_click = !this.select_click;
+  this.caret_rotate = !this.caret_rotate;
+  if(this.select_click){
+    this.DropOptions =  [...this.options.value];
+  }
+  this.rowsSection = 'basic';
 }
 
+handleOption(option: any,index:number):void {
+  this.select_click = !this.select_click;
+  this.caret_rotate = !this.caret_rotate;
+  this.selectedOption = option.text;
+  this.selectedOptionIndex = index; 
+  this.loadFromLocalStorage();
+}
 
+ // Form Methods
+
+onResetForm():void {
+  this.tableForm.reset({
+    id: null,
+    numeral: null,
+    type: 'table',
+    text: '',
+    description: '',
+    icon: 'table-icon',
+    note_text: '',
+    no_visible_title:'',
+    no_visible_rows: this.fb.array([this.fb.control('')]),
+    options: this.fb.array([
+      this.createOption()
+    ]),
+    settings: { 
+      question_multimedia: '',
+      options_multimedia: '',
+      required: false,
+      add_note: false,
+    }
+  });
+
+  this.selectedOptionIndex = 0;
+  this.selectedOption = '';
+  this.DropOptions = [];
+
+  this.initializeFormValues();
+  this.loadFromLocalStorage();
+  this.reloadAllControls();
+ 
+}
 
   onSubmit() : void {
     if(this.tableForm.valid){

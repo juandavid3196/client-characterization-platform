@@ -52,6 +52,7 @@ export class CheckboxQuestionComponent {
   }
 
   ngOnInit() {
+    localStorage.clear();
     this.loadFromLocalStorage();
     this.initializeFormValues();
     
@@ -239,6 +240,11 @@ getOptionValue(option : string): void {
    if(this.checkBoxForm.valid){
     console.log(this.checkBoxForm.value);
    }
+  }
+
+
+  ngOnDestroy(): void {
+    localStorage.removeItem('checkBoxForm');
   }
 
 }

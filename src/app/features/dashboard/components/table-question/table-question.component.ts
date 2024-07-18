@@ -62,6 +62,7 @@ export class TableQuestionComponent {
   }
 
   ngOnInit() {
+    localStorage.clear();
     this.loadFromLocalStorage();
     this.initializeFormValues();
     
@@ -441,5 +442,9 @@ onResetForm():void {
     }
    }
 
+
+  ngOnDestroy(): void {
+    localStorage.removeItem('tableForm');
+  }
 
 }

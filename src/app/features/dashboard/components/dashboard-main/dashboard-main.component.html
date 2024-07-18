@@ -30,13 +30,13 @@
         <div class="element-list">
             <span class="plus-icon" *ngIf="dashboardOptions.length > 0" ><img src="assets/icons/plus-icon-blue.svg" alt="" (click)="addNewElement(0,'back')"></span>
             <div class="element-box" *ngFor="let element of dashboardOptions, let i = index">
-                    <div class="question-type  {{indexSelected == i ? 'element-active' : '' }} " *ngIf="element.type !== 'section'" (click)="onElementSelected(i,null)">
+                    <div class="question-type  {{indexSelected == i ? 'element-active' : '' }} " *ngIf="element.type !== 'section'" (click)="onElementSelected(i,element)">
                         <span class="numeral">{{element.numeral}}</span>
                         <span class="element-icon"> <img src='assets/icons/{{element.icon}}.svg' alt=""></span>
                         <span class="element-text">{{element.text}}</span>
                         <span class="delete-icon" (click)="deleteQuestion(i)"> <mat-icon >delete</mat-icon> </span>
                     </div>
-                    <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="onElementSelected(i, 'section')">
+                    <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="onElementSelected(i,element)">
                         <span class="element-icon"><img src='assets/icons/{{element.icon}}.svg' alt=""></span>
                         <span class="element-text">{{element.title}}</span>
                         <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
@@ -52,9 +52,12 @@
         </div>
     </aside>
     <div class="main-panel">
-       <!-- <app-table-question *ngIf="elementSelected.type === 'table'"  [numeral]="elementSelected.numeral" ></app-table-question>
-       <app-checkbox-question *ngIf="elementSelected.type  === 'checkbox'" [numeral]="elementSelected.numeral"></app-checkbox-question> -->
-        <app-table-question></app-table-question>
+        <div *ngIf="elementSelected.type !== 'section'">
+            <ng-container [ngSwitch]="elementSelected.type">
+                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral" ></app-table-question>
+                <app-checkbox-question *ngSwitchCase="'checkbox'"  [numeral]="elementSelected.numeral" ></app-checkbox-question>
+            </ng-container>
+        </div>
     </div>
   </main>
 </div>

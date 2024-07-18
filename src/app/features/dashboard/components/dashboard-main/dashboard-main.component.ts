@@ -42,7 +42,7 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.unshift(newQuestion);
-          this.onElementSelected(0,null);
+          this.onElementSelected(0,newQuestion);
         }else {
           const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
           for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
@@ -51,14 +51,14 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
-          this.onElementSelected(this.questionIndex + 1,null);
+          this.onElementSelected(this.questionIndex + 1, newQuestion);
         }
       }else{
         
         this.numeralListCount();
           const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
           this.dashboardOptions.push(newQuestion);
-          this.onElementSelected(this.dashboardOptions.length -1,null);
+          this.onElementSelected(this.dashboardOptions.length -1,newQuestion);
       }
     }
 
@@ -83,18 +83,19 @@ export class DashboardMainComponent {
       if(this.questionIndex === 0  && this.indexPosition === 'back'){
         this.dashboardOptions.unshift(section);
         if(typeof this.questionIndex === 'number')
-          this.onElementSelected(0,'section');
+          this.onElementSelected(0,{type:'section'});
       }else {
         this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
-        this.onElementSelected(this.questionIndex + 1,'section');
+        this.onElementSelected(this.questionIndex + 1,{type:'section'});
       }
     }else{
       this.dashboardOptions.push(section);
-      this.onElementSelected(this.dashboardOptions.length - 1,'section');
+      this.onElementSelected(this.dashboardOptions.length - 1,{type:'section'});
     }
 
     this.questionIndex = null;
     this.indexPosition = '';
+
   }
 
 
@@ -107,8 +108,12 @@ export class DashboardMainComponent {
         }
       }
     }
-      this.dashboardOptions.splice(index, 1);
-    }
+
+    this.selectAfterDelete(index);
+    this.dashboardOptions.splice(index, 1);
+  }
+
+
     
   addNewElement(index:number,position:string): void {
     this.questionIndex= index;
@@ -116,18 +121,29 @@ export class DashboardMainComponent {
     this.openQuestionsMenu();
   }
 
-  onElementSelected(index:number, type:string | null):void {
+  onElementSelected(index:number, element:any):void {
     this.indexSelected = index;
-    if(type !== 'section'){
-      const element =  this.dashboardOptions.find(e => e.numeral == index + 1);
-      if(element.type ){
-        this.elementSelected = element;
-      }
+    if(element.type !== 'section'){
+      this.elementSelected = element;
+    }else{
+      this.elementSelected = {};
     }
-   
+  }
+
+  selectAfterDelete(index:number):void {
+    if(index ===  0 && this.dashboardOptions.length === 1){
+      this.elementSelected = {};
+    }else if( this.dashboardOptions.length > 1 && index === this.dashboardOptions.length -1 ){
+      this.onElementSelected(index-1,this.dashboardOptions[index-1]);  
+    }else if(index === 0 && this.dashboardOptions.length === 2){
+      this.onElementSelected(0,{...this.dashboardOptions[index+1],numeral:1});
+    }else{
+      this.onElementSelected(index,this.dashboardOptions[index+1]);
+    }
   }
 
   deleteSection(index: number) : void {
+      this.selectAfterDelete(index);
       this.dashboardOptions.splice(index, 1);  
   }
 

@@ -2,13 +2,22 @@ import { Component, Input, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 
+interface Option {
+  rows: string[];
+  selected: boolean;
+  text: string;
+  type: string;
+}
+
 @Component({
   selector: 'app-table-question',
   templateUrl: './table-question.component.html',
   styleUrls: ['./table-question.component.scss']
 })
-export class TableQuestionComponent {
 
+
+export class TableQuestionComponent {
+  
   tableForm !: FormGroup;
   changeSection: boolean = true;
   addNote: boolean = false;
@@ -212,13 +221,17 @@ export class TableQuestionComponent {
   }
 
   
-  updateAnswer(event:any,index:number): void {
+
+   //Options Methods
+  
+   updateAnswer(event:any,index:number): void {
+
     const currentValues = this.options.at(index).value;
     this.options.at(index).patchValue({
       text: event.target.value, 
       type:currentValues.type,
-      selected:currentValues.selected.
-      rows = currentValues.rows
+      selected:currentValues.selected,
+      rows: currentValues.rows
     });
     this.saveToLocalStorage();
    
@@ -227,9 +240,6 @@ export class TableQuestionComponent {
     }    
     
   }
-
-  //Options Methods
- 
 
   addOption(i:number,position:string | null): void {
 
@@ -294,11 +304,12 @@ export class TableQuestionComponent {
     this.saveToLocalStorage();
   }
 
-  clearNoVisibleRows() {
+  clearNoVisibleRows():void {
     const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
     while (noVisibleRowsArray.length) {
       noVisibleRowsArray.removeAt(0);
     }
+    noVisibleRowsArray.push(this.fb.control(''));
   }
 
   updateNoVisibleValue(event:any):void {
@@ -378,6 +389,18 @@ handleOption(option: any,index:number):void {
   this.loadFromLocalStorage();
 }
 
+//table Info
+
+getMaxLengthValue(): number[] {
+  const options = this.tableForm.value.options as Option[];
+  const maxOptionsRows = Math.max(...options.map(option => option.rows.length));
+  const maxVisibleRows = this.tableForm.value.no_visible_rows.length;
+  const maxRows = Math.max(maxOptionsRows, maxVisibleRows);
+  return Array.from({ length: maxRows }, (_, i) => i);
+}
+
+ 
+
  // Form Methods
 
 onResetForm():void {
@@ -414,7 +437,7 @@ onResetForm():void {
 
   onSubmit() : void {
     if(this.tableForm.valid){
-      console.log(this.tableForm.value);
+      console.log(this.tableForm.value,this.getMaxLengthValue());
     }
    }
 

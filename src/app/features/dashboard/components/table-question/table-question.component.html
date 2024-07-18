@@ -158,99 +158,32 @@
                 <span class="q-number">pregunta {{numeral}}</span>
                 <span class="q-text">{{tableForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="tableForm.value.description != '' " >Descripción: </span>{{tableForm.value.description}}</div>
-                <div class="table-section">
+                <div class="table-section" *ngIf="tableForm.value.options[0].text !== ''  || tableForm.value.no_visible_title !== ''">
                     <div class="table-styled">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Situación</th>
-                                    <th>Si</th>
-                                    <th>No</th>
-                                    <th class="no-visible-clm">No Visible <img src="assets/icons/no-visible-icon.svg" alt=""></th>
+                                    <th *ngFor="let option of tableForm.value.options">{{ option.text }}</th>
+                                    <th *ngIf="tableForm.value.no_visible_title != ''" class="no-visible-clm">{{tableForm.value.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Ver de cerca, de lejos o alrededor (incluso cuando usas gafas).</td>
-                                    <td>
+                                <tr *ngFor="let rowIndex of getMaxLengthValue(); let i = index">
+                                    <td *ngFor="let option of tableForm.value.options">
+                                      <ng-container *ngIf="option.type === 'text'">
+                                        {{ option.rows[i] || '' }}
+                                      </ng-container>
+                                      <ng-container *ngIf="option.type === 'radio button'">
                                         <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
+                                          <input type="radio" name="sample-{{ i }}">
+                                          <span class="checkmark"></span>
                                         </label>
+                                      </ng-container>
                                     </td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
+                                    <td  class="no-visible-clm" *ngIf="tableForm.value.no_visible_title !==  '' ">
+                                        {{tableForm.value.no_visible_rows[i] || '' }}
                                     </td>
-                                    <td class="no-visible-clm">Visual</td>
-                                </tr>
-                                <tr>
-                                    <td>Oír la voz o sonidos (incluso con ayudas auditivas, audífonos, implante coclear, otros).</td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td class="no-visible-clm">Auditiva</td>
-                                </tr>
-                                <tr>
-                                    <td>Mover el cuerpo, caminar, subir o bajar escaleras; agarrar o mover objetos con las manos.</td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td class="no-visible-clm">Fisica</td>
-                                </tr>
-                                <tr>
-                                    <td>Entender, aprender, recordar o tomar decisiones por sí mismo.</td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td class="no-visible-clm">Intelectual</td>
-                                    
-                                </tr>
-                                <tr class="no-visible-row">
-                                    <td>Relacionarse o interactuar con las demás personas y el entorno.</td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="custom-radio-btn">
-                                            <input type="radio" name="sample">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </td>
-                                    <td class="no-visible-clm">Psicosocial-mental</td>
-                                </tr>
+                                  </tr>
                             </tbody>
                         </table>
                     </div>

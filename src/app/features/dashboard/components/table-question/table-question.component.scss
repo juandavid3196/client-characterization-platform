@@ -785,6 +785,7 @@
                         border-top: hidden;
                         border-bottom: hidden;
                         border-collapse: collapse;
+                        width: -webkit-fill-available;
                         
                         thead {
                             tr{
@@ -834,6 +835,7 @@
                                         display: flex;
                                         justify-content: center;
                                         align-items: center;
+                                        margin: auto;
 
                                         .checkmark {
                                             width: calc(100% - 6px);

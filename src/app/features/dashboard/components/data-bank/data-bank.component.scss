@@ -1,0 +1,242 @@
+.databank-container {
+    position: fixed;
+    background: rgba($color: #000000, $alpha: 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+	animation: fadeIn 0.5s ease forwards;
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+
+
+    .databank-box {
+        width: 70%;
+        height: 90%;
+        background-color: white;
+        flex-direction: column;
+        display: flex;
+        overflow: auto;
+        opacity: 0;
+		transition: opacity 0.5s ease-in-out;
+		animation: fadeIn 0.5s ease forwards;
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+
+        .top-section {
+            height: 80px;
+            display: flex;
+            padding: 0px 20px 0px 60px;
+            justify-content: space-between;
+            align-items: center;
+
+            .databank-title {
+                font-size: 20px;
+                font-weight: 400;
+                color: black;
+            }
+
+            img {
+                height: 20px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            img:hover {
+                background-color: #f5f5f5;
+                border-radius: 50%;
+            }
+            
+            }
+
+
+        main {
+            height: calc(100% - 80px);
+            padding: 40px 60px;
+            background-color: #EFEFEF;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .search-bar-container {
+                display: flex;
+                height: 35px;
+                position: relative;
+
+
+                .filter-box{
+                    width: 30%;
+
+                    ::ng-deep .dropdown {
+                        
+                        .select {
+                            color: #333E48;
+                            justify-content: center;
+                            gap: 20px;
+                            font-weight: 500;
+                            border-radius: inherit;
+                            height: 35px;
+                            border: none;
+                            border: 0.2px solid #b9b9b9;
+                            border-right: none;
+                            font-size: 12px;
+                        }
+
+                        .select-clicked {
+                            border:0.2px solid #0D99FF;
+                        }
+
+                        .caret {
+                            border-top: 6px solid #333E48;
+                        }
+                    }
+                }
+
+                input{
+                    width: 70%;
+                    border: none;
+                    padding: 0 8px;
+                    border: 0.2px solid #b9b9b9;
+                }
+
+                input:focus {
+                    outline: none;
+                    border: 0.2px solid #0D99FF;
+                }
+
+                input:focus~.search-icon {
+                    filter: brightness(0) saturate(100%) invert(67%) sepia(83%) saturate(5336%) hue-rotate(183deg) brightness(100%) contrast(102%);
+                }
+
+                .search-icon {
+                    position: absolute;
+                    right: 8px;
+                    top: 9px;
+                    height: 16px;
+                }
+
+
+            }
+
+            .questions-total {
+                color: #666666;
+                font-size: 12px;
+                margin-left: auto;
+            }
+
+            .questions-container {
+                background-color: #E4E4E4;
+                padding: 20px 10px;
+                height: 210px;
+
+                .question-box {
+                    display: flex;
+                    height: 35px;
+                    background-color: white;
+                    padding: 0 10px;
+                    align-items: center;
+                    gap: 10px;
+                    border-radius: 5px;
+
+                    .q-icon {
+                        height: 22px;
+                    }
+                    .q-text{
+                        color: #333E48;
+                        font-size: 15px;
+                    }
+                    .q-state {
+                        margin-left: auto;
+                        display: flex;
+                        gap: 5px;
+
+                        img {
+                            height: 20px;
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .q-box-selected {
+                    background-color: #D9D9D9;
+                    border: 0.2px solid #1DA93C;
+                }
+            }
+
+            .btn-confirm{
+                padding: 0 20px;
+                width: fit-content;
+                height: 35px;
+                background-color: #0D99FF;
+                border: none;
+                border-radius: 4px;
+                color: white;
+                font-size: 12px;
+                font-weight: 500;
+                font-family: "Poppins";
+                margin-left: auto;
+                margin-top: auto;
+                cursor: pointer;
+            }
+
+        }
+
+
+
+    }
+    .databank-box.close {
+		opacity: 1;
+		transition: opacity 0.5s ease-in-out;
+		animation: fadeoff 0.5s ease forwards;
+
+		@keyframes fadeoff {
+			from {
+				opacity: 1;
+			}
+
+			to {
+				opacity: 0;
+			}
+		}
+	}
+
+}
+
+.databank-container.close {
+
+	opacity: 1;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeoff 0.5s ease forwards;
+
+	@keyframes fadeoff {
+		from {
+			opacity: 1;
+		}
+
+		to {
+			opacity: 0;
+
+		}
+	}
+}

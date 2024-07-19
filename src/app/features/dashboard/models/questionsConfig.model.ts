@@ -1,16 +1,5 @@
-export interface QuestionConfig {
-    id: number | null;
-    numeral: number | null;
-    type: string;
-    text:string;
-    description?: string;
-    icon:string;
-    options?: string[];
-    settings?:any;
-  };
 
-
-export const questionConfigs: QuestionConfig[] = [
+export const questionConfigs = [
 
   {
     id: null,
@@ -19,16 +8,15 @@ export const questionConfigs: QuestionConfig[] = [
     text: '',
     description:'',
     icon:'check-icon',
+    note_text:'',
     options: [],
     settings: {
       another_field: false,
       question_multimedia: '',
       answer_multimedia:'',
       required: false,
-      answer: {
-        defected_answer: false,
-        answer_value: ''
-      },
+      defected_answer:false,
+      answer_value:'',
       add_note:false,
     }
   },
@@ -39,16 +27,14 @@ export const questionConfigs: QuestionConfig[] = [
     text: '',
     description:'',
     icon:'table-icon',
+    note_text:'',
+    no_visible_title:'',
+    no_visible_rows:[],
     options: [],
     settings: {
-      another_field: false,
       question_multimedia: '',
       answer_multimedia:'',
       required: false,
-      answer: {
-        defected_answer: false,
-        answer_value: ''
-      },
       add_note:false,
     }
   }

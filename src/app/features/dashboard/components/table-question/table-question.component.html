@@ -136,11 +136,11 @@
                         </div>
                         <div class="container-box">
                             <span class="label">Obligatorio</span>
-                            <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                            <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)" storageItem="tableForm" ></app-toggle-button>
                         </div>  
                         <div class="container-box">
                             <span class="label">Añadir Nota</span>
-                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)" storageItem="tableForm"></app-toggle-button>
                         </div>
                     </div>
                 </div>

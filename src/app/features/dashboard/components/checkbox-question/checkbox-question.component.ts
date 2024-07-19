@@ -52,7 +52,6 @@ export class CheckboxQuestionComponent {
   }
 
   ngOnInit() {
-    localStorage.clear();
     this.loadFromLocalStorage();
     this.initializeFormValues();
     

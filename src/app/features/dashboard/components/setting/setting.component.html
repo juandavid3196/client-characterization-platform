@@ -1,0 +1,31 @@
+<div class="setting-container {{close ? 'close' : '' }}">
+    <div class="setting-box {{close ? 'close' : '' }}">
+        <div class="top-section">
+            <span class="setting-title">Configuración</span>
+            <img src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
+        </div>
+        <main>
+            <div class="settings-container">
+                <div class="setting-box">
+                    <span class="box-title">Editar nombre encuesta</span>
+                    <input type="text" name="" id="">
+                </div>
+                <div class="setting-box">
+                    <span class="box-title">Seleccionar categoria</span>
+                    <app-filter-select></app-filter-select>
+                </div>
+                <div class="setting-box">
+                    <span class="box-title">Eliminar encuesta</span>
+                    <span class="error-message"><img src="assets/icons/warning-yellow-icon.svg" alt="">Una vez eliminada la encuesta, no se podra recuperar la información</span>
+                    <button class="btn btn-delete">Eliminar</button>
+                </div>
+            </div>
+            <div class="btn-container">
+                <button class="btn btn-cancel">Cancelar</button>
+                <button class="btn btn-confirm">Aplicar cambios</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+

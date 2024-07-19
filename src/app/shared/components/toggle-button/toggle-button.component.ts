@@ -9,6 +9,7 @@ export class ToggleButtonComponent {
 
   @Input() name : string = '';
   @Input() OAnswer !: number;
+  @Input() storageItem : string = '';
   @Output() toggleValues = new EventEmitter<any>();
   @Output() optionsLength = new EventEmitter<boolean>();
   state !: boolean;
@@ -25,7 +26,7 @@ export class ToggleButtonComponent {
 
   
   loadFromLocalStorage() {
-    const savedForm = localStorage.getItem('tableForm');
+    const savedForm = localStorage.getItem(this.storageItem);
     if(savedForm){
       const localInfo = JSON.parse(savedForm);
       if (localInfo.hasOwnProperty('settings')) {

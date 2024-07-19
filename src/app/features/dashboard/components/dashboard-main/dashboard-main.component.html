@@ -1,6 +1,8 @@
 
 <div class="container">
     <app-questions-options *ngIf="openQuestion"  (formClose)="openQuestionsMenu()" (typeSelected)="onSelectedType($event)"  (sectionSelected)="onSectionSelected($event)" ></app-questions-options>
+    <app-data-bank *ngIf="databankSection"  (formClose)="openDataBankSection()"></app-data-bank>
+    <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"></app-setting>
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -17,13 +19,13 @@
   <main>
     <aside>
         <div class="aside-options">
-            <div class="icon-box icon-selected">
+            <div class="icon-box {{btnSelected == 'dashboard' ? 'icon-selected' : ''}}">
                 <span> <img src="assets/icons/pencil-icon.svg" alt=""></span>
             </div>
-            <div class="icon-box">
+            <div class="icon-box {{btnSelected == 'databank' ? 'icon-selected' : ''}}" (click)="openDataBankSection()">
                 <span> <img src="assets/icons/pig-icon.svg" alt=""></span>
             </div>
-            <div class="icon-box">
+            <div class="icon-box {{btnSelected == 'setting' ? 'icon-selected' : ''}}" (click)="openSettingSection()">
                 <span> <img src="assets/icons/setting-icon.svg" alt=""></span>
             </div>
         </div>
@@ -52,12 +54,10 @@
         </div>
     </aside>
     <div class="main-panel">
-        <div *ngIf="elementSelected.type !== 'section'">
-            <ng-container [ngSwitch]="elementSelected.type">
-                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral" ></app-table-question>
+            <ng-container [ngSwitch]="elementSelected.type" *ngIf="elementSelected.type !== 'section'">
+                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral"></app-table-question>
                 <app-checkbox-question *ngSwitchCase="'checkbox'"  [numeral]="elementSelected.numeral" ></app-checkbox-question>
             </ng-container>
-        </div>
     </div>
   </main>
 </div>

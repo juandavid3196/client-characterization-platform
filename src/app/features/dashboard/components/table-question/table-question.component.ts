@@ -1,4 +1,4 @@
-import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 
@@ -28,6 +28,7 @@ export class TableQuestionComponent {
   selectedOptionIndex : number = 0; 
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   @Input() numeral !: number;
+  @Output() dataTable =  new EventEmitter<any>();
 
   //Dropdown variables
   select_click: boolean = false;
@@ -438,7 +439,7 @@ onResetForm():void {
 
   onSubmit() : void {
     if(this.tableForm.valid){
-      console.log(this.tableForm.value,this.getMaxLengthValue());
+      this.dataTable.emit(this.tableForm.value);
     }
    }
 

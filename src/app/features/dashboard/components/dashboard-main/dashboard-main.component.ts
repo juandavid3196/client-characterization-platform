@@ -20,6 +20,37 @@ export class DashboardMainComponent {
   indexPosition :string = '';
   indexSelected!:number | null;
   elementSelected : any = {};
+  databankSection: boolean = false;
+  settingSection: boolean = false;
+  btnSelected : string = 'dashboard';
+
+
+
+  // Local Storage Info
+
+  ngOnInit() : void {
+    this.loadFromLocalStorage();
+    this.initializeDashboardValues();
+  } 
+
+  saveToLocalStorage() : void {
+    localStorage.setItem('dashboardOptions', JSON.stringify(this.dashboardOptions));
+  }
+
+  loadFromLocalStorage() : void {
+    const savedForm = localStorage.getItem('dashboardOptions');
+    if (savedForm) {
+      this.dashboardOptions = JSON.parse(savedForm);
+      }
+    }
+
+    initializeDashboardValues(): void {
+      if(this.dashboardOptions.length >0 ){
+        this.elementSelected = this.dashboardOptions[0];
+        this.indexSelected = 0;
+      }
+    } 
+
 
   setFormData(form:FormGroup):void{
     this.formData = form;
@@ -64,6 +95,8 @@ export class DashboardMainComponent {
 
     this.questionIndex = null;
     this.indexPosition = '';
+
+    console.log(this.elementSelected);
 
   }
 
@@ -146,5 +179,33 @@ export class DashboardMainComponent {
       this.selectAfterDelete(index);
       this.dashboardOptions.splice(index, 1);  
   }
+
+  openDataBankSection():void {
+    this.databankSection = !this.databankSection;
+    if(this.databankSection === false){
+      this.btnSelected = 'dashboard';
+    }else {
+      this.btnSelected = 'databank';
+    }
+  }
+
+  openSettingSection():void {
+    this.settingSection = !this.settingSection;
+    if(this.settingSection === false){
+      this.btnSelected = 'dashboard';
+    }else {
+      this.btnSelected = 'setting';
+    }
+  }
+
+  // handleDataTable(dataTable:any):void {
+  //   if(this.indexSelected !== null){
+  //     this.dashboardOptions[this.indexSelected]= {...dataTable,numeral:this.elementSelected.numeral};
+  //     this.elementSelected = this.dashboardOptions[this.indexSelected];
+  //   }
+  //   console.log(this.dashboardOptions,this.indexSelected,this.elementSelected);
+  //   this.saveToLocalStorage();
+  // }
+
 
 }

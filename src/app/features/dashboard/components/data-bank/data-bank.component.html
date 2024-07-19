@@ -1,0 +1,30 @@
+<div class="databank-container {{close ? 'close' : '' }}">
+    <div class="databank-box {{close ? 'close' : '' }}">
+        <div class="top-section">
+            <span class="databank-title">Banco de Preguntas</span>
+            <img src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
+        </div>
+        <main>
+            <div class="search-bar-container">
+                <div class="filter-box">
+                    <app-filter-select></app-filter-select>
+                </div>
+                <input type="text">
+                <img src="assets/icons/search-icon.svg" alt="" class="search-icon">
+            </div>
+            <span class="questions-total">250 preguntas</span>
+            <div class="questions-container">
+                <div class="question-box">
+                    <img src="assets/icons/check-icon.svg" alt="" class="q-icon">
+                    <span class="q-text">pregunta</span>
+                    <span class="q-state">
+                        <img src="assets/icons/plus-icon-blue.svg" alt="">
+                        <img src="assets/icons/cancel-icon.svg" alt="">
+                    </span>
+                </div>
+            </div>
+            <button class="btn-confirm">Agregar (1) Preguntas</button>
+        </main>
+    </div>
+</div>
+

@@ -9,6 +9,8 @@ import { QuestionsOptionsComponent } from './components/questions-options/questi
 import { CheckboxQuestionComponent } from './components/checkbox-question/checkbox-question.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TableQuestionComponent } from './components/table-question/table-question.component';
+import { DataBankComponent } from './components/data-bank/data-bank.component';
+import { SettingComponent } from './components/setting/setting.component';
 
 
 
@@ -18,6 +20,8 @@ import { TableQuestionComponent } from './components/table-question/table-questi
     QuestionsOptionsComponent,
     CheckboxQuestionComponent,
     TableQuestionComponent,
+    DataBankComponent,
+    SettingComponent,
   ],
   imports: [
     CommonModule,

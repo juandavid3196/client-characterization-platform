@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
+import { DataBankService } from '../../services/data-bank.service';
 
 interface Option {
   rows: string[];
@@ -38,7 +39,7 @@ export class TableQuestionComponent {
   DropOptions : any[] = [];
   rowsSection: string = 'basic';
   
-  constructor(private fb:FormBuilder){
+  constructor(private fb:FormBuilder, private dataBankService : DataBankService){
     this.tableForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
       numeral: null,
@@ -46,6 +47,7 @@ export class TableQuestionComponent {
       text: '',
       description:'',
       icon:'table-icon',
+      addedToBank:false,
       note_text:'',
       no_visible_title:'',
       no_visible_rows: this.fb.array([this.fb.control('')]),
@@ -436,6 +438,14 @@ onResetForm():void {
   this.reloadAllControls();
  
 }
+
+
+  // Questions bank methods
+
+  addToBank() : void {
+    this.tableForm.patchValue({['addedToBank']:true});
+    this.dataBankService.addObject(this.tableForm.value);
+  }
 
   onSubmit() : void {
     if(this.tableForm.valid){

@@ -347,6 +347,15 @@
                             filter: brightness(0) saturate(100%) invert(38%) sepia(68%) saturate(4707%) hue-rotate(186deg) brightness(90%) contrast(103%);
                         }
                     }
+
+                    .btn-bank-blocked {
+                        border-color: #bababa;
+                        color: #bababa;
+                        cursor: not-allowed;
+                            img {
+                                filter: brightness(0) saturate(100%) invert(77%) sepia(0%) saturate(0%) hue-rotate(91deg) brightness(99%) contrast(87%); 
+                            }
+                        }
                 }
                 .btn-s-right {
                     display: flex;

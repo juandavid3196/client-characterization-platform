@@ -101,15 +101,21 @@
                             border: 0.2px solid #b9b9b9;
                             border-right: none;
                             font-size: 12px;
+
+                            .caret {
+                                border-top: 6px solid #333E48;
+                            }
                         }
 
                         .select-clicked {
                             border:0.2px solid #0D99FF;
                         }
 
-                        .caret {
-                            border-top: 6px solid #333E48;
+                        .menu {
+                            max-height: fit-content;
                         }
+
+                       
                     }
                 }
 
@@ -149,6 +155,9 @@
                 background-color: #E4E4E4;
                 padding: 20px 10px;
                 height: 210px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
 
                 .question-box {
                     display: flex;

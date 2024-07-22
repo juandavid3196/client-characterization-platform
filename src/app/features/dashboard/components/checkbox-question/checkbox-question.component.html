@@ -94,7 +94,7 @@
             </div>
             <div class="btn-section">
                 <div class="btn-s-left">
-                    <button class="btn btn-bank"(click)="addToBank()" >Agregar <img src="assets/icons/bank-blue-icon.svg" alt=""></button>
+                    <button class="btn btn-bank {{this.checkBoxForm.value.addedToBank ? 'btn-bank-blocked' : ''}} "(click)="addToBank()" >{{this.checkBoxForm.value.addedToBank ? 'Agregada' : 'Agregar'}}<img src="assets/icons/bank-blue-icon.svg" alt=""></button>
                 </div>
                 <div class="btn-s-right">
                     <button class="btn-clean btn" type="button" (click)="onResetForm()">Restaurar <mat-icon>refresh</mat-icon> </button>

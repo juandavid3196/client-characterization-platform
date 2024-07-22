@@ -38,6 +38,7 @@ export class CheckboxQuestionComponent {
       description:'',
       icon:'check-icon',
       note_text:'',
+      addedToBank: false,
       options: this.fb.array([this.fb.control('')]),
       settings: this.fb.group({  
         another_field: false,
@@ -237,6 +238,7 @@ getOptionValue(option : string): void {
   }
 
   addToBank() : void {
+    this.checkBoxForm.patchValue({ ['addedToBank']: true });
     this.dataBankService.addObject(this.checkBoxForm.value);
   }
 

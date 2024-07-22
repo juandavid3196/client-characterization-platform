@@ -7,23 +7,24 @@
         <main>
             <div class="search-bar-container">
                 <div class="filter-box">
-                    <app-filter-select></app-filter-select>
+                    <app-filter-select [options]="types" (optionValue)="filterByType($event)"></app-filter-select>
                 </div>
-                <input type="text">
+                <input type="text" (input)="filterByText($event)">
                 <img src="assets/icons/search-icon.svg" alt="" class="search-icon">
             </div>
             <span class="questions-total">250 preguntas</span>
             <div class="questions-container">
-                <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of bankQuestions; let i = index">
+                <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of arrayQuestions; let i = index">
                     <img src="assets/icons/{{item.icon}}.svg" alt="" class="q-icon">
                     <span class="q-text">{{item.text}}</span>
                     <span class="q-state">
                         <img src="assets/icons/plus-icon-blue.svg" alt="" (click)="selectedQuestion(i)" *ngIf="!verifyIndex(i)" >
-                        <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)">
+                        <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)" (click)="deselectQuestion(i)">
+                        <img src="assets/icons/delete-basket-icon.svg" alt="" *ngIf="!verifyIndex(i)" (click)="deleteQuestion(i)">
                     </span>
                 </div>
             </div>
-            <button class="btn-confirm">Agregar (1) Preguntas</button>
+            <button class="btn-confirm">Agregar ({{this.selectedIndexes.length}}) Preguntas</button>
         </main>
     </div>
 </div>

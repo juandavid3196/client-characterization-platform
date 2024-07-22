@@ -14,12 +14,12 @@
             </div>
             <span class="questions-total">250 preguntas</span>
             <div class="questions-container">
-                <div class="question-box">
-                    <img src="assets/icons/check-icon.svg" alt="" class="q-icon">
-                    <span class="q-text">pregunta</span>
+                <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of bankQuestions; let i = index">
+                    <img src="assets/icons/{{item.icon}}.svg" alt="" class="q-icon">
+                    <span class="q-text">{{item.text}}</span>
                     <span class="q-state">
-                        <img src="assets/icons/plus-icon-blue.svg" alt="">
-                        <img src="assets/icons/cancel-icon.svg" alt="">
+                        <img src="assets/icons/plus-icon-blue.svg" alt="" (click)="selectedQuestion(i)" *ngIf="!verifyIndex(i)" >
+                        <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)">
                     </span>
                 </div>
             </div>

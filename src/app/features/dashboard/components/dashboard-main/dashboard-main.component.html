@@ -1,8 +1,14 @@
 
 <div class="container">
-    <app-questions-options *ngIf="openQuestion"  (formClose)="openQuestionsMenu()" (typeSelected)="onSelectedType($event)"  (sectionSelected)="onSectionSelected($event)" ></app-questions-options>
-    <app-data-bank *ngIf="databankSection"  (formClose)="openDataBankSection()"></app-data-bank>
-    <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"></app-setting>
+    <app-questions-options 
+    *ngIf="openQuestion"   
+    (formClose)="openQuestionsMenu()" 
+    (typeSelected)="onSelectedType($event)"  
+    (sectionSelected)="onSectionSelected($event)" 
+    (openBank)="openDataBankSection()"
+    ></app-questions-options>
+    <app-data-bank *ngIf="databankSection"  (formClose)="openDataBankSection()" [IndexPosition]="bankIndex" ></app-data-bank>
+    <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"  ></app-setting>
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -48,7 +54,7 @@
             <div class="add-question-container">
                 <div class="add-question-box">
                     <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>
-                    <span class="add-q-text" (click)="openQuestionsMenu()">Agregar pregunta</span>
+                    <span class="add-q-text" (click)="openQuestionsMenu(dashboardOptions.length)">Agregar pregunta</span>
                 </div>
             </div>
         </div>

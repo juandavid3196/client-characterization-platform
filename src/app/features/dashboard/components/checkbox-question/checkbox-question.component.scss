@@ -326,39 +326,64 @@
             .btn-section {
                 display: flex;
                 width: 100%;
-                justify-content: end;
-                gap: 20px;  
-        
-                .btn-confirm {
-                    background-color: #0D99FF;
-                    color: white;
-                    border: none;
-                    height: 35px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    padding: 0 30px;
-                }
-        
-                .btn-confirm:hover {
-                    background-color: #0079cf;
-        
-                } 
+                justify-content: space-between;
 
-                .btn-clean {
-                    background-color: white;
-                    color: #0D99FF;
-                    border-color: #0D99FF;
+                .btn-s-left{
+                    .btn-bank {
+                        display: flex;
+                        gap: 7px;
+                        align-items: center;
+                        background-color: white;
+                        img {
+                            height: 22px;
+                        }
+                    }
+                    .btn-bank:hover {
+                        color: #0079cf;
+                        border-color: #0079cf;
+                        transition: color 0.2s ease;
+
+                        img {
+                            filter: brightness(0) saturate(100%) invert(38%) sepia(68%) saturate(4707%) hue-rotate(186deg) brightness(90%) contrast(103%);
+                        }
+                    }
+                }
+                .btn-s-right {
                     display: flex;
-                    gap: 5px;
-                    align-items: center;
-                    font-weight: 600;
-                }
+                    gap: 20px;
 
-                .btn-clean:hover {
-                    color: #0079cf;
-                    border-color: #0079cf;
-                    transition: color 0.2s ease;
+                    .btn-confirm {
+                        background-color: #0D99FF;
+                        color: white;
+                        border: none;
+                        height: 35px;
+                        font-size: 13px;
+                        font-weight: 600;
+                        padding: 0 30px;
+                    }
+            
+                    .btn-confirm:hover {
+                        background-color: #0079cf;
+            
+                    } 
+    
+                    .btn-clean {
+                        background-color: white;
+                        color: #0D99FF;
+                        border-color: #0D99FF;
+                        display: flex;
+                        gap: 5px;
+                        align-items: center;
+                        font-weight: 600;
+                    }
+    
+                    .btn-clean:hover {
+                        color: #0079cf;
+                        border-color: #0079cf;
+                        transition: color 0.2s ease;
+                    }
                 }
+        
             }
         }
           form::-webkit-scrollbar {

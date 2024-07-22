@@ -2,6 +2,7 @@ import { Component, Input, QueryList, ViewChild, ViewChildren} from '@angular/co
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
+import { DataBankService } from '../../services/data-bank.service';
 
 @Component({
   selector: 'app-checkbox-question',
@@ -28,7 +29,7 @@ export class CheckboxQuestionComponent {
 
   @Input() numeral!:number;
 
-  constructor(private fb:FormBuilder){
+  constructor(private fb:FormBuilder, private dataBankService :DataBankService){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
       numeral: null,
@@ -233,6 +234,10 @@ getOptionValue(option : string): void {
       this.ToggleComponent?.reloadComponent();
       this.reloadAllControls();
      
+  }
+
+  addToBank() : void {
+    this.dataBankService.addObject(this.checkBoxForm.value);
   }
 
   onSubmit() : void {

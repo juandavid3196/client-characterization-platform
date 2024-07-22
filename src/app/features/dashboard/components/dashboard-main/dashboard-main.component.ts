@@ -23,6 +23,7 @@ export class DashboardMainComponent {
   databankSection: boolean = false;
   settingSection: boolean = false;
   btnSelected : string = 'dashboard';
+  bankIndex !: number;
 
 
 
@@ -57,8 +58,9 @@ export class DashboardMainComponent {
   }
 
 
-  openQuestionsMenu() : void {
+  openQuestionsMenu(index?:number) : void {
     this.openQuestion = !this.openQuestion;
+    this.bankIndex = index || 0;
   }
 
   onSelectedType(type:string): void {
@@ -95,8 +97,6 @@ export class DashboardMainComponent {
 
     this.questionIndex = null;
     this.indexPosition = '';
-
-    console.log(this.elementSelected);
 
   }
 
@@ -151,7 +151,7 @@ export class DashboardMainComponent {
   addNewElement(index:number,position:string): void {
     this.questionIndex= index;
     this.indexPosition = position;
-    this.openQuestionsMenu();
+    this.openQuestionsMenu(index);
   }
 
   onElementSelected(index:number, element:any):void {

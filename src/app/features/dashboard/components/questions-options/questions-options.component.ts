@@ -15,7 +15,9 @@ export class QuestionsOptionsComponent {
   @Output() formClose = new EventEmitter<void>()
   @Output() typeSelected = new EventEmitter<string>();
   @Output() sectionSelected = new EventEmitter<string>();
+  @Output() openBank = new EventEmitter<any>();
   @Input() section : Section | null =  null;
+
 
   sectionForm !: FormGroup;
 
@@ -26,7 +28,6 @@ export class QuestionsOptionsComponent {
       icon:'section-icon'
     })
   }
-
 
   selectType(type: string) {
     this.typeSelected.emit(type);
@@ -67,6 +68,11 @@ export class QuestionsOptionsComponent {
       return;
     }
     this.onClose();
+  }
+
+  sendInfo() : void {
+    this.onClose();
+    this.openBank.emit()
   }
 
 }

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from 
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
+import { DashboardService } from '../../services/dashboard.service';
 
 interface Option {
   rows: string[];
@@ -29,6 +30,7 @@ export class TableQuestionComponent {
   selectedOptionIndex : number = 0; 
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   @Input() numeral !: number;
+  @Input() questionData !: any;
   @Output() dataTable =  new EventEmitter<any>();
 
   //Dropdown variables
@@ -39,7 +41,7 @@ export class TableQuestionComponent {
   DropOptions : any[] = [];
   rowsSection: string = 'basic';
   
-  constructor(private fb:FormBuilder, private dataBankService : DataBankService){
+  constructor(private fb:FormBuilder, private dataBankService : DataBankService, private dashboardService : DashboardService){
     this.tableForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
       numeral: null,
@@ -62,16 +64,13 @@ export class TableQuestionComponent {
       })
     });
 
+   
+
   }
 
   ngOnInit() {
-    localStorage.clear();
-    this.loadFromLocalStorage();
+    this.loadFromQuestionData();
     this.initializeFormValues();
-    
-    this.tableForm.valueChanges.subscribe(value => {
-      localStorage.setItem('tableForm', JSON.stringify(this.tableForm.value));
-    });
   }
 
   createOption(): FormGroup {
@@ -96,30 +95,39 @@ export class TableQuestionComponent {
     return this.options.at(this.selectedOptionIndex).get('rows') as FormArray;
   }
   
-  saveToLocalStorage() {
-    localStorage.setItem('tableForm', JSON.stringify(this.tableForm.value));
+
+  saveTableData() : void {
+    this.dashboardService.getQuestions().subscribe(q => { 
+        const index = q.findIndex(e => e.id === this.questionData.id);
+        if (index !== -1) {
+          q[index] = { ...q[index], ...this.tableForm.value }; 
+          this.dashboardService.updateQuestion(q).subscribe(response => {
+            console.log('Questions updated successfully', response);
+          }, error => {
+            console.error('Error updating questions', error);
+          });
+        } 
+    });
   }
 
 
-  loadFromLocalStorage() {
-    const savedForm = localStorage.getItem('tableForm');
-    if (savedForm) {
-      const parsedForm = JSON.parse(savedForm);
-      this.tableForm.patchValue(parsedForm);
-  
+  loadFromQuestionData(): void {
+    if (this.questionData) {
+      this.tableForm.patchValue(this.questionData);
+    
       // cargar opciones
       const optionsArray = this.tableForm.get('options') as FormArray;
-  
+    
       // Limpiar opciones existentes
       while (optionsArray.length) {
         optionsArray.removeAt(0);
       }
-  
-      // Cargar opciones desde el almacenamiento local
-      parsedForm.options.forEach((option: any) => {
+    
+      // Cargar opciones desde la data de la pregunta
+      this.questionData.options.forEach((option: any) => {
         const optionGroup = this.createOption(); // Crear un nuevo FormGroup para cada opción
         optionGroup.patchValue(option); // Parchar el FormGroup con los valores guardados
-  
+    
         // Limpiar y cargar filas (rows) si existen
         const rowsArray = optionGroup.get('rows') as FormArray;
         if (option.rows && Array.isArray(option.rows)) {
@@ -130,20 +138,20 @@ export class TableQuestionComponent {
             rowsArray.push(this.fb.control(row));
           });
         }
-  
-        // Limpiar y cargar filas no visibles (no_visible_rows) si existen
-        const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
-       
-          while (noVisibleRowsArray.length) {
-            noVisibleRowsArray.removeAt(0);
-          }
-          parsedForm.no_visible_rows.forEach((noVisibleRow: any) => {
-            noVisibleRowsArray.push(this.fb.control(noVisibleRow));
-          });
-        
-  
+    
         optionsArray.push(optionGroup);
       });
+    
+      // Limpiar y cargar filas no visibles (no_visible_rows) si existen
+      const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
+      if (this.questionData.no_visible_rows && Array.isArray(this.questionData.no_visible_rows)) {
+        while (noVisibleRowsArray.length) {
+          noVisibleRowsArray.removeAt(0);
+        }
+        this.questionData.no_visible_rows.forEach((noVisibleRow: any) => {
+          noVisibleRowsArray.push(this.fb.control(noVisibleRow));
+        });
+      }
     }
   }
   
@@ -157,7 +165,6 @@ export class TableQuestionComponent {
     if(this.tableForm.get('no_visible_title')?.value){
       this.noVisibleField = true;
     }
-    this.saveToLocalStorage();
   }
   
   
@@ -237,7 +244,6 @@ export class TableQuestionComponent {
       selected:currentValues.selected,
       rows: currentValues.rows
     });
-    this.saveToLocalStorage();
    
     if (this.options.length > 0 && this.options.at(0)?.get('text')?.value === '' && this.options.length === 1) {
       this.removeOption(0);
@@ -252,13 +258,11 @@ export class TableQuestionComponent {
     }else{
       this.options.insert(i + 1 ,this.createOption());
     }
-    this.saveToLocalStorage();
   }
 
   handleOptionsType(index:number, type:string):void{
     const currentValues = this.options.at(index).value;
     this.options.at(index).patchValue({ text: currentValues.text, type:type, selected:true, rows: currentValues.rows});
-    this.saveToLocalStorage();
   }
   
   removeOption(index: number): void {
@@ -284,7 +288,6 @@ export class TableQuestionComponent {
       this.selectedOption = '';
     }
     
-    this.saveToLocalStorage();
   }
 
 
@@ -305,7 +308,6 @@ export class TableQuestionComponent {
     this.tableForm.patchValue({ ['no_visible_title']: '' }); 
     this.clearNoVisibleRows();
     this.rowsSection = 'basic';
-    this.saveToLocalStorage();
   }
 
   clearNoVisibleRows():void {
@@ -321,7 +323,6 @@ export class TableQuestionComponent {
     if(event.target.value === ''){
       this.rowsSection = 'basic';
     }  
-    this.saveToLocalStorage();
   }
 
   addNoVisibleRows(): void {
@@ -330,7 +331,6 @@ export class TableQuestionComponent {
 
   addVisibleRow(optionIndex: number): void {
     this.no_visible_rows.insert(optionIndex + 1,this.fb.control(''));
-    this.saveToLocalStorage();
   }
 
   removeVisibleRow(optionIndex: number): void {
@@ -339,12 +339,10 @@ export class TableQuestionComponent {
     }else{
       this.no_visible_rows.removeAt(optionIndex);
     }
-    this.saveToLocalStorage();
   }
 
   updateVisibleRow(optionIndex:number,event:any):void {
     this.no_visible_rows.at(optionIndex).setValue(event.target.value);
-    this.saveToLocalStorage();
   } 
   
 
@@ -352,7 +350,6 @@ export class TableQuestionComponent {
 
   addRow(optionIndex: number, rowIndex:number): void {
     this.getRows(optionIndex).insert(rowIndex + 1,this.fb.control(''));
-    this.saveToLocalStorage();
   }
 
   removeRow(optionIndex: number, rowIndex: number): void {
@@ -361,12 +358,10 @@ export class TableQuestionComponent {
     }else{
       this.getRows(optionIndex).removeAt(rowIndex);
     }
-    this.saveToLocalStorage();
   }
 
   updateRow(optionIndex:number,event:any):void {
     this.getRows(optionIndex).setValue(event.target.value);
-    this.saveToLocalStorage();
   } 
 
   getRows(index: number): FormArray {
@@ -390,7 +385,7 @@ handleOption(option: any,index:number):void {
   this.caret_rotate = !this.caret_rotate;
   this.selectedOption = option.text;
   this.selectedOptionIndex = index; 
-  this.loadFromLocalStorage();
+  this.loadFromQuestionData();
 }
 
 //table Info
@@ -434,7 +429,7 @@ onResetForm():void {
   this.DropOptions = [];
 
   this.initializeFormValues();
-  this.loadFromLocalStorage();
+  this.loadFromQuestionData();
   this.reloadAllControls();
  
 }
@@ -444,18 +439,24 @@ onResetForm():void {
 
   addToBank() : void {
     this.tableForm.patchValue({['addedToBank']:true});
-    this.dataBankService.addObject(this.tableForm.value);
+    this.dataBankService.createBank(this.tableForm.value).subscribe(
+      (response) => {
+        console.log('Bank created', response);
+      },
+      (error) => {
+        console.error('Error creating bank', error);
+      }
+    );
   }
 
   onSubmit() : void {
     if(this.tableForm.valid){
-      this.dataTable.emit(this.tableForm.value);
+      this.saveTableData();
     }
    }
 
-
-  ngOnDestroy(): void {
-    localStorage.removeItem('tableForm');
+  ngOnDestroy() : void {
+    this.saveTableData();
   }
 
 }

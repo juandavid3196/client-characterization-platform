@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 import { DataBankService } from '../../services/data-bank.service';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-checkbox-question',
@@ -28,8 +29,9 @@ export class CheckboxQuestionComponent {
   optionsMessage : boolean = false;
 
   @Input() numeral!:number;
+  @Input() questionData !: any;
 
-  constructor(private fb:FormBuilder, private dataBankService :DataBankService){
+  constructor(private fb:FormBuilder, private dataBankService :DataBankService, private dashboardService : DashboardService){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
       id: null,
       numeral: null,
@@ -54,38 +56,42 @@ export class CheckboxQuestionComponent {
   }
 
   ngOnInit() {
-    this.loadFromLocalStorage();
+    this.loadFromDataObject();
     this.initializeFormValues();
-    
-    this.checkBoxForm.valueChanges.subscribe(value => {
-      localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
+  }
+
+  saveCheckBoxData() : void {
+    this.dashboardService.getQuestions().subscribe(q => { 
+        const index = q.findIndex(e => e.id === this.questionData.id);
+        if (index !== -1) {
+          q[index] = { ...q[index], ...this.checkBoxForm.value }; 
+          this.dashboardService.updateQuestion(q).subscribe(response => {
+            console.log('Questions updated successfully', response);
+          }, error => {
+            console.error('Error updating questions', error);
+          });
+        } 
     });
   }
 
-  saveToLocalStorage() {
-    localStorage.setItem('checkBoxForm', JSON.stringify(this.checkBoxForm.value));
-  }
-
-  loadFromLocalStorage() {
-    const savedForm = localStorage.getItem('checkBoxForm');
-    if(savedForm){
-      const parsedForm = JSON.parse(savedForm);
-      this.checkBoxForm.patchValue(parsedForm);
-
-       // cargar opciones
-      const optionsArray = this.checkBoxForm.get('options') as FormArray;
-      while (optionsArray.length) {
-        optionsArray.removeAt(0);
-      }
-      parsedForm.options.forEach((option: string) => {
+  loadFromDataObject(): void {
+    this.checkBoxForm.patchValue(this.questionData);
+  
+    // Load options
+    const optionsArray = this.checkBoxForm.get('options') as FormArray;
+    while (optionsArray.length) {
+      optionsArray.removeAt(0);
+    }
+    
+    if (this.questionData.options) {
+      this.questionData.options.forEach((option: string) => {
         optionsArray.push(this.fb.control(option));
       });
-      
-      this.optionsAnswer = parsedForm.options.filter((option: string | null) => option != null && option !== '') || [];      
-     
     }
-
+  
+    this.optionsAnswer = this.questionData.options.filter((option: string | null) => option != null && option !== '') || [];
   }
+  
 
   initializeFormValues(): void {
     const settings = this.checkBoxForm.get('settings') as FormGroup;
@@ -93,7 +99,6 @@ export class CheckboxQuestionComponent {
     this.addNote = settings.get('add_note')?.value;
     this.defectedAnswer = settings.get('defected_answer')?.value;
     this.required = settings.get('required')?.value;
-    this.saveToLocalStorage();
   }
 
 
@@ -135,7 +140,6 @@ getOptionValue(option : string): void {
     
     if (settings.controls.hasOwnProperty('answer_value')) {
       settings.patchValue({ ['answer_value']: option });
-      this.saveToLocalStorage();
      }
   }
 
@@ -170,12 +174,10 @@ getOptionValue(option : string): void {
 
   addOption(): void {
     this.options.push(this.fb.control(''));
-    this.saveToLocalStorage();
   }
 
   updateAnswer(): void {
     this.optionsAnswer = this.options.controls.map(control => control.value);
-    this.saveToLocalStorage();
     if(this.optionsAnswer[0] === ''){
       this.removeOption(0);
     }
@@ -189,7 +191,6 @@ getOptionValue(option : string): void {
       this.optionsAnswer = [];
       settings.patchValue({ ['defected_answer']: false });
       this.initializeFormValues();
-      this.loadFromLocalStorage();
       this.ToggleComponent?.reloadComponent();
       this.optionsMessage = false;
     }else{
@@ -231,7 +232,6 @@ getOptionValue(option : string): void {
       this.optionsAnswer = [];
     
       this.initializeFormValues();
-      this.loadFromLocalStorage();
       this.ToggleComponent?.reloadComponent();
       this.reloadAllControls();
      
@@ -239,18 +239,25 @@ getOptionValue(option : string): void {
 
   addToBank() : void {
     this.checkBoxForm.patchValue({ ['addedToBank']: true });
-    this.dataBankService.addObject(this.checkBoxForm.value);
+    this.dataBankService.createBank(this.checkBoxForm.value).subscribe(
+      (response) => {
+        console.log('Bank created', response);
+      },
+      (error) => {
+        console.error('Error creating bank', error);
+      }
+    );
   }
 
   onSubmit() : void {
    if(this.checkBoxForm.valid){
-    console.log(this.checkBoxForm.value);
+    this.saveCheckBoxData();
    }
   }
 
-
-  ngOnDestroy(): void {
-    localStorage.removeItem('checkBoxForm');
+  ngOnDestroy() : void {
+    this.saveCheckBoxData();
   }
+
 
 }

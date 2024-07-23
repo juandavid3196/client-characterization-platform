@@ -20,7 +20,7 @@
                     <span class="q-state">
                         <img src="assets/icons/plus-icon-blue.svg" alt="" (click)="selectedQuestion(i)" *ngIf="!verifyIndex(i)" >
                         <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)" (click)="deselectQuestion(i)">
-                        <img src="assets/icons/delete-basket-icon.svg" alt="" *ngIf="!verifyIndex(i)" (click)="deleteQuestion(i)">
+                        <img src="assets/icons/delete-basket-icon.svg" alt="" *ngIf="!verifyIndex(i)" (click)="deleteQuestion(item.id)">
                     </span>
                 </div>
             </div>

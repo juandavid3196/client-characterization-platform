@@ -1,41 +1,28 @@
 import { Injectable } from '@angular/core';
+import { ApiService } from '../../../core/services/api.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataBankService {
 
-  private dataBank: any[] = [];
+  private endpoint = 'bank';
 
-  constructor() {}
+  constructor(private apiService: ApiService) {}
 
-  // Agregar un objeto al array
-  addObject(obj: any): void {
-    this.dataBank.push(obj);
+  getBanks(): Observable<any[]> {
+    return this.apiService.get<any>(this.endpoint);
   }
 
-  // Obtener todos los objetos del array
-  getObjects(): any[] {
-    return this.dataBank;
+
+  createBank(any: any): Observable<any> {
+    return this.apiService.create<any>(this.endpoint, any);
   }
 
-  // Obtener un objeto por índice
-  getObject(index: number): any {
-    return this.dataBank[index];
-  }
 
-  // Actualizar un objeto en el array por índice
-  updateObject(index: number, newObj: any): void {
-    if (index >= 0 && index < this.dataBank.length) {
-      this.dataBank[index] = newObj;
-    }
-  }
-
-  // Eliminar un objeto del array por índice
-  deleteObject(index: number): void {
-    if (index >= 0 && index < this.dataBank.length) {
-      this.dataBank.splice(index, 1);
-    }
+  deleteBank(id: number): Observable<void> {
+    return this.apiService.delete(this.endpoint, id);
   }
 
 }

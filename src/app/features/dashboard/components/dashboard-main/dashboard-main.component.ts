@@ -2,6 +2,8 @@ import { Component} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
+import { DashboardService } from '../../services/dashboard.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -26,27 +28,36 @@ export class DashboardMainComponent {
   bankIndex !: number;
 
 
+  constructor(private dashboardService : DashboardService ){}
 
   // Local Storage Info
 
   ngOnInit() : void {
-    this.loadFromLocalStorage();
+    this.getQuestions();
     this.initializeDashboardValues();
   } 
 
-  saveToLocalStorage() : void {
-    localStorage.setItem('dashboardOptions', JSON.stringify(this.dashboardOptions));
+ 
+  getQuestions() : void {
+    this.dashboardService.getQuestions().subscribe(q => { 
+      this.dashboardOptions = q;
+    });
   }
 
-  loadFromLocalStorage() : void {
-    const savedForm = localStorage.getItem('dashboardOptions');
-    if (savedForm) {
-      this.dashboardOptions = JSON.parse(savedForm);
+  updateDashboardQuestions(item : any[]) : void {
+    this.dashboardService.updateQuestion(item).subscribe(
+      (response) => {
+        console.log('questions updated', response);
+        this.getQuestions();
+      },
+      (error) => {
+        console.error('Error updating questions', error);
       }
-    }
+    );
+  }
 
     initializeDashboardValues(): void {
-      if(this.dashboardOptions.length >0 ){
+      if(this.dashboardOptions.length > 0 ){
         this.elementSelected = this.dashboardOptions[0];
         this.indexSelected = 0;
       }
@@ -66,6 +77,10 @@ export class DashboardMainComponent {
   onSelectedType(type:string): void {
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
+      // Asignar un ID único si no existe
+      if (!selectedQuestion.id) {
+        selectedQuestion.id = uuidv4(); // Generar un nuevo ID único
+      }
       if(typeof this.questionIndex === 'number'){
         if(this.questionIndex === 0  && this.indexPosition === 'back'){
           const newQuestion = { ...selectedQuestion, numeral: 1}; 
@@ -95,6 +110,8 @@ export class DashboardMainComponent {
       }
     }
 
+    this.updateDashboardQuestions(this.dashboardOptions);
+    
     this.questionIndex = null;
     this.indexPosition = '';
 
@@ -126,6 +143,8 @@ export class DashboardMainComponent {
       this.onElementSelected(this.dashboardOptions.length - 1,{type:'section'});
     }
 
+    this.updateDashboardQuestions(this.dashboardOptions);
+
     this.questionIndex = null;
     this.indexPosition = '';
 
@@ -144,6 +163,7 @@ export class DashboardMainComponent {
 
     this.selectAfterDelete(index);
     this.dashboardOptions.splice(index, 1);
+    this.updateDashboardQuestions(this.dashboardOptions);
   }
 
 
@@ -178,6 +198,7 @@ export class DashboardMainComponent {
   deleteSection(index: number) : void {
       this.selectAfterDelete(index);
       this.dashboardOptions.splice(index, 1);  
+      this.updateDashboardQuestions(this.dashboardOptions);
   }
 
   openDataBankSection():void {

@@ -19,10 +19,18 @@ types : string[] = ['Check Box','Tabla', 'Si y No', 'Abierta', 'Escala de Opcion
 constructor(private dataBankService : DataBankService){}
 
 ngOnInit() : void {
-  const allObjects = this.dataBankService.getObjects();
-  this.bankQuestions = allObjects;
-  this.arrayQuestions = allObjects;
+
+  this.getBanks();
   this.selectedIndexes = [];
+}
+
+
+getBanks() : void {
+  this.dataBankService.getBanks().subscribe(banks => { 
+    console.log(banks);
+    this.bankQuestions = banks;
+    this.arrayQuestions = banks;
+  });
 }
 
 
@@ -45,8 +53,16 @@ verifyIndex(index:number): boolean {
  return false;
 }
 
-deleteQuestion(index:number): void {
-  this.dataBankService.deleteObject(index);
+deleteQuestion(id:number): void {
+  this.dataBankService.deleteBank(id).subscribe(
+    () => {
+      console.log('Bank deleted');
+      this.getBanks();
+    },
+    (error) => {
+      console.error('Error deleting bank', error);
+    }
+  );
 }
 
 deselectQuestion(index:number) : void {

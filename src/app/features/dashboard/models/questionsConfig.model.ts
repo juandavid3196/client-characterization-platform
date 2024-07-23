@@ -2,7 +2,7 @@
 export const questionConfigs = [
 
   {
-    id: null,
+    id: '',
     numeral: null,
     type: 'checkbox',
     text: '',
@@ -21,7 +21,7 @@ export const questionConfigs = [
     }
   },
   {
-    id: null,
+    id: '',
     numeral: null,
     type: 'table',
     text: '',

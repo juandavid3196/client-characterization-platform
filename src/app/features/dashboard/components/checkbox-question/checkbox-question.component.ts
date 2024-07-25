@@ -1,9 +1,11 @@
-import { Component, Input, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 import { DataBankService } from '../../services/data-bank.service';
 import { DashboardService } from '../../services/dashboard.service';
+import { Subscription } from 'rxjs';
+import { DashboardlsService } from '../../services/dashboardls.service';
 
 @Component({
   selector: 'app-checkbox-question',
@@ -27,13 +29,19 @@ export class CheckboxQuestionComponent {
   blocked : boolean =  false;
   changeSection: boolean = true;
   optionsMessage : boolean = false;
+  dashboardOptions : any[] = [];
+  formSubscription: Subscription | undefined;
 
   @Input() numeral!:number;
-  @Input() questionData !: any;
+  @Input() questionId : string = '';
+  @Output() refreshList =  new EventEmitter();
 
-  constructor(private fb:FormBuilder, private dataBankService :DataBankService, private dashboardService : DashboardService){
+  constructor(private fb:FormBuilder,
+     private dataBankService :DataBankService, 
+     private dashboardService : DashboardService,
+     private dashboardlsService : DashboardlsService ){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
-      id: null,
+      id: '',
       numeral: null,
       type: 'checkbox',
       text: '',
@@ -58,38 +66,73 @@ export class CheckboxQuestionComponent {
   ngOnInit() {
     this.loadFromDataObject();
     this.initializeFormValues();
-  }
 
-  saveCheckBoxData() : void {
-    this.dashboardService.getQuestions().subscribe(q => { 
-        const index = q.findIndex(e => e.id === this.questionData.id);
-        if (index !== -1) {
-          q[index] = { ...q[index], ...this.checkBoxForm.value }; 
-          this.dashboardService.updateQuestion(q).subscribe(response => {
-            console.log('Questions updated successfully', response);
-          }, error => {
-            console.error('Error updating questions', error);
-          });
-        } 
+    this.formSubscription = this.checkBoxForm.valueChanges.subscribe(value => {
+      if (this.questionId !== undefined) {
+        this.updateDashboardOptions(value);
+      }
     });
   }
 
-  loadFromDataObject(): void {
-    this.checkBoxForm.patchValue(this.questionData);
+  private updateDashboardOptions(value: any): void {
+    if (this.questionId !== undefined) {
+      const index = this.dashboardOptions.findIndex(e => e.id === this.questionId);
+      if (index !== -1) {
+        this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
+        this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
+      }
+    }
+  }
+
+  saveCheckBoxData(): void {
+
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+    
+    if (storedQuestions) {
+     
+      const index = storedQuestions.findIndex((e:any)  => e.id === this.checkBoxForm.value.id);
+      
+      if (index !== -1) {
   
-    // Load options
-    const optionsArray = this.checkBoxForm.get('options') as FormArray;
-    while (optionsArray.length) {
-      optionsArray.removeAt(0);
+        storedQuestions[index] = { ...storedQuestions[index], ...this.checkBoxForm.value };
+        this.dashboardlsService.saveDashboardOptions(storedQuestions);
+        console.log('Questions updated successfully in Local Storage');
+      } else {
+        console.error('Question not found in Local Storage');
+      }
+    } else {
+      console.error('No questions found in Local Storage');
+    }
+  }
+  
+
+  loadFromDataObject(): void {
+
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+    
+    if (storedQuestions  && this.questionId) {
+      this.dashboardOptions = storedQuestions;
+      storedQuestions;
+      const element = storedQuestions.find((e:any)  => e.id === this.questionId);
+      if(element){
+        this.checkBoxForm.patchValue(element);
+  
+      // Load options
+      const optionsArray = this.checkBoxForm.get('options') as FormArray;
+      while (optionsArray.length) {
+        optionsArray.removeAt(0);
+      }
+      
+      if (element.options) {
+          element.options.forEach((option: string) => {
+          optionsArray.push(this.fb.control(option));
+        });
+      }
+    
+      this.optionsAnswer = element.options.filter((option: string | null) => option != null && option !== '') || [];
+        }
     }
     
-    if (this.questionData.options) {
-      this.questionData.options.forEach((option: string) => {
-        optionsArray.push(this.fb.control(option));
-      });
-    }
-  
-    this.optionsAnswer = this.questionData.options.filter((option: string | null) => option != null && option !== '') || [];
   }
   
 
@@ -249,14 +292,20 @@ getOptionValue(option : string): void {
     );
   }
 
+
+
   onSubmit() : void {
    if(this.checkBoxForm.valid){
     this.saveCheckBoxData();
+    this.refreshList.emit();
    }
   }
 
-  ngOnDestroy() : void {
-    this.saveCheckBoxData();
+  ngOnDestroy(): void {
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.saveCheckBoxData();
+    }
   }
 
 

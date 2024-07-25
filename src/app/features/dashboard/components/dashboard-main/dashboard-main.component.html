@@ -17,7 +17,7 @@
             <span class="survey-title">Example</span>
         </div>
         <div class="menu-right">
-            <button class="btn-save btn">Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
+            <button class="btn-save btn" (click)="saveDashboardData()">Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
             <button class="btn-view btn">Vista Previa</button>
         </div>
     </div>
@@ -61,8 +61,8 @@
     </aside>
     <div class="main-panel">
             <ng-container [ngSwitch]="elementSelected.type" *ngIf="elementSelected.type !== 'section'">
-                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral" [questionData]="elementSelected" ></app-table-question>
-                <app-checkbox-question *ngSwitchCase="'checkbox'"  [numeral]="elementSelected.numeral" [questionData]="elementSelected"></app-checkbox-question>
+                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral" [questionId]="elementSelected.id" (refreshList)="onRefreshList()" ></app-table-question>
+                <app-checkbox-question *ngSwitchCase="'checkbox'"  [numeral]="elementSelected.numeral" [questionId]="elementSelected.id" (refreshList)="onRefreshList()"></app-checkbox-question>
             </ng-container>
     </div>
   </main>

@@ -4,6 +4,7 @@ import { UserBarComponent } from './components/user-bar/user-bar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { FilterSelectComponent } from './components/filter-select/filter-select.component';
 import { ToggleButtonComponent } from './components/toggle-button/toggle-button.component';
+import { SpinerComponent } from './components/spiner/spiner.component';
 
 
 
@@ -12,6 +13,7 @@ import { ToggleButtonComponent } from './components/toggle-button/toggle-button.
     UserBarComponent,
     FilterSelectComponent,
     ToggleButtonComponent,
+    SpinerComponent,
 
   ],
   imports: [
@@ -21,7 +23,8 @@ import { ToggleButtonComponent } from './components/toggle-button/toggle-button.
   exports: [
     ToggleButtonComponent,
     UserBarComponent,
-    FilterSelectComponent
+    FilterSelectComponent,
+    SpinerComponent
   ]
 })
 export class SharedModule { }

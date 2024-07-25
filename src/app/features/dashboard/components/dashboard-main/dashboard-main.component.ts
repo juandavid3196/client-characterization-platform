@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
+import { DashboardlsService } from '../../services/dashboardls.service';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -28,7 +29,7 @@ export class DashboardMainComponent {
   bankIndex !: number;
 
 
-  constructor(private dashboardService : DashboardService ){}
+  constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
   // Local Storage Info
 
@@ -38,17 +39,18 @@ export class DashboardMainComponent {
   } 
 
  
-  getQuestions() : void {
+  getQuestions(): void {
     this.dashboardService.getQuestions().subscribe(q => { 
       this.dashboardOptions = q;
+      this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
     });
   }
 
-  updateDashboardQuestions(item : any[]) : void {
-    this.dashboardService.updateQuestion(item).subscribe(
+  saveDashboardData() : void {
+    this.loadQuestionsFromLocalStorage();
+    this.dashboardService.updateQuestion(this.dashboardOptions).subscribe(
       (response) => {
         console.log('questions updated', response);
-        this.getQuestions();
       },
       (error) => {
         console.error('Error updating questions', error);
@@ -56,12 +58,28 @@ export class DashboardMainComponent {
     );
   }
 
-    initializeDashboardValues(): void {
-      if(this.dashboardOptions.length > 0 ){
-        this.elementSelected = this.dashboardOptions[0];
-        this.indexSelected = 0;
-      }
-    } 
+  updateDashboardQuestions(item: any[]): void {
+    this.dashboardlsService.saveDashboardOptions(item);
+    this.dashboardOptions = item;
+    console.log('questions updated and stored in Local Storage', item);
+  }
+
+
+
+  loadQuestionsFromLocalStorage(): void {
+    const storedOptions = this.dashboardlsService.getDashboardOptions();
+    if (storedOptions) {
+      this.dashboardOptions = storedOptions;
+    }
+  }
+
+
+  initializeDashboardValues(): void {
+    if(this.dashboardOptions.length > 0 ){
+      this.elementSelected = this.dashboardOptions[0];
+      this.indexSelected = 0;
+    }
+  } 
 
 
   setFormData(form:FormGroup):void{
@@ -78,9 +96,7 @@ export class DashboardMainComponent {
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
       // Asignar un ID único si no existe
-      if (!selectedQuestion.id) {
-        selectedQuestion.id = uuidv4(); // Generar un nuevo ID único
-      }
+      selectedQuestion.id = uuidv4(); // Generar un nuevo ID único   
       if(typeof this.questionIndex === 'number'){
         if(this.questionIndex === 0  && this.indexPosition === 'back'){
           const newQuestion = { ...selectedQuestion, numeral: 1}; 
@@ -219,14 +235,14 @@ export class DashboardMainComponent {
     }
   }
 
-  // handleDataTable(dataTable:any):void {
-  //   if(this.indexSelected !== null){
-  //     this.dashboardOptions[this.indexSelected]= {...dataTable,numeral:this.elementSelected.numeral};
-  //     this.elementSelected = this.dashboardOptions[this.indexSelected];
-  //   }
-  //   console.log(this.dashboardOptions,this.indexSelected,this.elementSelected);
-  //   this.saveToLocalStorage();
-  // }
+  onRefreshList() : void {
+    this.loadQuestionsFromLocalStorage();
+  }
+
+  ngOnDestroy() : void {
+    this.saveDashboardData();
+    localStorage.clear();
+  }
 
 
 }

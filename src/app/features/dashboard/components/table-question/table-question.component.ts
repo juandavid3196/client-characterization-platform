@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
 import { DashboardService } from '../../services/dashboard.service';
+import { DashboardlsService } from '../../services/dashboardls.service';
+import { Subscription } from 'rxjs';
 
 interface Option {
   rows: string[];
@@ -28,10 +30,14 @@ export class TableQuestionComponent {
   aMessage : boolean = false;
   noVisibleField : boolean =  false;
   selectedOptionIndex : number = 0; 
+  spinner: boolean = false;
+  dashboardOptions : any[] = [];
+  formSubscription: Subscription | undefined;
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   @Input() numeral !: number;
-  @Input() questionData !: any;
+  @Input() questionId : string = '';
   @Output() dataTable =  new EventEmitter<any>();
+  @Output() refreshList =  new EventEmitter();
 
   //Dropdown variables
   select_click: boolean = false;
@@ -41,9 +47,12 @@ export class TableQuestionComponent {
   DropOptions : any[] = [];
   rowsSection: string = 'basic';
   
-  constructor(private fb:FormBuilder, private dataBankService : DataBankService, private dashboardService : DashboardService){
+  constructor(private fb:FormBuilder, 
+    private dataBankService : DataBankService, 
+    private dashboardService : DashboardService,
+    private dashboardlsService : DashboardlsService){
     this.tableForm = this.fb.group({  // create a fb.group for every Object 
-      id: null,
+      id: '',
       numeral: null,
       type: 'table',
       text: '',
@@ -71,6 +80,22 @@ export class TableQuestionComponent {
   ngOnInit() {
     this.loadFromQuestionData();
     this.initializeFormValues();
+
+    this.formSubscription = this.tableForm.valueChanges.subscribe(value => {
+      if (this.questionId !== undefined) {
+        this.updateDashboardOptions(value);
+      }
+    });
+  }
+
+  private updateDashboardOptions(value: any): void {
+    if (this.questionId !== undefined) {
+      const index = this.dashboardOptions.findIndex(e => e.id === this.questionId);
+      if (index !== -1) {
+        this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
+        this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
+      }
+    }
   }
 
   createOption(): FormGroup {
@@ -96,64 +121,85 @@ export class TableQuestionComponent {
   }
   
 
-  saveTableData() : void {
-    this.dashboardService.getQuestions().subscribe(q => { 
-        const index = q.findIndex(e => e.id === this.questionData.id);
-        if (index !== -1) {
-          q[index] = { ...q[index], ...this.tableForm.value }; 
-          this.dashboardService.updateQuestion(q).subscribe(response => {
-            console.log('Questions updated successfully', response);
-          }, error => {
-            console.error('Error updating questions', error);
-          });
-        } 
-    });
-  }
-
-
-  loadFromQuestionData(): void {
-    if (this.questionData) {
-      this.tableForm.patchValue(this.questionData);
+  saveTableData(): void {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
     
-      // cargar opciones
-      const optionsArray = this.tableForm.get('options') as FormArray;
-    
-      // Limpiar opciones existentes
-      while (optionsArray.length) {
-        optionsArray.removeAt(0);
+    if (storedQuestions) {
+      const index = storedQuestions.findIndex((e:any)  => e.id === this.tableForm.value.id);
+      
+      if (index !== -1) {
+        storedQuestions[index] = { ...storedQuestions[index], ...this.tableForm.value };
+        this.dashboardlsService.saveDashboardOptions(storedQuestions);
+        console.log('Questions updated successfully in Local Storage');
+      } else {
+        console.error('Question not found in Local Storage');
       }
-    
-      // Cargar opciones desde la data de la pregunta
-      this.questionData.options.forEach((option: any) => {
-        const optionGroup = this.createOption(); // Crear un nuevo FormGroup para cada opción
-        optionGroup.patchValue(option); // Parchar el FormGroup con los valores guardados
-    
-        // Limpiar y cargar filas (rows) si existen
-        const rowsArray = optionGroup.get('rows') as FormArray;
-        if (option.rows && Array.isArray(option.rows)) {
-          while (rowsArray.length) {
-            rowsArray.removeAt(0);
-          }
-          option.rows.forEach((row: any) => {
-            rowsArray.push(this.fb.control(row));
-          });
-        }
-    
-        optionsArray.push(optionGroup);
-      });
-    
-      // Limpiar y cargar filas no visibles (no_visible_rows) si existen
-      const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
-      if (this.questionData.no_visible_rows && Array.isArray(this.questionData.no_visible_rows)) {
-        while (noVisibleRowsArray.length) {
-          noVisibleRowsArray.removeAt(0);
-        }
-        this.questionData.no_visible_rows.forEach((noVisibleRow: any) => {
-          noVisibleRowsArray.push(this.fb.control(noVisibleRow));
-        });
-      }
+    } else {
+      console.error('No questions found in Local Storage');
     }
   }
+  
+
+
+  async loadFromQuestionData(): Promise<void> {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+    
+    if (storedQuestions && this.questionId) {
+      this.dashboardOptions = storedQuestions;
+      const element = storedQuestions.find((e: any) => e.id === this.questionId);
+  
+      if (element) {
+        this.tableForm.patchValue(element);
+  
+        // cargar opciones
+        const optionsArray = this.tableForm.get('options') as FormArray;
+  
+        // Limpiar opciones existentes
+        while (optionsArray.length) {
+          optionsArray.removeAt(0);
+        }
+  
+        // Cargar opciones desde la data de la pregunta
+        if (element.options && Array.isArray(element.options)) {
+          element.options.forEach((option: any) => {
+            const optionGroup = this.createOption(); // Crear un nuevo FormGroup para cada opción
+            optionGroup.patchValue(option); // Parchar el FormGroup con los valores guardados
+  
+            // Limpiar y cargar filas (rows) si existen
+            const rowsArray = optionGroup.get('rows') as FormArray;
+            if (option.rows && Array.isArray(option.rows)) {
+              while (rowsArray.length) {
+                rowsArray.removeAt(0);
+              }
+              option.rows.forEach((row: any) => {
+                rowsArray.push(this.fb.control(row));
+              });
+            }
+  
+            optionsArray.push(optionGroup);
+          });
+        }
+  
+        // Limpiar y cargar filas no visibles (no_visible_rows) si existen
+        const noVisibleRowsArray = this.tableForm.get('no_visible_rows') as FormArray;
+        if (element.no_visible_rows && Array.isArray(element.no_visible_rows)) {
+          while (noVisibleRowsArray.length) {
+            noVisibleRowsArray.removeAt(0);
+          }
+          element.no_visible_rows.forEach((noVisibleRow: any) => {
+            noVisibleRowsArray.push(this.fb.control(noVisibleRow));
+          });
+        }
+  
+        this.spinner = false;
+      } else {
+        this.spinner = true;
+      }
+    } else {
+      this.spinner = true;
+    }
+  }
+  
   
   
   
@@ -452,10 +498,14 @@ onResetForm():void {
   onSubmit() : void {
     if(this.tableForm.valid){
       this.saveTableData();
+      this.refreshList.emit();
+
     }
    }
 
   ngOnDestroy() : void {
+    if(this.formSubscription)
+    this.formSubscription.unsubscribe();
     this.saveTableData();
   }
 

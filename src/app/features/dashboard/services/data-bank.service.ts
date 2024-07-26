@@ -21,7 +21,7 @@ export class DataBankService {
   }
 
 
-  deleteBank(id: number): Observable<void> {
+  deleteBank(id:string): Observable<void> {
     return this.apiService.delete(this.endpoint, id);
   }
 

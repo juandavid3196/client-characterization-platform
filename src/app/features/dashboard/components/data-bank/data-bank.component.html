@@ -12,7 +12,7 @@
                 <input type="text" (input)="filterByText($event)">
                 <img src="assets/icons/search-icon.svg" alt="" class="search-icon">
             </div>
-            <span class="questions-total">250 preguntas</span>
+            <span class="questions-total">{{arrayQuestions.length}} {{arrayQuestions.length == 1 ? 'pregunta' : 'preguntas'}} </span>
             <div class="questions-container">
                 <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of arrayQuestions; let i = index">
                     <img src="assets/icons/{{item.icon}}.svg" alt="" class="q-icon">

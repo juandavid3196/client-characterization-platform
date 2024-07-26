@@ -1,10 +1,11 @@
-import { Component} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DashboardlsService } from '../../services/dashboardls.service';
+import { DataBankComponent } from '../data-bank/data-bank.component';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -19,15 +20,14 @@ export class DashboardMainComponent {
   numeralList !: number;
   questionConfigs = questionConfigs; 
   formData !: FormGroup;
-  questionIndex !: number | null;
-  indexPosition :string = '';
+  questionIndex : number =0;
+  indexPosition :string = 'back';
   indexSelected!:number | null;
   elementSelected : any = {};
   databankSection: boolean = false;
   settingSection: boolean = false;
   btnSelected : string = 'dashboard';
   bankIndex !: number;
-
 
   constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
@@ -60,8 +60,6 @@ export class DashboardMainComponent {
 
   updateDashboardQuestions(item: any[]): void {
     this.dashboardlsService.saveDashboardOptions(item);
-    this.dashboardOptions = item;
-    console.log('questions updated and stored in Local Storage', item);
   }
 
 
@@ -93,21 +91,25 @@ export class DashboardMainComponent {
   }
 
   onSelectedType(type:string): void {
+    this.dashboardOptions = this.dashboardlsService.getDashboardOptions();
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
       // Asignar un ID único si no existe
       selectedQuestion.id = uuidv4(); // Generar un nuevo ID único   
-      if(typeof this.questionIndex === 'number'){
         if(this.questionIndex === 0  && this.indexPosition === 'back'){
+
           const newQuestion = { ...selectedQuestion, numeral: 1}; 
           for(let i = 0; i < this.dashboardOptions.length; i++){
             if(this.dashboardOptions[i].type != 'section'){
               this.dashboardOptions[i].numeral  += 1;
             }
           }
+
           this.dashboardOptions.unshift(newQuestion);
+          this.updateDashboardQuestions(this.dashboardOptions);
           this.onElementSelected(0,newQuestion);
-        }else {
+
+        }else if (this.questionIndex >= 0 && this.indexPosition === 'forward' ) {
           const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
           for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
             if(this.dashboardOptions[i].type != 'section'){
@@ -115,23 +117,23 @@ export class DashboardMainComponent {
             }
           }
           this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
+          this.updateDashboardQuestions(this.dashboardOptions);
           this.onElementSelected(this.questionIndex + 1, newQuestion);
-        }
-      }else{
-        
+        }else{  
         this.numeralListCount();
           const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
           this.dashboardOptions.push(newQuestion);
+          this.updateDashboardQuestions(this.dashboardOptions);
           this.onElementSelected(this.dashboardOptions.length -1,newQuestion);
-      }
     }
 
-    this.updateDashboardQuestions(this.dashboardOptions);
     
-    this.questionIndex = null;
+    this.questionIndex = 0;
     this.indexPosition = '';
 
   }
+
+}
 
   numeralListCount(): void {
     this.numeralList = 1;
@@ -145,23 +147,21 @@ export class DashboardMainComponent {
 
   onSectionSelected(section:string): void {
     
-    if(typeof this.questionIndex === 'number'){
-      if(this.questionIndex === 0  && this.indexPosition === 'back'){
+    if(this.questionIndex === 0  && this.indexPosition === 'back'){
         this.dashboardOptions.unshift(section);
-        if(typeof this.questionIndex === 'number')
-          this.onElementSelected(0,{type:'section'});
-      }else {
+        this.updateDashboardQuestions(this.dashboardOptions);
+        this.onElementSelected(0,{type:'section'});
+    }else if(this.questionIndex >= 0  && this.indexPosition === ' forward') {
         this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
+        this.updateDashboardQuestions(this.dashboardOptions);
         this.onElementSelected(this.questionIndex + 1,{type:'section'});
-      }
     }else{
       this.dashboardOptions.push(section);
+      this.updateDashboardQuestions(this.dashboardOptions);
       this.onElementSelected(this.dashboardOptions.length - 1,{type:'section'});
     }
 
-    this.updateDashboardQuestions(this.dashboardOptions);
-
-    this.questionIndex = null;
+    this.questionIndex = 0;
     this.indexPosition = '';
 
   }
@@ -199,6 +199,15 @@ export class DashboardMainComponent {
     }
   }
 
+  selectElement(index: number) : void {
+      const storageElement = this.dashboardlsService.getDashboardOptions();
+      if(storageElement){
+        this.dashboardOptions = storageElement;
+        this.indexSelected = index;
+        this.elementSelected = this.dashboardOptions[index];
+      }
+  }
+
   selectAfterDelete(index:number):void {
     if(index ===  0 && this.dashboardOptions.length === 1){
       this.elementSelected = {};
@@ -234,6 +243,7 @@ export class DashboardMainComponent {
       this.btnSelected = 'setting';
     }
   }
+
 
   onRefreshList() : void {
     this.loadQuestionsFromLocalStorage();

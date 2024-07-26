@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
@@ -49,7 +49,6 @@ export class TableQuestionComponent {
   
   constructor(private fb:FormBuilder, 
     private dataBankService : DataBankService, 
-    private dashboardService : DashboardService,
     private dashboardlsService : DashboardlsService){
     this.tableForm = this.fb.group({  // create a fb.group for every Object 
       id: '',
@@ -88,7 +87,13 @@ export class TableQuestionComponent {
     });
   }
 
-  private updateDashboardOptions(value: any): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['questionId']) {
+      this.loadFromQuestionData();
+    }
+  }
+
+  updateDashboardOptions(value: any): void {
     if (this.questionId !== undefined) {
       const index = this.dashboardOptions.findIndex(e => e.id === this.questionId);
       if (index !== -1) {
@@ -450,7 +455,7 @@ getMaxLengthValue(): number[] {
 
 onResetForm():void {
   this.tableForm.reset({
-    id: null,
+    id: '',
     numeral: null,
     type: 'table',
     text: '',
@@ -459,6 +464,7 @@ onResetForm():void {
     note_text: '',
     no_visible_title:'',
     no_visible_rows: this.fb.array([this.fb.control('')]),
+    addedToBank:false,
     options: this.fb.array([
       this.createOption()
     ]),
@@ -507,6 +513,7 @@ onResetForm():void {
     if(this.formSubscription)
     this.formSubscription.unsubscribe();
     this.saveTableData();
+    this.onResetForm();
   }
 
 }

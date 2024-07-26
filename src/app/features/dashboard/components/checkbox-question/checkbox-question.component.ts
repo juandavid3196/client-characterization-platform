@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
@@ -29,16 +29,16 @@ export class CheckboxQuestionComponent {
   blocked : boolean =  false;
   changeSection: boolean = true;
   optionsMessage : boolean = false;
+  spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
 
   @Input() numeral!:number;
-  @Input() questionId : string = '';
+  @Input() elementData : any = {};
   @Output() refreshList =  new EventEmitter();
 
   constructor(private fb:FormBuilder,
      private dataBankService :DataBankService, 
-     private dashboardService : DashboardService,
      private dashboardlsService : DashboardlsService ){
     this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
       id: '',
@@ -60,23 +60,28 @@ export class CheckboxQuestionComponent {
         add_note: false,
       })
     });
-
   }
 
   ngOnInit() {
     this.loadFromDataObject();
     this.initializeFormValues();
-
     this.formSubscription = this.checkBoxForm.valueChanges.subscribe(value => {
-      if (this.questionId !== undefined) {
+      if (this.elementData.id !== undefined) {
         this.updateDashboardOptions(value);
       }
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['elementData'].currentValue.id) {
+      this.loadFromDataObject();
+    }
+  }
+  
+
   private updateDashboardOptions(value: any): void {
-    if (this.questionId !== undefined) {
-      const index = this.dashboardOptions.findIndex(e => e.id === this.questionId);
+    if (this.elementData.id !== undefined) {
+      const index = this.dashboardOptions.findIndex(e => e.id === this.elementData.id);
       if (index !== -1) {
         this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
         this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
@@ -107,15 +112,16 @@ export class CheckboxQuestionComponent {
   
 
   loadFromDataObject(): void {
-
-    const storedQuestions = this.dashboardlsService.getDashboardOptions();
     
-    if (storedQuestions  && this.questionId) {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+
+
+    if (storedQuestions && this.elementData.id) {
+
       this.dashboardOptions = storedQuestions;
-      storedQuestions;
-      const element = storedQuestions.find((e:any)  => e.id === this.questionId);
+      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
-        this.checkBoxForm.patchValue(element);
+      this.checkBoxForm.patchValue(element);
   
       // Load options
       const optionsArray = this.checkBoxForm.get('options') as FormArray;
@@ -130,9 +136,12 @@ export class CheckboxQuestionComponent {
       }
     
       this.optionsAnswer = element.options.filter((option: string | null) => option != null && option !== '') || [];
-        }
-    }
-    
+      this.spinner =  false;
+    }else {
+      this.spinner = true;
+    }  
+  }
+    this.spinner =  false;
   }
   
 
@@ -253,13 +262,14 @@ getOptionValue(option : string): void {
 
   onResetForm():void {
       this.checkBoxForm.reset({
-        id: null,
+        id: '',
         numeral: null,
         type: 'checkbox',
         text: '',
         description: '',
         icon: 'check-icon',
         note_text: '',
+        addedToBank : false,
         options: this.fb.array([this.fb.control('')]),
         settings: {
           another_field: false,
@@ -305,6 +315,7 @@ getOptionValue(option : string): void {
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
       this.saveCheckBoxData();
+      this.onResetForm();
     }
   }
 

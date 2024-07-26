@@ -53,10 +53,9 @@ verifyIndex(index:number): boolean {
  return false;
 }
 
-deleteQuestion(id:number): void {
+deleteQuestion(id:string): void {
   this.dataBankService.deleteBank(id).subscribe(
     () => {
-      console.log('Bank deleted');
       this.getBanks();
     },
     (error) => {
@@ -66,7 +65,6 @@ deleteQuestion(id:number): void {
 }
 
 deselectQuestion(index:number) : void {
-  console.log(index);
   let number = this.selectedIndexes.indexOf(index);
   if(number != -1){
     this.selectedIndexes.splice(number,1);

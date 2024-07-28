@@ -155,6 +155,7 @@ export class TableQuestionComponent {
   
       if (element) {
         this.tableForm.patchValue(element);
+        console.log(element);
   
         // cargar opciones
         const optionsArray = this.tableForm.get('options') as FormArray;

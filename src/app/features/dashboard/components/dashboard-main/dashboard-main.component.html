@@ -7,7 +7,7 @@
     (sectionSelected)="onSectionSelected($event)" 
     (openBank)="openDataBankSection()"
     ></app-questions-options>
-    <app-data-bank   *ngIf="databankSection"  (formClose)="openDataBankSection()" [IndexPosition]="bankIndex" ></app-data-bank>
+    <app-data-bank   *ngIf="databankSection"  (formClose)="openDataBankSection()" [IndexPosition]="bankIndex" (reloadList)="loadQuestionsFromLocalStorage()" ></app-data-bank>
     <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"  ></app-setting>
   <header>
     <app-user-bar></app-user-bar>

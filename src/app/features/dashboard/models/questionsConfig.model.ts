@@ -9,7 +9,8 @@ export const questionConfigs = [
     description:'',
     icon:'check-icon',
     note_text:'',
-    options: [],
+    options: [''],
+    addedTobank:  false,
     settings: {
       another_field: false,
       question_multimedia: '',
@@ -28,9 +29,10 @@ export const questionConfigs = [
     description:'',
     icon:'table-icon',
     note_text:'',
+    addedToBank:false,
     no_visible_title:'',
-    no_visible_rows:[],
-    options: [],
+    no_visible_rows:[''],
+    options: [''],
     settings: {
       question_multimedia: '',
       answer_multimedia:'',

@@ -5,7 +5,6 @@ import { Section } from '../../models/section.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DashboardlsService } from '../../services/dashboardls.service';
-import { DataBankComponent } from '../data-bank/data-bank.component';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -21,13 +20,13 @@ export class DashboardMainComponent {
   questionConfigs = questionConfigs; 
   formData !: FormGroup;
   questionIndex : number =0;
-  indexPosition :string = 'back';
+  indexPosition :any  = 'back';
   indexSelected!:number | null;
   elementSelected : any = {};
   databankSection: boolean = false;
   settingSection: boolean = false;
   btnSelected : string = 'dashboard';
-  bankIndex !: number;
+  bankIndex : any = {index:0,position:''};
 
   constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
@@ -85,9 +84,13 @@ export class DashboardMainComponent {
   }
 
 
-  openQuestionsMenu(index?:number) : void {
+  openQuestionsMenu(index?:number,position?:string) : void {
     this.openQuestion = !this.openQuestion;
-    this.bankIndex = index || 0;
+    console.log(index);
+    if(typeof index === 'number'){
+      this.bankIndex.index = index;
+      this.bankIndex.position = position;
+    }
   }
 
   onSelectedType(type:string): void {
@@ -151,7 +154,7 @@ export class DashboardMainComponent {
         this.dashboardOptions.unshift(section);
         this.updateDashboardQuestions(this.dashboardOptions);
         this.onElementSelected(0,{type:'section'});
-    }else if(this.questionIndex >= 0  && this.indexPosition === ' forward') {
+    }else if(this.questionIndex >= 0  && this.indexPosition === 'forward') {
         this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
         this.updateDashboardQuestions(this.dashboardOptions);
         this.onElementSelected(this.questionIndex + 1,{type:'section'});
@@ -187,7 +190,7 @@ export class DashboardMainComponent {
   addNewElement(index:number,position:string): void {
     this.questionIndex= index;
     this.indexPosition = position;
-    this.openQuestionsMenu(index);
+    this.openQuestionsMenu(index,position);
   }
 
   onElementSelected(index:number, element:any):void {

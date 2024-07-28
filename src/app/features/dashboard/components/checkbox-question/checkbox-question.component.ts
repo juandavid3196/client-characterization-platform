@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 import { DataBankService } from '../../services/data-bank.service';
-import { DashboardService } from '../../services/dashboard.service';
 import { Subscription } from 'rxjs';
 import { DashboardlsService } from '../../services/dashboardls.service';
 
@@ -121,6 +120,7 @@ export class CheckboxQuestionComponent {
       this.dashboardOptions = storedQuestions;
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
+        console.log(element);
       this.checkBoxForm.patchValue(element);
   
       // Load options

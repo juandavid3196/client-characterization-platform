@@ -41,7 +41,7 @@
                     <div class="c-section">
                         <div class="container-box">
                             <span class="label">Añadir el Campo Otro</span>
-                            <app-toggle-button name="another_field" #appToggleButton (toggleValues)="getToggleValues($event)" storageItem="checkBoxForm"></app-toggle-button>
+                            <app-toggle-button name="another_field" #appToggleButton (toggleValues)="getToggleValues($event)" [elementData]="checkBoxForm.value"></app-toggle-button>
                         </div>
                         <div class="container-box">
                             <span class="label">Adjuntar video/imagen para pregunta</span>
@@ -71,14 +71,14 @@
                         </div>
                         <div class="container-box">
                         <span class="label">Obligatorio</span>
-                        <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)" storageItem="checkBoxForm"></app-toggle-button>
+                        <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)" [elementData]="checkBoxForm.value"></app-toggle-button>
                         </div>  
                     </div>
                     <div class="c-section">
                         <div class="container-box mayor">
                             <span class="label">Respuesta por defecto</span>
                             <div class="answer-box">
-                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  storageItem="checkBoxForm" [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"  (optionsLength)="checkOptionsLength()" (click)="checkOptionsLength()" ></app-toggle-button>
+                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  [elementData]="checkBoxForm.value" [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"  (optionsLength)="checkOptionsLength()" (click)="checkOptionsLength()" ></app-toggle-button>
                                 <div class="select-container" *ngIf="defectedAnswer">
                                     <app-filter-select  [options]="optionsAnswer" #appFilterComponent   (optionValue)="getOptionValue($event)"></app-filter-select>
                                 </div>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="container-box">
                             <span class="label">Añadir Nota</span>
-                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)" storageItem="checkBoxForm"></app-toggle-button>
+                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)" [elementData]="checkBoxForm.value"></app-toggle-button>
                         </div>
                     </div>
                 </div>

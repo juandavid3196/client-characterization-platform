@@ -1,4 +1,4 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, HostListener, ViewChild} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
@@ -18,15 +18,15 @@ export class DashboardMainComponent {
   dashboardOptions: any[]= [];
   numeralList !: number;
   questionConfigs = questionConfigs; 
-  formData !: FormGroup;
   questionIndex : number =0;
-  indexPosition :any  = 'back';
+  indexPosition : string  = 'back';
   indexSelected!:number | null;
   elementSelected : any = {};
   databankSection: boolean = false;
   settingSection: boolean = false;
   btnSelected : string = 'dashboard';
   bankIndex : any = {index:0,position:''};
+  editSection : boolean = false;
 
   constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
@@ -39,10 +39,7 @@ export class DashboardMainComponent {
 
  
   getQuestions(): void {
-    this.dashboardService.getQuestions().subscribe(q => { 
-      this.dashboardOptions = q;
-      this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
-    });
+    this.dashboardOptions = this.dashboardlsService.getDashboardOptions();
   }
 
   saveDashboardData() : void {
@@ -67,6 +64,7 @@ export class DashboardMainComponent {
     const storedOptions = this.dashboardlsService.getDashboardOptions();
     if (storedOptions) {
       this.dashboardOptions = storedOptions;
+      this.editSection = false;
     }
   }
 
@@ -79,14 +77,9 @@ export class DashboardMainComponent {
   } 
 
 
-  setFormData(form:FormGroup):void{
-    this.formData = form;
-  }
-
 
   openQuestionsMenu(index?:number,position?:string) : void {
     this.openQuestion = !this.openQuestion;
-    console.log(index);
     if(typeof index === 'number'){
       this.bankIndex.index = index;
       this.bankIndex.position = position;
@@ -198,7 +191,7 @@ export class DashboardMainComponent {
     if(element.type !== 'section'){
       this.elementSelected = element;
     }else{
-      this.elementSelected = {};
+     this.elementSelected = {};
     }
   }
 
@@ -208,6 +201,10 @@ export class DashboardMainComponent {
         this.dashboardOptions = storageElement;
         this.indexSelected = index;
         this.elementSelected = this.dashboardOptions[index];
+        if(this.elementSelected.type === 'section'){
+          this.editSection = true;
+          this.openQuestionsMenu();
+        }
       }
   }
 
@@ -252,10 +249,9 @@ export class DashboardMainComponent {
     this.loadQuestionsFromLocalStorage();
   }
 
-  ngOnDestroy() : void {
-    this.saveDashboardData();
-    localStorage.clear();
+  ngOnDestroy(): void {
+    const localInfo = this.dashboardlsService.getDashboardOptions();
+    this.dashboardlsService.saveDashboardOptions(localInfo);
   }
-
 
 }

@@ -260,36 +260,50 @@ getOptionValue(option : string): void {
     this.changeSection = !this.changeSection;
   }
 
-  onResetForm():void {
-      this.checkBoxForm.reset({
-        id: '',
-        numeral: null,
-        type: 'checkbox',
-        text: '',
-        description: '',
-        icon: 'check-icon',
-        note_text: '',
-        addedToBank : false,
-        options: this.fb.array([this.fb.control('')]),
-        settings: {
-          another_field: false,
-          question_multimedia: '',
-          options_multimedia: '',
-          required: false,
-          defected_answer: false,
-          answer_value: '',
-          add_note: false,
-        }
-      });
-
-      this.optionsAnswer = [];
-    
-      this.initializeFormValues();
-      this.ToggleComponent?.reloadComponent();
-      this.reloadAllControls();
-     
+  onResetForm(): void {
+    this.resetCheckBoxForm();
+    this.resetFormState();
+    console.log(this.checkBoxForm.value);
   }
-
+  
+  resetCheckBoxForm(): void {
+    this.checkBoxForm.reset({
+      id: this.elementData.id || '',
+      numeral: null,
+      type: 'checkbox',
+      text: '',
+      description: '',
+      icon: 'check-icon',
+      note_text: '',
+      addedToBank: false,
+      options: [],
+      settings: {
+        another_field: false,
+        question_multimedia: '',
+        options_multimedia: '',
+        required: false,
+        defected_answer: false,
+        answer_value: '',
+        add_note: false,
+      }
+    });
+  
+    // Reset FormArray controls
+    this.resetFormArray(this.checkBoxForm.get('options') as FormArray, ['']);
+  }
+  
+  resetFormArray(formArray: FormArray, initialValues: any[]): void {
+    formArray.clear();
+    initialValues.forEach(value => formArray.push(this.fb.control(value)));
+  }
+  
+  resetFormState(): void {
+    this.optionsAnswer = [];
+    this.initializeFormValues();
+    this.ToggleComponent?.reloadComponent();
+    this.reloadAllControls();
+  }
+  
   addToBank() : void {
     this.checkBoxForm.patchValue({ ['addedToBank']: true });
     this.dataBankService.createBank(this.checkBoxForm.value).subscribe(

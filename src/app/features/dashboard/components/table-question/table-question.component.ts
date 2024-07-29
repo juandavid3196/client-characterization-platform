@@ -81,6 +81,7 @@ export class TableQuestionComponent {
     this.initializeFormValues();
 
     this.formSubscription = this.tableForm.valueChanges.subscribe(value => {
+      console.log(value);
       if (this.questionId !== undefined) {
         this.updateDashboardOptions(value);
       }
@@ -155,7 +156,6 @@ export class TableQuestionComponent {
   
       if (element) {
         this.tableForm.patchValue(element);
-        console.log(element);
   
         // cargar opciones
         const optionsArray = this.tableForm.get('options') as FormArray;
@@ -452,24 +452,29 @@ getMaxLengthValue(): number[] {
 
  
 
- // Form Methods
+ // reset Methods
 
-onResetForm():void {
+ onResetForm(): void {
+  this.resetTableForm();
+  this.resetFormState();
+  console.log(this.tableForm.value);
+}
+
+resetTableForm(): void {
+
   this.tableForm.reset({
-    id: '',
+    id: this.questionId || '',
     numeral: null,
     type: 'table',
     text: '',
     description: '',
     icon: 'table-icon',
     note_text: '',
-    no_visible_title:'',
-    no_visible_rows: this.fb.array([this.fb.control('')]),
-    addedToBank:false,
-    options: this.fb.array([
-      this.createOption()
-    ]),
-    settings: { 
+    no_visible_title: '',
+    no_visible_rows: [],
+    addedToBank: false,
+    options: [],
+    settings: {
       question_multimedia: '',
       options_multimedia: '',
       required: false,
@@ -477,16 +482,24 @@ onResetForm():void {
     }
   });
 
+  // Reset FormArray controls
+  this.resetFormArray(this.tableForm.get('no_visible_rows') as FormArray, ['']);
+  this.resetFormArray(this.tableForm.get('options') as FormArray, [this.createOption()]);
+}
+
+ resetFormArray(formArray: FormArray, initialValues: any[]): void {
+  formArray.clear();
+  initialValues.forEach(value => formArray.push(this.fb.control(value)));
+}
+
+resetFormState(): void {
   this.selectedOptionIndex = 0;
   this.selectedOption = '';
   this.DropOptions = [];
-
+  this.noVisibleField = false;
   this.initializeFormValues();
-  this.loadFromQuestionData();
   this.reloadAllControls();
- 
 }
-
 
   // Questions bank methods
 

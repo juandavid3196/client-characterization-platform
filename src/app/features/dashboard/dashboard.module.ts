@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TableQuestionComponent } from './components/table-question/table-question.component';
 import { DataBankComponent } from './components/data-bank/data-bank.component';
 import { SettingComponent } from './components/setting/setting.component';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 
 
@@ -22,6 +23,7 @@ import { SettingComponent } from './components/setting/setting.component';
     TableQuestionComponent,
     DataBankComponent,
     SettingComponent,
+    TruncatePipe,
   ],
   imports: [
     CommonModule,

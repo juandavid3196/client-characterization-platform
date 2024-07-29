@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Section } from '../../models/section.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { v4 as uuidv4 } from 'uuid';
+import { DashboardlsService } from '../../services/dashboardls.service';
 
 @Component({
   selector: 'app-questions-options',
@@ -16,17 +18,28 @@ export class QuestionsOptionsComponent {
   @Output() typeSelected = new EventEmitter<string>();
   @Output() sectionSelected = new EventEmitter<string>();
   @Output() openBank = new EventEmitter<any>();
-  @Input() section : Section | null =  null;
+  @Output() refreshList = new EventEmitter<any>();
+  @Input() section !: Section;
+  @Input() editSection : boolean  =false;
+  
 
 
   sectionForm !: FormGroup;
 
-  constructor( private fb:FormBuilder){
+  constructor( private fb:FormBuilder, private dashboardlsService: DashboardlsService){
     this.sectionForm = this.fb.group({
+      id:'',
       title: ['',Validators.required],
       type:'section',
       icon:'section-icon'
     })
+  }
+
+  ngOnInit():void {
+    if(this.editSection){
+     this.changeSection = !this.changeSection;
+     this.sectionForm.patchValue(this.section);
+    }
   }
 
   selectType(type: string) {
@@ -41,6 +54,9 @@ export class QuestionsOptionsComponent {
   }
 
   onChangeSection():void {
+    if(this.editSection) {
+      return;
+    }
     this.changeSection = !this.changeSection;
   }
   
@@ -54,14 +70,24 @@ export class QuestionsOptionsComponent {
   onSubmit(): void {
     if (this.sectionForm.valid) {
       
-      if (this.section) {
-        // Editar sección existente
-        
+      if (this.editSection) {
+        const storedQuestions = this.dashboardlsService.getDashboardOptions();
+        if (storedQuestions && this.section.id) {
+          const index = storedQuestions.findIndex((e:any)  => e.id === this.section.id);
+      
+          if (index !== -1) {
+            storedQuestions[index] = { ...storedQuestions[index], ...this.sectionForm.value };
+            this.dashboardlsService.saveDashboardOptions(storedQuestions);
+            this.editSection = false;
+            this.refreshList.emit();
+          }
+        }   
       } else {
         // Crear nueva sección
-
-        this.sectionSelected.emit(this.sectionForm.value);
-      
+        this.sectionForm.patchValue({
+          id: uuidv4()
+        });
+        this.sectionSelected.emit(this.sectionForm.value);    
       }
     }else {
       this.errorMessage = !this.errorMessage;

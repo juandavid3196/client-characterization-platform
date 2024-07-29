@@ -10,7 +10,7 @@ export const questionConfigs = [
     icon:'check-icon',
     note_text:'',
     options: [''],
-    addedTobank:  false,
+    addedToBank:  false,
     settings: {
       another_field: false,
       question_multimedia: '',

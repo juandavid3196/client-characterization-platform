@@ -6,6 +6,9 @@
     (typeSelected)="onSelectedType($event)"  
     (sectionSelected)="onSectionSelected($event)" 
     (openBank)="openDataBankSection()"
+    (refreshList)="loadQuestionsFromLocalStorage()"
+    [section]="elementSelected"
+    [editSection]="editSection"
     ></app-questions-options>
     <app-data-bank   *ngIf="databankSection"  (formClose)="openDataBankSection()" [IndexPosition]="bankIndex" (reloadList)="loadQuestionsFromLocalStorage()" ></app-data-bank>
     <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"  ></app-setting>
@@ -41,12 +44,12 @@
                     <div class="question-type  {{indexSelected == i ? 'element-active' : '' }} " *ngIf="element.type !== 'section'" (click)="selectElement(i)">
                         <span class="numeral">{{element.numeral}}</span>
                         <span class="element-icon"> <img src='assets/icons/{{element.icon}}.svg' alt=""></span>
-                        <span class="element-text">{{element.text}}</span>
+                        <span class="element-text">{{element.text | truncate:20}}</span>
                         <span class="delete-icon" (click)="deleteQuestion(i)"> <mat-icon >delete</mat-icon> </span>
                     </div>
-                    <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="onElementSelected(i,element)">
+                    <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="selectElement(i)">
                         <span class="element-icon"><img src='assets/icons/{{element.icon}}.svg' alt=""></span>
-                        <span class="element-text">{{element.title}}</span>
+                        <span class="element-text">{{element.title | truncate:25}}</span>
                         <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
                     </div>
                     <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>

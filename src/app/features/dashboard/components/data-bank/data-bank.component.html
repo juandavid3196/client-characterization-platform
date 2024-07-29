@@ -16,7 +16,7 @@
             <div class="questions-container">
                 <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of arrayQuestions; let i = index">
                     <img src="assets/icons/{{item.icon}}.svg" alt="" class="q-icon">
-                    <span class="q-text">{{item.text}}</span>
+                    <span class="q-text">{{item.text | truncate: 90 }}</span>
                     <span class="q-state">
                         <img src="assets/icons/plus-icon-blue.svg" alt="" (click)="selectedQuestion(i)" *ngIf="!verifyIndex(i)" >
                         <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)" (click)="deselectQuestion(i)">

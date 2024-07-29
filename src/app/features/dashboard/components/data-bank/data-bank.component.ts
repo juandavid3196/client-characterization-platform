@@ -114,10 +114,10 @@ sendQuestions() :  void {
 
   // Insertar preguntas en la posición deseada y ajustar numerales
   for (let i = 0; i < questions.length; i++) {
-    if(questions.length === 1 ){
-      questions[i].numeral = numeralList + 1;
-    }else {
+    if (this.IndexPosition.position === 'forward'  && questions.length > 1 ) {
       questions[i].numeral = numeralList + 2;
+    }else{
+      questions[i].numeral = numeralList + 1;
     }
     numeralList++;
   }

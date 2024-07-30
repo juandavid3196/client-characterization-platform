@@ -12,6 +12,7 @@ import { TableQuestionComponent } from './components/table-question/table-questi
 import { DataBankComponent } from './components/data-bank/data-bank.component';
 import { SettingComponent } from './components/setting/setting.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { PreviewComponent } from './components/preview/preview.component';
 
 
 
@@ -24,6 +25,7 @@ import { TruncatePipe } from './pipes/truncate.pipe';
     DataBankComponent,
     SettingComponent,
     TruncatePipe,
+    PreviewComponent,
   ],
   imports: [
     CommonModule,

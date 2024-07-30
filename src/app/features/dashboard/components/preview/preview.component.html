@@ -1,0 +1,74 @@
+<div class="preview-container">
+    <div class="zoom-control-box" *ngIf="dashboardData.length > 0">
+        <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
+        <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
+    </div>
+    <div class="preview-box" appZoom *ngIf="dashboardData.length > 0">
+        <div class="p-inner-box">
+            <div class="questions-container" *ngFor="let item of dashboardData">
+                <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
+                    <div class="checkbox-view-box">
+                        <span class="q-number">pregunta {{item.numeral}}</span>
+                        <span class="q-text">{{item.text}}</span>
+                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                        <div class="options-container">
+                            <div class="option-box"  *ngFor="let option of item.options; let i = index">
+                                <div class="checkbox-box" *ngIf="item.options.length > 0">
+                                    <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === item.settings.answer_value"  [disabled]="true">
+                                    <label for="{{i}}"></label>
+                                </div>
+                                <span class="option-text">{{option}}</span>
+                            </div>
+                        </div>
+                        <div class="another-field-container" *ngIf="item.settings.another_field">
+                           <span class="af-text">Otra (Especifique)</span>
+                           <input type="text" class="af-input"  [disabled]="true">
+                        </div>
+                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.add_note">Nota  </span>{{item.note_text}}</span> 
+                    </div>
+                </div>
+                <div class="table-view-container" *ngIf="item.type === 'table'">
+                    <div class="table-view-box">
+                        <span class="q-number">pregunta {{item.numeral}}</span>
+                        <span class="q-text">{{item.text}}</span>
+                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                        <div class="table-section" *ngIf="item.options[0].text !== ''  || item.no_visible_title !== ''">
+                            <div class="table-styled">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th *ngFor="let option of item.options">{{ option.text }}</th>
+                                            <th *ngIf="item.no_visible_title != ''" class="no-visible-clm">{{item.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let rowIndex of getMaxLengthValue(item); let i = index">
+                                            <td *ngFor="let option of item.options">
+                                              <ng-container *ngIf="option.type === 'text'">
+                                                {{ option.rows[i] || '' }}
+                                              </ng-container>
+                                              <ng-container *ngIf="option.type === 'radio button'">
+                                                <label class="custom-radio-btn">
+                                                  <input type="radio" name="sample-{{ i }}">
+                                                  <span class="checkmark"></span>
+                                                </label>
+                                              </ng-container>
+                                            </td>
+                                            <td  class="no-visible-clm" *ngIf="item.no_visible_title !==  '' ">
+                                                {{item.no_visible_rows[i] || '' }}
+                                            </td>
+                                          </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                    </div>
+                </div>
+                <div class="section-container" *ngIf="item.type === 'section'">
+                    <span class="section-title">{{item.title}}</span>
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>

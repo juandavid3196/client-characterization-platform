@@ -1,6 +1,5 @@
-import { Component, HostListener, ViewChild} from '@angular/core';
+import { Component} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
-import { FormGroup } from '@angular/forms';
 import { Section } from '../../models/section.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +26,7 @@ export class DashboardMainComponent {
   btnSelected : string = 'dashboard';
   bankIndex : any = {index:0,position:''};
   editSection : boolean = false;
+  openPreview : boolean = false;
 
   constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
@@ -233,6 +233,10 @@ export class DashboardMainComponent {
     }else {
       this.btnSelected = 'databank';
     }
+  }
+
+  openPreviewSection(): void {
+    this.openPreview = !this.openPreview;
   }
 
   openSettingSection():void {

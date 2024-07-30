@@ -20,12 +20,12 @@
             <span class="survey-title">Example</span>
         </div>
         <div class="menu-right">
-            <button class="btn-save btn" (click)="saveDashboardData()">Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
-            <button class="btn-view btn">Vista Previa</button>
+            <button class="btn-save btn" (click)="saveDashboardData()" *ngIf="!openPreview" >Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
+            <button class="btn-view btn"  (click)="openPreviewSection()"> {{openPreview ? 'Editor' : 'Vista Previa'}}</button>
         </div>
     </div>
   </header>
-  <main>
+  <main *ngIf="!openPreview">
     <aside>
         <div class="aside-options">
             <div class="icon-box {{btnSelected == 'dashboard' ? 'icon-selected' : ''}}">
@@ -49,7 +49,7 @@
                     </div>
                     <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="selectElement(i)">
                         <span class="element-icon"><img src='assets/icons/{{element.icon}}.svg' alt=""></span>
-                        <span class="element-text">{{element.title | truncate:25}}</span>
+                        <span class="element-text">{{element.title | truncate:23}}</span>
                         <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
                     </div>
                     <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>
@@ -69,4 +69,5 @@
             </ng-container>
     </div>
   </main>
+  <app-preview *ngIf="openPreview"></app-preview>
 </div>

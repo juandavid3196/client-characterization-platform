@@ -8,6 +8,7 @@ import { SharedModule } from './shared/shared.module';
 import { SurveysModule } from './features/surveys/surveys.module';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardModule } from './features/dashboard/dashboard.module';
+import { AdminpanelModule } from './features/adminpanel/adminpanel.module';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
     SharedModule,
     SurveysModule,
     HttpClientModule,
-    DashboardModule
+    DashboardModule,
+    AdminpanelModule
 
   ],
   providers: [],

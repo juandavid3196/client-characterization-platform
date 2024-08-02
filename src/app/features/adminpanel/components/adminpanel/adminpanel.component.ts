@@ -9,9 +9,12 @@ export class AdminpanelComponent {
 
 
   sectionSelected : string = 'home';
+  searchTerm : string = '';
 
   onSectionSelected(text:string) : void {
     this.sectionSelected = text;
   }
+
+ 
 
 }

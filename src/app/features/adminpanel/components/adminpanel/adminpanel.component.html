@@ -29,7 +29,7 @@
     <main>
         <div class="top-section">
             <div class="search-box">
-                <input type="text" placeholder="Buscar" >
+                <input type="text" placeholder="Buscar">
                 <mat-icon class="search-bar-icon">search</mat-icon>
             </div>
             <div class="right">
@@ -64,6 +64,8 @@
                     <span class="elements-number">29</span>
                 </div>
             </div>
+            <app-survey-table [filteredWord]="searchTerm" *ngSwitchCase="'surveys'" ></app-survey-table>
+            <app-user-table *ngSwitchCase="'users'" ></app-user-table>
         </div>
     </main>
 </div>

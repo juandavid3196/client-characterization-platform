@@ -1,0 +1,41 @@
+<div class="survey-container">
+    <div class="survey-colums-box">
+        <ul>
+            <span class="left-menu">
+                <li>Nombre y Fecha de Modificacción</li>
+            </span>
+            <span class="right-menu">
+                <li>Preguntas</li>
+                <li>Clonar</li>
+                <li>Estado</li>
+                <li>Acciones</li>
+            </span>
+        </ul>
+    </div>
+    <div class="survey-rows-box" *ngFor="let survey of filteredSurveys" >
+        <div class="left-section">
+            <div class="title-box">
+                <span class="survey-title">{{survey.title}}</span>
+                <span class="survey-update">Modificado {{ survey.updated_date}}</span>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="row-box">
+                <span class="survey-number"> {{survey.question_count}}</span>
+            </div>
+            <div class="row-box">
+                <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon></span>
+            </div>
+            <div class="row-box">
+                <span class="survey-state">{{survey.state}}</span>
+            </div>
+            <div class="row-box">
+                <div class="actions-box">
+                    <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
+                    <span class="btn-edit btn"> <mat-icon class="btn-icon">edit</mat-icon></span>
+                    <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

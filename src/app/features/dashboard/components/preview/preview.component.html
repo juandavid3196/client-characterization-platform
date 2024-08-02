@@ -25,6 +25,7 @@
                            <input type="text" class="af-input"  [disabled]="true">
                         </div>
                         <span class="note-message"><span class="dark-message" *ngIf="item.settings.add_note">Nota  </span>{{item.note_text}}</span> 
+                        <div class="required-message-view" *ngIf="item.settings.required">Pregunta Obligatoria ACTIVADA</div>
                     </div>
                 </div>
                 <div class="table-view-container" *ngIf="item.type === 'table'">
@@ -63,6 +64,7 @@
                             </div>
                         </div>
                         <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                        <div class="required-message-view" *ngIf="item.settings.required">Pregunta Obligatoria ACTIVADA</div>
                     </div>
                 </div>
                 <div class="section-container" *ngIf="item.type === 'section'">

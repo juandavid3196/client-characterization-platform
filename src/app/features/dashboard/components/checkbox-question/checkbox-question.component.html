@@ -80,7 +80,7 @@
                             <div class="answer-box">
                                 <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  [elementData]="checkBoxForm.value" [OAnswer]="optionsAnswer.length" (toggleValues)="getToggleValues($event)"  (optionsLength)="checkOptionsLength()" (click)="checkOptionsLength()" ></app-toggle-button>
                                 <div class="select-container" *ngIf="defectedAnswer">
-                                    <app-filter-select  [options]="optionsAnswer" #appFilterComponent   (optionValue)="getOptionValue($event)"></app-filter-select>
+                                    <app-filter-select  [options]="optionsAnswer" #appFilterComponent  [elementData]="checkBoxForm.value" (optionValue)="getOptionValue($event)"></app-filter-select>
                                 </div>
                             </div>
                             <span class="file-message" *ngIf="optionsMessage && optionsAnswer.length === 0">Sin respuestas</span>

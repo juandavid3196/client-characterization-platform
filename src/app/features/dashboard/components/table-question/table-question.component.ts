@@ -33,8 +33,9 @@ export class TableQuestionComponent {
   spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
+
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
-  @Input() numeral !: number;
+  
   @Input() questionId : string = '';
   @Output() dataTable =  new EventEmitter<any>();
   @Output() refreshList =  new EventEmitter();

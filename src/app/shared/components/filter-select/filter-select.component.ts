@@ -8,7 +8,7 @@ import { DashboardlsService } from 'src/app/features/dashboard/services/dashboar
 })
 export class FilterSelectComponent {
 
-@Input() options : string[] = [];
+@Input() options : any[] = [];
 @Input() elementData : any = {};
 @Output() optionValue = new EventEmitter<string>();
 
@@ -27,6 +27,7 @@ selectedOption : string = '';
   verifySelectedOption() : void {
     if(!this.options.includes(this.selectedOption)){
       this.selectedOption = '';
+      this.optionValue.emit(this.selectedOption);
     }
   }
 

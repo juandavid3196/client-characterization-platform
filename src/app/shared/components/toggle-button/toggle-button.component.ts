@@ -22,7 +22,8 @@ export class ToggleButtonComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['elementData'].currentValue.id) {
+
+    if (changes['elementData']?.currentValue.id) {
       this.loadFromLocalStorage();
     }
   }

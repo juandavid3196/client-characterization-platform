@@ -39,6 +39,30 @@ export const questionConfigs = [
       required: false,
       add_note:false,
     }
-  }
+  },
+  {
+    id: '',
+    numeral: null,
+    type: 'scale',
+    text: '',
+    description:'',
+    icon:'scale-opinion-icon',
+    note_text:'',
+    addedToBank:  false,
+    scale_value: 0,
+    settings: {
+      question_multimedia: '',
+      answer_multimedia:'',
+      steps: 0,
+      left_label : 'Menor',
+      center_label:'Neutral',
+      right_label:'Mayor',
+      answer_value:'',
+      required: false,
+      defected_answer:false,
+      add_note:false,
+      apply:false,
+    }
+  },
 
 ];

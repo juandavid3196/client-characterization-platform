@@ -64,8 +64,9 @@
     </aside>
     <div class="main-panel">
             <ng-container [ngSwitch]="elementSelected.type" *ngIf="elementSelected.type !== 'section'">
-                <app-table-question *ngSwitchCase="'table'"  [numeral]="elementSelected.numeral" [questionId]="elementSelected.id" (refreshList)="onRefreshList()" ></app-table-question>
-                <app-checkbox-question *ngSwitchCase="'checkbox'"  [numeral]="elementSelected.numeral" [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-checkbox-question>
+                <app-table-question *ngSwitchCase="'table'"  [questionId]="elementSelected.id" (refreshList)="onRefreshList()" ></app-table-question>
+                <app-checkbox-question *ngSwitchCase="'checkbox'"   [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-checkbox-question>
+                <app-scale-question *ngSwitchCase="'scale'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-scale-question>
             </ng-container>
     </div>
   </main>

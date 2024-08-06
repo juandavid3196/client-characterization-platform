@@ -1,0 +1,133 @@
+<div class="main-container">
+    <app-spiner *ngIf="spinner"></app-spiner>
+    <div class="top-options-section">
+        <span (click)="onChangeSection()" class="{{changeSection ?'section-active' : ''}} ">Editar</span>
+        <span (click)="onChangeSection()" class="{{!changeSection ?'section-active' : ''}} ">Vista</span>
+    </div>
+    <div class="edit-section" *ngIf="changeSection">
+        <div class="question-container">
+            <form  [formGroup]="yesnoForm" (ngSubmit)="onSubmit()">
+            <div class="question-section">
+                <div class="question-s-number">
+                    <span class="number">{{yesnoForm.value.numeral}}</span>
+                </div>
+                
+                <div class="question-s-container">
+                    <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta"  formControlName="text">
+                    <input type="text" class="q-s-description" placeholder="Descripción" formControlName="description">
+                </div>
+            </div>
+            <div class="note-section" *ngIf="addNote">
+                <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
+            </div>
+            <div class="buttons-yesno-section">
+                <span class="q-yesno-box">
+                        <img src="assets/icons/{{iconsType === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
+                </span>
+                <span class="q-yesno-box">
+                        <img src="assets/icons/{{iconsType === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
+                </span>
+            </div>
+            <div class="settings-section">
+                <div class="settings-s-top">
+                    <div class="eyelash-box">
+                        Opciones
+                    </div>
+                </div>
+                <div class="settings-s-container" formGroupName="settings">
+                    <div class="c-section">
+                        <div class="container-box">
+                            <span class="label">Elegir un icono</span>
+                            <div class="icons-container">
+                                <div class="icons-box {{iconsType === 'hands' ? 'selected-icons' :''}}"  (click)="iconsSelection('hands')">
+                                    <img src="assets/icons/like-hand-icon.svg" alt="">
+                                    <img src="assets/icons/dislike-hand-icon.svg" alt="">
+                                </div>
+                                <div class="icons-box {{iconsType === 'symbols' ? 'selected-icons' :''}}" (click)="iconsSelection('symbols')">
+                                    <img src="assets/icons/checking-icon.svg" alt="">
+                                    <img src="assets/icons/deny-icon.svg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box mayor">
+                            <span class="label">Respuesta por defecto</span>
+                            <div class="answer-box">
+                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  [elementData]="yesnoForm.value" [OAnswer]="yesNoOptions.length" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                                <div class="select-container" *ngIf="defectedAnswer">
+                                    <app-filter-select  [options]="yesNoOptions" #appFilterComponent  [elementData]="yesnoForm.value" (optionValue)="getOptionValue($event)"></app-filter-select>
+                                </div>
+                            </div>
+                            <span class="file-message" *ngIf="optionsMessage && yesNoOptions.length === 0">Sin respuestas</span>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Añadir Nota</span>
+                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)" [elementData]="yesnoForm.value"></app-toggle-button>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Obligatorio</span>
+                            <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)" [elementData]="yesnoForm.value"></app-toggle-button>
+                        </div>  
+                    </div>
+                    <div class="c-section">
+                        <div class="container-box">
+                            <span class="label">Adjuntar video/imagen para pregunta</span>
+                            <div class="answer-box">
+                                <div class="file-container">
+                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
+                                    <label for="question_multimedia">Adjuntar</label>
+                                    <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
+                                </div>
+                                <div class="clean-file-container" *ngIf="qMessage">
+                                    <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Ampliar Respuesta</span>
+                            <app-toggle-button name="enlarge_answer" #appToggleButton  (toggleValues)="getToggleValues($event)" [elementData]="yesnoForm.value"></app-toggle-button>
+                        </div>  
+                    </div>
+                </div>
+        
+            </div>
+            <div class="btn-section">
+                <div class="btn-s-left">
+                    <button class="btn btn-bank {{this.yesnoForm.value.addedToBank ? 'btn-bank-blocked' : ''}} "(click)="addToBank()" >{{this.yesnoForm.value.addedToBank ? 'Agregada' : 'Agregar'}}<img src="assets/icons/bank-blue-icon.svg" alt=""></button>
+                </div>
+                <div class="btn-s-right">
+                    <button class="btn-clean btn" type="button" (click)="onResetForm()">Restaurar <mat-icon>refresh</mat-icon> </button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+    <div class="view-section"  *ngIf="!changeSection" >
+        <div class="checkbox-view-container">
+            <div class="checkbox-view-box">
+                <span class="q-number">pregunta {{yesnoForm.value.numeral}}</span>
+                <span class="q-text">{{yesnoForm.value.text}}</span>
+                <div class="q-description"> <span class="dark-description" *ngIf="yesnoForm.value.description != '' " >Descripción: </span>{{yesnoForm.value.description}}</div>
+                <div class="buttons-yesno-section">
+                    <span class="q-yesno-box">
+                            <img src="assets/icons/{{iconsType === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
+                            <span class="small-message">SI</span>
+                    </span>
+                    <span class="q-yesno-box">
+                            <img src="assets/icons/{{iconsType === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
+                            <span class="small-message">NO</span>
+                    </span>
+                </div>
+                <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{yesnoForm.value.note_text}}</span>
+                <div class="required-message-view" *ngIf="required">
+                    <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
+                </div>    
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

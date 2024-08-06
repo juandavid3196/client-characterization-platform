@@ -67,6 +67,7 @@
                 <app-table-question *ngSwitchCase="'table'"  [questionId]="elementSelected.id" (refreshList)="onRefreshList()" ></app-table-question>
                 <app-checkbox-question *ngSwitchCase="'checkbox'"   [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-checkbox-question>
                 <app-scale-question *ngSwitchCase="'scale'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-scale-question>
+                <app-yes-no-question *ngSwitchCase="'yes/no'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-yes-no-question>
             </ng-container>
     </div>
   </main>

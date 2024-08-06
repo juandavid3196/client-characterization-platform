@@ -1,70 +1,60 @@
-import { Component, ElementRef, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 import { DataBankService } from '../../services/data-bank.service';
 import { Subscription } from 'rxjs';
 import { DashboardlsService } from '../../services/dashboardls.service';
-
 @Component({
-  selector: 'app-scale-question',
-  templateUrl: './scale-question.component.html',
-  styleUrls: ['./scale-question.component.scss']
+  selector: 'app-yes-no-question',
+  templateUrl: './yes-no-question.component.html',
+  styleUrls: ['./yes-no-question.component.scss']
 })
-export class ScaleQuestionComponent {
+export class YesNoQuestionComponent {
   @ViewChild('appFilterComponent') FilterComponent: FilterSelectComponent | undefined;
   @ViewChild('appToggleButtonDefectedA') ToggleComponent: ToggleButtonComponent | undefined;
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
-  scaleForm : FormGroup;
+  yesnoForm : FormGroup;
   addNote : boolean =  false;
   defectedAnswer : boolean = false;
+  enlargeAnswer : boolean = false;
   anotherField : boolean = false;
   required :boolean = false;
-  apply : boolean = false;
   qMessage : boolean = false;
   aMessage : boolean = false;
-  optionsMessage : boolean = false;
   changeSection: boolean = true;
+  optionsMessage : boolean = false;
   spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
-  sliderValue: number = 5;
-  sliderOptions : number[] = [1,2,3,4,5];
-  sliderMouseOptions : number[] = [];
-  showValue : boolean = false;
-
+  yesNoOptions : string[] = ['Si','No'];
+  iconsType : string = '';
 
   @Input() elementData : any = {};
   @Output() refreshList =  new EventEmitter();
 
-  @ViewChild('slideValue') slideValueElement!: ElementRef;
-
   constructor(private fb:FormBuilder,
      private dataBankService :DataBankService, 
      private dashboardlsService : DashboardlsService ){
-    this.scaleForm = this.fb.group({  // create a fb.group for every Object 
+   
+      this.yesnoForm = this.fb.group({  // create a fb.group for every Object 
       id: '',
       numeral: null,
-      type: 'scale',
+      type: 'yes/no',
       text: '',
       description:'',
-      icon:'scale-opinion-icon',
+      icon:'yes-no-icon',
       note_text:'',
       addedToBank: false,
-      scale_value : 0,
+      selected_icons:'',
       settings: this.fb.group({  
         question_multimedia: '',
-        options_multimedia: '',
-        steps: 0,
-        left_label : '',
-        center_label:'',
-        right_label:'',
         answer_value: '',
         required: false,
         defected_answer: false,
         add_note: false,
-        apply:false,
+        enlarge_answer:false,
       })
     });
   }
@@ -72,7 +62,7 @@ export class ScaleQuestionComponent {
   ngOnInit() {
     this.loadFromDataObject();
     this.initializeFormValues();
-    this.formSubscription = this.scaleForm.valueChanges.subscribe(value => {
+    this.formSubscription = this.yesnoForm.valueChanges.subscribe(value => {
       if (this.elementData.id !== undefined) {
         this.updateDashboardOptions(value);
       }
@@ -96,17 +86,17 @@ export class ScaleQuestionComponent {
     }
   }
 
-  saveScaleData(): void {
+  saveYesNoData(): void {
 
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
     
     if (storedQuestions) {
      
-      const index = storedQuestions.findIndex((e:any)  => e.id === this.scaleForm.value.id);
+      const index = storedQuestions.findIndex((e:any)  => e.id === this.yesnoForm.value.id);
       
       if (index !== -1) {
   
-        storedQuestions[index] = { ...storedQuestions[index], ...this.scaleForm.value };
+        storedQuestions[index] = { ...storedQuestions[index], ...this.yesnoForm.value };
         this.dashboardlsService.saveDashboardOptions(storedQuestions);
         console.log('Questions updated successfully in Local Storage');
       } else {
@@ -128,7 +118,7 @@ export class ScaleQuestionComponent {
       this.dashboardOptions = storedQuestions;
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
-      this.scaleForm.patchValue(element);
+      this.yesnoForm.patchValue(element);
       this.spinner =  false;
     }else {
       this.spinner = true;
@@ -139,11 +129,12 @@ export class ScaleQuestionComponent {
   
 
   initializeFormValues(): void {
-    const settings = this.scaleForm.get('settings') as FormGroup;
+    const settings = this.yesnoForm.get('settings') as FormGroup;
     this.addNote = settings.get('add_note')?.value;
     this.defectedAnswer = settings.get('defected_answer')?.value;
     this.required = settings.get('required')?.value;
-    this.apply = settings.get('apply')?.value;
+    this.enlargeAnswer = settings.get('enlarge_answer')?.value;
+    this.iconsType = this.yesnoForm.get('selected_icons')?.value;
   }
 
 
@@ -158,7 +149,7 @@ export class ScaleQuestionComponent {
 
   getToggleValues(values : any): void {
 
-    let settings = this.scaleForm.get('settings') as FormGroup;  // access to a specific property.   
+    let settings = this.yesnoForm.get('settings') as FormGroup;  // access to a specific property.   
      
      if (settings.controls.hasOwnProperty(values.name)) { // verify a property 
 
@@ -173,7 +164,7 @@ export class ScaleQuestionComponent {
 
   checkInfo(values:any):boolean {
     if(values.name === 'add_note' && values.state === false){
-      this.scaleForm.patchValue({ ['note_text']: '' }); 
+      this.yesnoForm.patchValue({ ['note_text']: '' }); 
     }
     return true;
   }
@@ -181,77 +172,23 @@ export class ScaleQuestionComponent {
 
 getOptionValue(option : string): void {
 
-    let settings = this.scaleForm.get('settings') as FormGroup;   
+    let settings = this.yesnoForm.get('settings') as FormGroup;   
     
     if (settings.controls.hasOwnProperty('answer_value')) {
       settings.patchValue({ ['answer_value']: option });
      }
-     console.log(option);
-     if(option !== ''){
-       this.mouseOver(parseInt(option));
-     }else {
-      this.cleansliderOptions();
-     }
   }
 
-  onSliderInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.sliderValue = parseInt(inputElement.value);
-    let item = 1;
-    this.sliderOptions  = [];
-    for (let index = 0; index < this.sliderValue; index++) {
-      this.sliderOptions.push(item);
-      item += 1;
-    }
-    let numberOption = parseInt(inputElement.value);
-    this.slideValueElement.nativeElement.style.left = (numberOption === 1) ? (numberOption * 0) :  ( (numberOption * 10) - 10) + '%';
-    this.showValue = true;
-  }
-
-  removeValue() : void {
-    this.showValue = false;
-  }
-
-  verifyOptionsValue() : void {
-    this.FilterComponent?.verifySelectedOption(); 
-  }
-
-  mouseOver(item:number) : void {
-    for (let index = 1; index <= item; index++) {
-      this.sliderMouseOptions.push(index);  
-    }
+  iconsSelection(type:string) : void {
+    this.iconsType = type;
+    this.yesnoForm.patchValue({ ['selected_icons']: type }); 
   } 
 
-  verifyIndex(item:number) : boolean {
-    if(this.sliderMouseOptions.includes(item)){
-      return true;
-    }
-    return false;
-  }
-
-  cleansliderOptions() : void {
-    this.sliderMouseOptions = [];
-  }
-
-
-  labelTitle(item: number): string {
-    let label = '';
-    const settings = this.scaleForm.get('settings') as FormGroup;
-    if(item == 1 && this.sliderOptions.length > 1){
-      label = settings.get('left_label')?.value;
-    }else if(this.sliderOptions.length >= 3 && item === ((this.sliderOptions.length / 2) + 0.5)){
-      label  = settings.get('center_label')?.value;
-    }else if(item === this.sliderOptions.length) {
-      label  = settings.get('right_label')?.value;
-    }
-
-    return label;
-  }
 
   onFileChange(event: any, controlName: string): void {
     const file = event.target.files[0];
     if (file) {
-      const settings = this.scaleForm.get('settings') as FormGroup;
+      const settings = this.yesnoForm.get('settings') as FormGroup;
       settings.patchValue({ [controlName]: file });
 
       if(controlName == 'question_multimedia'){
@@ -263,7 +200,7 @@ getOptionValue(option : string): void {
   }
 
   resetInputFile(controlName:string) {
-    const settings = this.scaleForm.get('settings') as FormGroup;
+    const settings = this.yesnoForm.get('settings') as FormGroup;
     settings.patchValue({ [controlName]: '' });
     if(controlName == 'question_multimedia'){
       this.qMessage = !this.qMessage;
@@ -279,49 +216,41 @@ getOptionValue(option : string): void {
   }
 
   onResetForm(): void {
-    this.resetscaleForm();
+    this.resetyesnoForm();
     this.resetFormState();
-    console.log(this.scaleForm.value);
   }
   
-  resetscaleForm(): void {
-    this.scaleForm.reset({
+  resetyesnoForm(): void {
+    this.yesnoForm.reset({
       id: this.elementData.id || '',
       numeral: null,
-      type: 'scale',
+      type: 'yes/no',
       text: '',
       description:'',
-      icon:'scale-opinion-icon',
+      icon:'yes-no-icon',
       note_text:'',
       addedToBank: false,
-      scale_value : 0,
       settings: this.fb.group({  
         question_multimedia: '',
-        options_multimedia: '',
-        steps: 0,
-        left_label : '',
-        center_label:'',
-        right_label:'',
         answer_value: '',
         required: false,
         defected_answer: false,
         add_note: false,
-        apply:false,
       })
     }); 
   }
   
   
   resetFormState(): void {
-    this.sliderOptions = [1,2,3,4,5];
+    this.yesNoOptions = [];
     this.initializeFormValues();
     this.ToggleComponent?.reloadComponent();
     this.reloadAllControls();
   }
   
   addToBank() : void {
-    this.scaleForm.patchValue({ ['addedToBank']: true });
-    this.dataBankService.createBank(this.scaleForm.value).subscribe(
+    this.yesnoForm.patchValue({ ['addedToBank']: true });
+    this.dataBankService.createBank(this.yesnoForm.value).subscribe(
       (response) => {
         console.log('Bank created', response);
       },
@@ -334,8 +263,8 @@ getOptionValue(option : string): void {
 
 
   onSubmit() : void {
-   if(this.scaleForm.valid){
-    this.saveScaleData();
+   if(this.yesnoForm.valid){
+    this.saveYesNoData();
     this.refreshList.emit();
    }
   }
@@ -343,7 +272,7 @@ getOptionValue(option : string): void {
   ngOnDestroy(): void {
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
-      this.saveScaleData();
+      this.saveYesNoData();
       this.onResetForm();
     }
   }

@@ -14,6 +14,7 @@ import { SettingComponent } from './components/setting/setting.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { PreviewComponent } from './components/preview/preview.component';
 import { ScaleQuestionComponent } from './components/scale-question/scale-question.component';
+import { YesNoQuestionComponent } from './components/yes-no-question/yes-no-question.component';
 
 
 
@@ -28,6 +29,7 @@ import { ScaleQuestionComponent } from './components/scale-question/scale-questi
     TruncatePipe,
     PreviewComponent,
     ScaleQuestionComponent,
+    YesNoQuestionComponent,
   ],
   imports: [
     CommonModule,

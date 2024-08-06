@@ -64,5 +64,24 @@ export const questionConfigs = [
       apply:false,
     }
   },
+  {
+    id: '',
+    numeral: null,
+    type: 'yes/no',
+    text: '',
+    description:'',
+    icon:'yes-no-icon',
+    note_text:'',
+    addedToBank: false,
+    selected_icons:'hands',
+    settings: {  
+      question_multimedia: '',
+      answer_value: '',
+      required: false,
+      defected_answer: false,
+      add_note: false,
+      enlarge_answer:false,
+    },
+  },
 
 ];

@@ -24,7 +24,7 @@
                 <div class="scale-circle-box" *ngIf="this.scaleForm.value.settings.apply">
                     <span class="scale-circle">N/A</span>
                 </div>
-                <div class="scale-circle-box" *ngFor="let item of sliderOPtions">
+                <div class="scale-circle-box" *ngFor="let item of sliderOptions">
                     <span class="scale-circle">{{item}}</span>
                     <span class="scale-circle-label">{{labelTitle(item)}}</span>
                 </div>
@@ -67,12 +67,12 @@
                         <div class="container-box mayor">
                             <span class="label">Respuesta por defecto</span>
                             <div class="answer-box">
-                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  [elementData]="scaleForm.value" [OAnswer]="sliderOPtions.length" (toggleValues)="getToggleValues($event)"></app-toggle-button>
+                                <app-toggle-button name="defected_answer"  #appToggleButtonDefectedA  [elementData]="scaleForm.value" [OAnswer]="sliderOptions.length" (toggleValues)="getToggleValues($event)"></app-toggle-button>
                                 <div class="select-container" *ngIf="defectedAnswer">
-                                    <app-filter-select  [options]="sliderOPtions" #appFilterComponent  [elementData]="scaleForm.value" (optionValue)="getOptionValue($event)"></app-filter-select>
+                                    <app-filter-select  [options]="sliderOptions" #appFilterComponent  [elementData]="scaleForm.value" (optionValue)="getOptionValue($event)"></app-filter-select>
                                 </div>
                             </div>
-                            <span class="file-message" *ngIf="optionsMessage && sliderOPtions.length === 0">Sin respuestas</span>
+                            <span class="file-message" *ngIf="optionsMessage && sliderOptions.length === 0">Sin respuestas</span>
                         </div>
                         <div class="container-box">
                             <span class="label">Añadir Nota</span>
@@ -126,8 +126,8 @@
                     <div class="scale-circle-box" *ngIf="this.scaleForm.value.settings.apply">
                         <span class="scale-circle">N/A</span>
                     </div>
-                    <div class="scale-circle-box" *ngFor="let item of sliderOPtions">
-                        <span class="scale-circle {{verifyIndex(item) ? 'scale-circle-selected' : ''}} " (mouseenter)="mouseOver(item)"  (mouseleave)="cleanSliderOptions()" >{{item}}</span>
+                    <div class="scale-circle-box" *ngFor="let item of sliderOptions">
+                        <span class="scale-circle {{verifyIndex(item) ? 'scale-circle-selected' : ''}} " (mouseenter)="mouseOver(item)"  (mouseleave)="cleansliderOptions()" >{{item}}</span>
                         <span class="scale-circle-label">{{labelTitle(item)}}</span>
                     </div>
                 </div>

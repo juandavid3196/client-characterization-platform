@@ -79,6 +79,7 @@ export class DashboardMainComponent {
 
 
   openQuestionsMenu(index?:number,position?:string) : void {
+    console.log(this.questionIndex, this.indexPosition);
     this.openQuestion = !this.openQuestion;
     if(typeof index === 'number'){
       this.bankIndex.index = index;
@@ -87,7 +88,6 @@ export class DashboardMainComponent {
   }
 
   onSelectedType(type:string): void {
-    this.dashboardOptions = this.dashboardlsService.getDashboardOptions();
     let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
     if(selectedQuestion){
       // Asignar un ID único si no existe
@@ -115,8 +115,8 @@ export class DashboardMainComponent {
           this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
           this.updateDashboardQuestions(this.dashboardOptions);
           this.onElementSelected(this.questionIndex + 1, newQuestion);
-        }else{  
-        this.numeralListCount();
+        }else if(this.indexPosition === 'end'){  
+          this.numeralListCount();
           const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
           this.dashboardOptions.push(newQuestion);
           this.updateDashboardQuestions(this.dashboardOptions);
@@ -193,6 +193,10 @@ export class DashboardMainComponent {
     }else{
      this.elementSelected = {};
     }
+  }
+
+  setIndexDataBank(data:any) : void {
+    this.onElementSelected(data.index,data.element);
   }
 
   selectElement(index: number) : void {

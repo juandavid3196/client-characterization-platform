@@ -118,6 +118,33 @@
                     </span>
                 </div>
                 <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{yesnoForm.value.note_text}}</span>
+                <div class="options-section">
+                    <button class="btn-confirm" (click)="addAnswer()" *ngIf="enlargeAnswer">Ampliar Respuesta</button>
+                    <span class="options-subtitle" *ngIf="optionsMenu">Seleccione un formato</span>
+                    <div class="options-container" *ngIf="optionsMenu" >
+                        <div class="option-box">
+                            <div class="checkbox-box" >
+                                <input type="checkbox" id="video"  [checked]="answerValue === 'video'" (change)="answerType('video')" >
+                                <label for="video"></label>
+                            </div>
+                            <span class="option-text">Video</span>
+                        </div>
+                        <div class="option-box">
+                            <div class="checkbox-box" >
+                                <input type="checkbox" id="audio"  [checked]="answerValue === 'audio'" (change)="answerType('audio')">
+                                <label for="audio"></label>
+                            </div>
+                            <span class="option-text">Audio</span>
+                        </div>
+                        <div class="option-box">
+                            <div class="checkbox-box" >
+                                <input type="checkbox" id="text" [checked]="answerValue === 'text'" (change)="answerType('text')">
+                                <label for="text"></label>
+                            </div>
+                            <span class="option-text">Texto</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="required-message-view" *ngIf="required">
                     <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
                 </div>    

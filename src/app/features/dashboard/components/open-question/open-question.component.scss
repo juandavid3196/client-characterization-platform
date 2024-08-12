@@ -141,31 +141,7 @@
                 }
             }
 
-            .buttons-yesno-section {
-                width: auto;
-                display: flex;
-                align-items: center;
-                margin: 0 auto;
-                gap: 20px;
-                
-                .q-yesno-box {
-                    
-                    height: 70px;
-                    width: 70px;
-                    border-radius: 5px;
-                    border: 1px solid #B2B2B2;
-                    background-color: #EFEFEF;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-
-                    img{
-                        filter: brightness(0) saturate(100%) invert(25%) sepia(7%) saturate(90%) hue-rotate(315deg) brightness(96%) contrast(86%);
-                        height: 35px;
-                    }
-                }
-            }
-
+    
             .settings-section {
                 border: 0.5px solid #bababa;
                 border-radius: 5px;
@@ -205,36 +181,6 @@
         
                             input[type="file"]{
                                 display: none;
-                            }
-
-                            .icons-container{
-                                display: flex;
-                                gap: 20px;
-                                align-items: center;
-
-                                .icons-box {
-                                    display: flex;
-                                    gap: 5px;
-                                    align-items: center;
-                                    cursor: pointer;
-
-                                    img {
-                                        height: 23px;
-
-                                    }
-                                }
-
-                                .selected-icons, .icons-box:hover {
-                                    img {
-                                        filter: brightness(0) saturate(100%) invert(58%) sepia(58%) saturate(6098%) hue-rotate(186deg) brightness(102%) contrast(104%);
-                                    }
-                                }
-
-                                .icons-box:hover {
-                                    transform: scale(1.2);
-                                    transition: transform 0.2s ease-in-out;
-                                }
-                               
                             }
 
                             
@@ -434,63 +380,7 @@
                     font-weight: 500;
                 }
             }
-
-            .buttons-yesno-section {
-                width: auto;
-                display: flex;
-                align-items: center;
-                margin: 0 auto;
-                gap: 20px;
-                
-                .q-yesno-box {
-                    
-                    height: 70px;
-                    width: 70px;
-                    border-radius: 5px;
-                    border: 1px solid #B2B2B2;
-                    background-color: #EFEFEF;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    position: relative;
-
-                    img{
-                        filter: brightness(0) saturate(100%) invert(25%) sepia(7%) saturate(90%) hue-rotate(315deg) brightness(96%) contrast(86%);
-                        height: 35px;
-                    }
-
-                    .small-message {
-                        font-size: 12px;
-                        position: absolute;
-                        bottom: 2px;
-                        left: 2px;
-                        height: 16px;
-                        color: #7D7D7D;
-                    }
-
-                }
-
-                .q-yesno-box-selected, .q-yesno-box:hover {
-                    background-color:#D8EEFF;
-                    border: 1px solid #0D99FF;
-
-                    img {
-                        filter: brightness(0) saturate(100%) invert(58%) sepia(58%) saturate(6098%) hue-rotate(186deg) brightness(102%) contrast(104%);
-                    }
-
-                    .small-message {
-                        color: #0D99FF;
-                    }
-                }
-
-                .q-yesno-box:hover {
-                    cursor: pointer;
-                    transform: scale(1.2);
-                    transition: transform 0.2s ease-in-out;
-                }
-            }
-        
-        
+            
             .note-message {
                 color: #0D99FF;
                 font-size: 13px;
@@ -501,97 +391,22 @@
                 }
             }
 
-            .options-section {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-
-                .btn-confirm {
-                    background-color: #0D99FF;
-                    color: white;
-                    border: none;
-                    height: 35px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    padding: 0 30px;
-                    padding: 0 20px;
-                    width: fit-content;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
-        
-                .btn-confirm:hover {
-                    background-color: #0079cf;
-        
-                } 
-
-                .options-subtitle {
-                    font-size: 15px;
-                    font-weight: 450;
-                    color: #333E48;
-                }
-
-                .options-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-                    padding: 10px  80px 10px 10px;
+            .text-section {
+                width: auto;
+                input {
+                    width: -webkit-fill-available;
+                    height: 100px;
                     border: 1px solid #B2B2B2;
                     border-radius: 5px;
-                    width: fit-content;
-            
-                    .option-box {
-                     display: flex;
-                     gap: 20px;
-                     align-items: center;
-            
-                        .checkbox-box {
-                            
-                            input[type="checkbox"] {
-                                display: none;
-                            }
-            
-                            input[type="checkbox"]:checked + label::before {
-                                content: "";
-                                position: absolute;
-                                left: 9px;
-                                top: 4px;
-                                width: 8px;
-                                height: 14px;
-                                border: solid #fff;
-                                border-width: 0 3px 3px 0;
-                                transform: rotate(45deg);
-                            }
-                    
-                            input[type="checkbox"]:checked + label {
-                            background-color: #0D99FF;
-                            border: none;
-                            }
-            
-                            label {
-                                position: relative;
-                                cursor: pointer;
-                                display: inline-block;
-                                width: 30px;
-                                height: 30px;
-                                background-color: white;
-                                border: 0.5px solid #bababa;
-                                border-radius: 4px;
-                                transition: background-color 0.2s;
-                            }
-            
-            
-                        } 
-            
-                        .option-text {
-                            color: #333E48;
-                            font-size: 15px;
-                            font-weight: 400;
-                        }
-                    }
-                     
+                    padding-left: 5px;
+                    font-size: 14px;
+                }
+                input:focus {
+                    outline: none;
+                    border: 1px solid #0D99FF;
                 }
             }
+
 
             .required-message-view {
                 color:#DD1F1F;

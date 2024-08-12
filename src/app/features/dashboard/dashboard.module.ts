@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule } from '@angular/forms';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardMainComponent } from './components/dashboard-main/dashboard-main.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -15,6 +15,8 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { PreviewComponent } from './components/preview/preview.component';
 import { ScaleQuestionComponent } from './components/scale-question/scale-question.component';
 import { YesNoQuestionComponent } from './components/yes-no-question/yes-no-question.component';
+import { AnswerMenuComponent } from './components/answer-menu/answer-menu.component';
+import { OpenQuestionComponent } from './components/open-question/open-question.component';
 
 
 
@@ -30,13 +32,17 @@ import { YesNoQuestionComponent } from './components/yes-no-question/yes-no-ques
     PreviewComponent,
     ScaleQuestionComponent,
     YesNoQuestionComponent,
+    AnswerMenuComponent,
+    OpenQuestionComponent,
+  
   ],
   imports: [
     CommonModule,
     SharedModule,
     MatIconModule,
     DashboardRoutingModule,
-   ReactiveFormsModule
+   ReactiveFormsModule,
+   FormsModule
   ]
 })
 export class DashboardModule { }

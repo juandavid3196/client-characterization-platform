@@ -1,0 +1,67 @@
+<div class="questions-container {{close ? 'close' : '' }}">
+    <div class="questions-box {{close ? 'close' : '' }}">
+        <div class="eyeslashes-section">
+            <div class="right">
+                <span (click)="onChangeSection()" class="{{!changeSection ?'section-active' : ''}} ">Pregunta</span>
+                <span (click)="onChangeSection()" class="{{changeSection ?'section-active' : ''}} ">Sección</span>
+            </div>
+            <img src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
+        </div>
+        <main>
+            <div class="question-s" *ngIf="!changeSection">
+                <div class="q-main">
+                    <div class="q-main-section">
+                        <div class="options-container">
+                            <div class="o-box" (click)="selectType('table')">
+                                <img src="assets/icons/table-icon.svg" alt="">
+                                <span class="o-title">Tabla</span>
+                            </div>
+                            <div class="o-box" (click)="selectType('checkbox')">
+                                <img src="assets/icons/check-icon.svg" alt="">
+                                <span class="o-title">Checkbox</span>
+                            </div>
+                            <div class="o-box" (click)="selectType('yes/no')">
+                                <img src="assets/icons/yes-no-icon.svg" alt="">
+                                <span class="o-title">Si y No</span>
+                            </div>
+                            <div class="o-box" (click)="selectType('open')">
+                                <img src="assets/icons/open-q-icon.svg" alt="">
+                                <span class="o-title">Abierta</span>
+                            </div>
+                            <div class="o-box" (click)="selectType('scale')">
+                                <img src="assets/icons/scale-opinion-icon.svg" alt="">
+                                <span class="o-title">Escala de Opciones</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="separator"></span>
+                    <div class="q-main-section">
+                        <div class="options-container">
+                            <div class="o-box" (click)="sendInfo()">
+                                <img src="assets/icons/q-bank-icon.svg" alt="">
+                                <span class="o-title">Banco de Preguntas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="main-section" *ngIf="changeSection">
+                    <form  [formGroup]="sectionForm"  (ngSubmit)="onSubmit()">
+                        <div class="form-box">
+                            <label for="title">Titulo de la Sección</label>
+                            <input type="text" name="title"  formControlName="title" (input)="validateField('title')">
+                            <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>    El campo titulo es obligatorio</span>
+                        </div>
+                        <div class="btns-section">
+                        <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
+                        <div class="btn-bottom-box">
+                            <button class="btn-confirm" type="submit">{{editSection ? "Editar" : "Crear"}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>      
+        </main>
+       
+    </div>
+</div>
+

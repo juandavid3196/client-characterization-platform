@@ -83,5 +83,21 @@ export const questionConfigs = [
       enlarge_answer:false,
     },
   },
+  {
+    id: '',
+    numeral: null,
+    type: 'open',
+    text: '',
+    description:'',
+    icon:'open-q-icon',
+    note_text:'',
+    text_answer:'',
+    addedToBank: false,
+    settings: {  
+      question_multimedia: '',
+      required: false,
+      add_note: false,
+    },
+  },
 
 ];

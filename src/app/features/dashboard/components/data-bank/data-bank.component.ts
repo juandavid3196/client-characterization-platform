@@ -14,6 +14,7 @@ export class DataBankComponent {
 close : boolean = false;
 @Output() formClose = new EventEmitter<void>();
 @Output() reloadList = new EventEmitter<void>();
+@Output() selectedOption =  new EventEmitter<any>();
 bankQuestions : any[] = [];
 arrayQuestions : any[] = [];
 selectedIndexes : number[] = [];
@@ -95,7 +96,7 @@ filterByType(type: string) {
 
 sendQuestions() :  void {
   let questions = [];
-  let numeralList = 0;
+  let numeralList = 1;
 
   // Generar IDs y preparar las preguntas seleccionadas
   for (let i = 0; i < this.selectedIndexes.length; i++) {
@@ -105,45 +106,73 @@ sendQuestions() :  void {
 
   let dashboardOptions = this.dashboardlsService.getDashboardOptions();
 
-  // Calcular el numeral inicial basado en la IndexPosition
-  for (let i = 0; i < this.IndexPosition.index; i++ ){
-    if(dashboardOptions.length > 0 && dashboardOptions[i].type !== 'section'){
-      numeralList++;
-    }
-  }
-
-  // Insertar preguntas en la posición deseada y ajustar numerales
-  for (let i = 0; i < questions.length; i++) {
-    if (this.IndexPosition.position === 'forward'  && questions.length > 1 ) {
-      questions[i].numeral = numeralList + 2;
-    }else{
-      questions[i].numeral = numeralList + 1;
-    }
-    numeralList++;
-  }
+  
 
   if (this.IndexPosition.index === 0 && this.IndexPosition.position !== 'forward') {
     // Insertar al principio
     dashboardOptions.unshift(...questions);
-  } else {
+  }else {
     // Insertar en la posición especificada
     dashboardOptions.splice(this.IndexPosition.index + 1, 0, ...questions);
   }
 
-  // Ajustar los numerales de las preguntas existentes después de la inserción
-  for(let i = this.IndexPosition.index + questions.length; i < dashboardOptions.length; i++){
+   // agregar numerales
+  
+   for(let i =0; i< dashboardOptions.length; i++){
     if(dashboardOptions[i].type !== 'section'){
-      dashboardOptions[i].numeral = i + 1;
+      dashboardOptions[i].numeral = numeralList;
     }
+    numeralList +=1;
   }
 
   // Guardar las opciones actualizadas y resetear el estado
   this.dashboardlsService.saveDashboardOptions(dashboardOptions);
+  this.reloadList.emit();
+  this.selectedIndex(this.IndexPosition, questions);
+  numeralList = 1;
   this.IndexPosition.index = 0;
   this.IndexPosition.position = '';
   this.selectedIndexes = [];
-  this.reloadList.emit();
   this.onClose();
+}
+
+selectedIndex(positionData:any,element: any) :  void {
+  let data = {
+    index: 0,
+    element: {}
+  }
+  if(positionData.index === 0  && element.length === 1){
+    if(positionData.position === 'back'){
+      data = {
+       index: 0,
+       element:element[element.length-1]
+     }
+    }else{
+      data = {
+        index: 1,
+        element:element[element.length-1]
+      }
+    }
+  }else if(positionData.index === 0 && element.length >= 1){
+    if(positionData.position === 'back'){
+      data = {
+        index: element.length -1,
+        element:element[element.length-1]
+      }
+    }else {
+      data = {
+        index: element.length,
+        element:element[element.length-1]
+      }
+    } 
+  }else{
+    data = {
+      index: positionData.index + element.length,
+      element:element[element.length-1]
+    }
+  }
+ 
+  this.selectedOption.emit(data);
 }
 
 

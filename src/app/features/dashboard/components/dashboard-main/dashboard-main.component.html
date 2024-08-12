@@ -10,7 +10,13 @@
     [section]="elementSelected"
     [editSection]="editSection"
     ></app-questions-options>
-    <app-data-bank   *ngIf="databankSection"  (formClose)="openDataBankSection()" [IndexPosition]="bankIndex" (reloadList)="loadQuestionsFromLocalStorage()" ></app-data-bank>
+    <app-data-bank   
+    *ngIf="databankSection"  
+    (formClose)="openDataBankSection()" 
+    [IndexPosition]="bankIndex" 
+    (reloadList)="loadQuestionsFromLocalStorage()"
+    (selectedOption)="setIndexDataBank($event)"
+    ></app-data-bank>
     <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"  ></app-setting>
   <header>
     <app-user-bar></app-user-bar>
@@ -57,7 +63,7 @@
             <div class="add-question-container">
                 <div class="add-question-box">
                     <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>
-                    <span class="add-q-text" (click)="openQuestionsMenu(dashboardOptions.length)">Agregar pregunta</span>
+                    <span class="add-q-text" (click)="addNewElement(dashboardOptions.length -1, 'end')">Agregar pregunta</span>
                 </div>
             </div>
         </div>
@@ -68,6 +74,7 @@
                 <app-checkbox-question *ngSwitchCase="'checkbox'"   [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-checkbox-question>
                 <app-scale-question *ngSwitchCase="'scale'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-scale-question>
                 <app-yes-no-question *ngSwitchCase="'yes/no'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-yes-no-question>
+                <app-open-question *ngSwitchCase="'open'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-open-question>
             </ng-container>
     </div>
   </main>

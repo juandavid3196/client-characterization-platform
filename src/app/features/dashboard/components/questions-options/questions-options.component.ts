@@ -17,8 +17,9 @@ export class QuestionsOptionsComponent {
   @Output() formClose = new EventEmitter<void>()
   @Output() typeSelected = new EventEmitter<string>();
   @Output() sectionSelected = new EventEmitter<string>();
-  @Output() openBank = new EventEmitter<any>();
-  @Output() refreshList = new EventEmitter<any>();
+  @Output() openBank = new EventEmitter<void>();
+  @Output() refreshList = new EventEmitter<void>();
+  @Output() closeEditWindow =  new EventEmitter<void>();
   @Input() section !: Section;
   @Input() editSection : boolean  =false;
   
@@ -62,6 +63,7 @@ export class QuestionsOptionsComponent {
   
   onClose():void {
     this.close =  true;
+   this.closeEditWindow.emit();
     setTimeout(()=>{
       this.formClose.emit();
     },500);

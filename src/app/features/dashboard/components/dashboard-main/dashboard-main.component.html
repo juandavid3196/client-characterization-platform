@@ -2,11 +2,12 @@
 <div class="container">
     <app-questions-options 
     *ngIf="openQuestion"   
-    (formClose)="openQuestionsMenu()" 
+    (formClose)="openQuestionsMenu()"
     (typeSelected)="onSelectedType($event)"  
     (sectionSelected)="onSectionSelected($event)" 
     (openBank)="openDataBankSection()"
     (refreshList)="loadQuestionsFromLocalStorage()"
+    (closeEditWindow)="changeEditSection()"
     [section]="elementSelected"
     [editSection]="editSection"
     ></app-questions-options>

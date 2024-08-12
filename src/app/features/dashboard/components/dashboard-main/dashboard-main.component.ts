@@ -55,7 +55,9 @@ export class DashboardMainComponent {
   }
 
   updateDashboardQuestions(item: any[]): void {
+    this.addNumeralToQuestions();
     this.dashboardlsService.saveDashboardOptions(item);
+    this.onRefreshList();
   }
 
 
@@ -79,7 +81,6 @@ export class DashboardMainComponent {
 
 
   openQuestionsMenu(index?:number,position?:string) : void {
-    console.log(this.questionIndex, this.indexPosition);
     this.openQuestion = !this.openQuestion;
     if(typeof index === 'number'){
       this.bankIndex.index = index;
@@ -94,51 +95,37 @@ export class DashboardMainComponent {
       selectedQuestion.id = uuidv4(); // Generar un nuevo ID único   
         if(this.questionIndex === 0  && this.indexPosition === 'back'){
 
-          const newQuestion = { ...selectedQuestion, numeral: 1}; 
-          for(let i = 0; i < this.dashboardOptions.length; i++){
-            if(this.dashboardOptions[i].type != 'section'){
-              this.dashboardOptions[i].numeral  += 1;
-            }
-          }
-
-          this.dashboardOptions.unshift(newQuestion);
+          this.dashboardOptions.unshift(selectedQuestion);
           this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(0,newQuestion);
+          this.onElementSelected(0,selectedQuestion);
 
         }else if (this.questionIndex >= 0 && this.indexPosition === 'forward' ) {
-          const newQuestion = { ...selectedQuestion, numeral: this.dashboardOptions[this.questionIndex].numeral + 1}; 
-          for(let i = this.questionIndex + 1; i < this.dashboardOptions.length; i++){
-            if(this.dashboardOptions[i].type != 'section'){
-              this.dashboardOptions[i].numeral  += 1;
-            }
-          }
-          this.dashboardOptions.splice(this.questionIndex + 1, 0, newQuestion);
+          
+          this.dashboardOptions.splice(this.questionIndex + 1, 0, selectedQuestion);
           this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(this.questionIndex + 1, newQuestion);
+          this.onElementSelected(this.questionIndex + 1, selectedQuestion);
+       
         }else if(this.indexPosition === 'end'){  
-          this.numeralListCount();
-          const newQuestion = { ...selectedQuestion, numeral: this.numeralList};
-          this.dashboardOptions.push(newQuestion);
+          
+          this.dashboardOptions.push(selectedQuestion);
           this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(this.dashboardOptions.length -1,newQuestion);
+          this.onElementSelected(this.dashboardOptions.length -1,selectedQuestion);
     }
 
-    
     this.questionIndex = 0;
     this.indexPosition = '';
-
   }
 
 }
 
-  numeralListCount(): void {
-    this.numeralList = 1;
-    for(let i = 0; i < this.dashboardOptions.length; i++ ){
-      if(this.dashboardOptions[i].type != 'section'){
-       this.numeralList ++;
+  addNumeralToQuestions() : void {
+    let numeralList = 1;
+    for(let i =0; i< this.dashboardOptions.length; i++){
+      if(this.dashboardOptions[i].type !== 'section'){
+        this.dashboardOptions[i].numeral = numeralList;
+        numeralList +=1;
       }
     }
-
   }
 
   onSectionSelected(section:string): void {
@@ -159,25 +146,15 @@ export class DashboardMainComponent {
 
     this.questionIndex = 0;
     this.indexPosition = '';
-
   }
 
 
   deleteQuestion(index:number): void {
-   
-    if(index != this.dashboardOptions.length - 1){
-      for(let i = index; i < this.dashboardOptions.length; i++ ){
-        if(this.dashboardOptions[i].type != 'section'){
-          this.dashboardOptions[i].numeral  -= 1;
-        }
-      }
-    }
 
     this.selectAfterDelete(index);
     this.dashboardOptions.splice(index, 1);
     this.updateDashboardQuestions(this.dashboardOptions);
   }
-
 
     
   addNewElement(index:number,position:string): void {
@@ -210,6 +187,10 @@ export class DashboardMainComponent {
           this.openQuestionsMenu();
         }
       }
+  }
+
+  changeEditSection() :  void {
+    this.editSection =  false;
   }
 
   selectAfterDelete(index:number):void {

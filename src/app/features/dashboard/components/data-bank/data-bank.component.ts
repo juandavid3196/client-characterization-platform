@@ -121,8 +121,8 @@ sendQuestions() :  void {
    for(let i =0; i< dashboardOptions.length; i++){
     if(dashboardOptions[i].type !== 'section'){
       dashboardOptions[i].numeral = numeralList;
+      numeralList +=1;
     }
-    numeralList +=1;
   }
 
   // Guardar las opciones actualizadas y resetear el estado
@@ -137,41 +137,23 @@ sendQuestions() :  void {
 }
 
 selectedIndex(positionData:any,element: any) :  void {
-  let data = {
-    index: 0,
-    element: {}
-  }
+  let data = {};
   if(positionData.index === 0  && element.length === 1){
-    if(positionData.position === 'back'){
-      data = {
-       index: 0,
+     data = {
+       index: (positionData.position === 'back') ? 0 : 1,
        element:element[element.length-1]
-     }
-    }else{
-      data = {
-        index: 1,
-        element:element[element.length-1]
       }
-    }
   }else if(positionData.index === 0 && element.length >= 1){
-    if(positionData.position === 'back'){
-      data = {
-        index: element.length -1,
+    data = {
+        index:(positionData.position === 'back')? element.length -1:element.length,
         element:element[element.length-1]
       }
-    }else {
-      data = {
-        index: element.length,
-        element:element[element.length-1]
-      }
-    } 
   }else{
     data = {
       index: positionData.index + element.length,
       element:element[element.length-1]
     }
   }
- 
   this.selectedOption.emit(data);
 }
 

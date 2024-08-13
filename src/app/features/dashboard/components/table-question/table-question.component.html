@@ -1,5 +1,12 @@
 <div class="main-container">
     <app-spiner *ngIf="spinner"></app-spiner>
+    <app-answer-menu
+    *ngIf="openVideoWindow"
+    [elementData]="elementData"
+    [videoType]="videoUrlType"
+    (formClose)="closeVideoWindow()"
+    (refreshData)="loadUrlsData()"
+    ></app-answer-menu>
     <div class="top-options-section">
         <span (click)="onChangeSection()" class="{{changeSection ?'section-active' : ''}} ">Editar</span>
         <span (click)="onChangeSection()" class="{{!changeSection ?'section-active' : ''}} ">Vista</span>
@@ -113,8 +120,7 @@
                             <span class="label">Adjuntar video/imagen para pregunta</span>
                             <div class="answer-box">
                                 <div class="file-container">
-                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
-                                    <label for="question_multimedia">Adjuntar</label>
+                                    <button class="btn attach-btn" (click)="addVideoUrl('question_multimedia')">Adjuntar</button>
                                     <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
                                 </div>
                                 <div class="clean-file-container" *ngIf="qMessage">
@@ -126,8 +132,7 @@
                             <span class="label">Adjuntar video/imagen para las opciones</span>
                             <div class="answer-box">
                                 <div class="file-container">
-                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="options_multimedia" formControlName="options_multimedia" (change)="onFileChange($event, 'options_multimedia')"> 
-                                    <label for="options_multimedia">Adjuntar</label>
+                                    <button class="btn attach-btn" (click)="addVideoUrl('options_multimedia')">Adjuntar</button>
                                     <span class="file-message" *ngIf="aMessage">Archivo cargado</span>
                                 </div>
                                 <div class="clean-file-container" *ngIf="aMessage">

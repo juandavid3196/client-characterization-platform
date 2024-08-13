@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewC
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ToggleButtonComponent } from 'src/app/shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
-import { DashboardService } from '../../services/dashboard.service';
 import { DashboardlsService } from '../../services/dashboardls.service';
 import { Subscription } from 'rxjs';
 
@@ -37,8 +36,10 @@ export class TableQuestionComponent {
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
   @Input() questionId : string = '';
+  @Input() elementData : any = {};
   @Output() dataTable =  new EventEmitter<any>();
-  @Output() refreshList =  new EventEmitter();
+  @Output() refreshList =  new EventEmitter<void>();
+  @Output() videoWindow = new EventEmitter<string>();
 
   //Dropdown variables
   select_click: boolean = false;
@@ -47,6 +48,8 @@ export class TableQuestionComponent {
   selectedOption : string = '';
   DropOptions : any[] = [];
   rowsSection: string = 'basic';
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
   
   constructor(private fb:FormBuilder, 
     private dataBankService : DataBankService, 
@@ -73,8 +76,6 @@ export class TableQuestionComponent {
       })
     });
 
-   
-
   }
 
   ngOnInit() {
@@ -82,7 +83,6 @@ export class TableQuestionComponent {
     this.initializeFormValues();
 
     this.formSubscription = this.tableForm.valueChanges.subscribe(value => {
-      console.log(value);
       if (this.questionId !== undefined) {
         this.updateDashboardOptions(value);
       }
@@ -157,6 +157,9 @@ export class TableQuestionComponent {
   
       if (element) {
         this.tableForm.patchValue(element);
+        const settings = this.tableForm.get('settings') as FormGroup;
+        this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+        this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
   
         // cargar opciones
         const optionsArray = this.tableForm.get('options') as FormArray;
@@ -208,8 +211,6 @@ export class TableQuestionComponent {
   }
   
   
-  
-  
 
   initializeFormValues(): void {
     const settings = this.tableForm.get('settings') as FormGroup;
@@ -218,6 +219,7 @@ export class TableQuestionComponent {
     if(this.tableForm.get('no_visible_title')?.value){
       this.noVisibleField = true;
     }
+    
   }
   
   
@@ -258,33 +260,45 @@ export class TableQuestionComponent {
     this.changeSection = !this.changeSection;
   }
   
+  // Url videos
+
+  addVideoUrl(controlName: string): void {
+   this.loadUrlsData();
+   this.videoUrlType = controlName;
+   this.openVideoWindow = true;
+  }
+
+
+  loadUrlsData() : void {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+    
+    if (storedQuestions && this.questionId) {
+      this.dashboardOptions = storedQuestions;
+      const element = storedQuestions.find((e: any) => e.id === this.questionId);
   
-
-  onFileChange(event: any, controlName: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const settings = this.tableForm.get('settings') as FormGroup;
-      settings.patchValue({ [controlName]: file });
-
-      if(controlName == 'question_multimedia'){
-        this.qMessage = !this.qMessage;
-      }else if(controlName == 'options_multimedia'){
-        this.aMessage = !this.aMessage;
+      if (element) {
+        this.tableForm.patchValue(element);
+        const settings = this.tableForm.get('settings') as FormGroup;
+        this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+        this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
       }
     }
+  }
+
+  closeVideoWindow() : void {
+    this.openVideoWindow = false;
   }
 
   resetInputFile(controlName:string) {
     const settings = this.tableForm.get('settings') as FormGroup;
     settings.patchValue({ [controlName]: '' });
+
     if(controlName == 'question_multimedia'){
-      this.qMessage = !this.qMessage;
+      this.qMessage = false;
     }else if(controlName == 'options_multimedia'){
-      this.aMessage = !this.aMessage;
+      this.aMessage = false;
     }
   }
-
-  
 
    //Options Methods
   
@@ -458,7 +472,6 @@ getMaxLengthValue(): number[] {
  onResetForm(): void {
   this.resetTableForm();
   this.resetFormState();
-  console.log(this.tableForm.value);
 }
 
 resetTableForm(): void {
@@ -498,6 +511,8 @@ resetFormState(): void {
   this.selectedOption = '';
   this.DropOptions = [];
   this.noVisibleField = false;
+  this.qMessage = false;
+  this.aMessage = false;
   this.initializeFormValues();
   this.reloadAllControls();
 }

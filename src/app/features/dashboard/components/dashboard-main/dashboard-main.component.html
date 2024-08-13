@@ -1,24 +1,27 @@
 
 <div class="container">
     <app-questions-options 
-    *ngIf="openQuestion"   
-    (formClose)="openQuestionsMenu()"
-    (typeSelected)="onSelectedType($event)"  
-    (sectionSelected)="onSectionSelected($event)" 
-    (openBank)="openDataBankSection()"
-    (refreshList)="loadQuestionsFromLocalStorage()"
-    (closeEditWindow)="changeEditSection()"
-    [section]="elementSelected"
-    [editSection]="editSection"
+        *ngIf="openQuestion"   
+        (formClose)="openQuestionsMenu()"
+        (typeSelected)="onSelectedType($event)"  
+        (sectionSelected)="onSectionSelected($event)" 
+        (openBank)="openDataBankSection()"
+        (refreshList)="loadQuestionsFromLocalStorage()"
+        (closeEditWindow)="changeEditSection()"
+        [section]="elementSelected"
+        [editSection]="editSection"
     ></app-questions-options>
     <app-data-bank   
-    *ngIf="databankSection"  
-    (formClose)="openDataBankSection()" 
-    [IndexPosition]="bankIndex" 
-    (reloadList)="loadQuestionsFromLocalStorage()"
-    (selectedOption)="setIndexDataBank($event)"
+        *ngIf="databankSection"  
+        (formClose)="openDataBankSection()" 
+        [IndexPosition]="bankIndex" 
+        (reloadList)="loadQuestionsFromLocalStorage()"
+        (selectedOption)="setIndexDataBank($event)"
     ></app-data-bank>
-    <app-setting *ngIf="settingSection"  (formClose)="openSettingSection()"  ></app-setting>
+    <app-setting 
+        *ngIf="settingSection"  
+        (formClose)="openSettingSection()"  
+    ></app-setting>
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -71,11 +74,32 @@
     </aside>
     <div class="main-panel">
             <ng-container [ngSwitch]="elementSelected.type" *ngIf="elementSelected.type !== 'section'">
-                <app-table-question *ngSwitchCase="'table'"  [questionId]="elementSelected.id" (refreshList)="onRefreshList()" ></app-table-question>
-                <app-checkbox-question *ngSwitchCase="'checkbox'"   [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-checkbox-question>
-                <app-scale-question *ngSwitchCase="'scale'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-scale-question>
-                <app-yes-no-question *ngSwitchCase="'yes/no'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-yes-no-question>
-                <app-open-question *ngSwitchCase="'open'"  [elementData]="elementSelected" (refreshList)="onRefreshList()"></app-open-question>
+                <app-table-question 
+                    *ngSwitchCase="'table'"  
+                    [elementData]="elementSelected"
+                    [questionId]="elementSelected.id" 
+                    (refreshList)="onRefreshList()" 
+                ></app-table-question>
+                <app-checkbox-question 
+                    *ngSwitchCase="'checkbox'"   
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-checkbox-question>
+                <app-scale-question 
+                    *ngSwitchCase="'scale'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-scale-question>
+                <app-yes-no-question 
+                    *ngSwitchCase="'yes/no'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-yes-no-question>
+                <app-open-question 
+                    *ngSwitchCase="'open'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-open-question>
             </ng-container>
     </div>
   </main>

@@ -1,7 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Section } from '../../models/section.model';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { v4 as uuidv4 } from 'uuid';
 import { DashboardlsService } from '../../services/dashboardls.service';
 
 @Component({
@@ -10,55 +8,62 @@ import { DashboardlsService } from '../../services/dashboardls.service';
   styleUrls: ['./answer-menu.component.scss']
 })
 export class AnswerMenuComponent {
+
   close : boolean = false;
-  changeSection: boolean = false;
   errorMessage : boolean =  false;
+  editVideo: boolean =  false;
   @Output() formClose = new EventEmitter<void>()
-  @Output() typeSelected = new EventEmitter<string>();
-  @Output() sectionSelected = new EventEmitter<string>();
-  @Output() openBank = new EventEmitter<any>();
-  @Output() refreshList = new EventEmitter<any>();
-  @Input() section !: Section;
-  @Input() editSection : boolean  =false;
-  
+  @Output() refreshData = new EventEmitter<void>()
+  @Input() elementData : any = {};
+  @Input() videoType : string = '';
 
-
-  sectionForm !: FormGroup;
+  videoForm!: FormGroup;
 
   constructor( private fb:FormBuilder, private dashboardlsService: DashboardlsService){
-    this.sectionForm = this.fb.group({
-      id:'',
+    this.videoForm= this.fb.group({
       title: ['',Validators.required],
-      type:'section',
-      icon:'section-icon'
     })
   }
 
   ngOnInit():void {
-    if(this.editSection){
-     this.changeSection = !this.changeSection;
-     this.sectionForm.patchValue(this.section);
+    console.log('enter');
+    this.loadFromLocalStorage();
+    if(this.videoForm.value.title != ''){
+      this.editVideo = true;
     }
   }
 
-  selectType(type: string) {
-    this.typeSelected.emit(type);
-    this.onClose();
+  ngOnChanges(changes: SimpleChanges): void {
+
+    if (changes['videoType']?.currentValue) {
+      this.loadFromLocalStorage();
+    }
   }
 
   validateField(field: string): void {
-    if (this.sectionForm.value[field] !== '') {
+    if (this.videoForm.value[field] !== '') {
       this.errorMessage = false;
     }
   }
 
-  onChangeSection():void {
-    if(this.editSection) {
-      return;
-    }
-    this.changeSection = !this.changeSection;
-  }
+  loadFromLocalStorage() {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+    if (storedQuestions && this.elementData.id) {
+      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
+      if(element){
+          if (element.hasOwnProperty('settings')) {
+            const settings = element.settings;
+            if (settings.hasOwnProperty(this.videoType)) {
+              if(settings[this.videoType] !== ''){
+                this.videoForm.patchValue({['title']: settings[this.videoType]});
+              }
+            }
+          }
+      }
+     }
+   }
   
+
   onClose():void {
     this.close =  true;
     setTimeout(()=>{
@@ -67,37 +72,25 @@ export class AnswerMenuComponent {
   }
 
   onSubmit(): void {
-    if (this.sectionForm.valid) {
-      
-      if (this.editSection) {
-        const storedQuestions = this.dashboardlsService.getDashboardOptions();
-        if (storedQuestions && this.section.id) {
-          const index = storedQuestions.findIndex((e:any)  => e.id === this.section.id);
-      
-          if (index !== -1) {
-            storedQuestions[index] = { ...storedQuestions[index], ...this.sectionForm.value };
+    if (this.videoForm.valid) {
+      const storedQuestions = this.dashboardlsService.getDashboardOptions();
+      if (storedQuestions && this.elementData?.id) {
+        const index = storedQuestions.findIndex((e:any)  => e.id === this.elementData.id);
+        if (index !== -1) {
+          const question = storedQuestions[index];
+          if (question.settings) {
+            question.settings[this.videoType] = this.videoForm.value.title;
+          } 
+            storedQuestions[index] = { ...question };
             this.dashboardlsService.saveDashboardOptions(storedQuestions);
-            this.editSection = false;
-            this.refreshList.emit();
-          }
-        }   
-      } else {
-        // Crear nueva sección
-        this.sectionForm.patchValue({
-          id: uuidv4()
-        });
-        this.sectionSelected.emit(this.sectionForm.value);    
+        }
       }
     }else {
       this.errorMessage = !this.errorMessage;
       return;
     }
+    this.editVideo = false;
     this.onClose();
+    this.refreshData.emit();
   }
-
-  sendInfo() : void {
-    this.onClose();
-    this.openBank.emit()
-  }
-
 }

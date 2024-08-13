@@ -1,9 +1,10 @@
-import { Component} from '@angular/core';
+import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { Section } from '../../models/section.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DashboardlsService } from '../../services/dashboardls.service';
+import { TableQuestionComponent } from '../table-question/table-question.component';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -27,6 +28,7 @@ export class DashboardMainComponent {
   bankIndex : any = {index:0,position:''};
   editSection : boolean = false;
   openPreview : boolean = false;
+
 
   constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
 
@@ -223,7 +225,7 @@ export class DashboardMainComponent {
   openPreviewSection(): void {
     this.openPreview = !this.openPreview;
   }
-
+ 
   openSettingSection():void {
     this.settingSection = !this.settingSection;
     if(this.settingSection === false){

@@ -31,6 +31,8 @@ export class YesNoQuestionComponent {
   yesNoOptions : string[] = ['Si','No'];
   iconsType : string = '';
   answerValue : string = '';
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
 
   @Input() elementData : any = {};
   @Output() refreshList =  new EventEmitter();
@@ -119,8 +121,10 @@ export class YesNoQuestionComponent {
       this.dashboardOptions = storedQuestions;
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
-      this.yesnoForm.patchValue(element);
-      this.spinner =  false;
+        this.yesnoForm.patchValue(element);
+        const settings = this.yesnoForm.get('settings') as FormGroup;
+        this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+        this.spinner =  false;
     }else {
       this.spinner = true;
     }  
@@ -193,15 +197,33 @@ getOptionValue(option : string): void {
       this.answerValue = type;
   }
 
+  // Video URL
 
-  onFileChange(event: any, controlName: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const settings = this.yesnoForm.get('settings') as FormGroup;
-      settings.patchValue({ [controlName]: file });
-        this.qMessage = !this.qMessage;
-    }
-  }
+  addVideoUrl(controlName: string): void {
+    this.loadUrlsData();
+    this.videoUrlType = controlName;
+    this.openVideoWindow = true;
+   }
+ 
+ 
+   loadUrlsData() : void {
+     const storedQuestions = this.dashboardlsService.getDashboardOptions();
+     
+     if (storedQuestions && this.elementData.id) {
+       this.dashboardOptions = storedQuestions;
+       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
+   
+       if (element) {
+         this.yesnoForm.patchValue(element);
+         const settings = this.yesnoForm.get('settings') as FormGroup;
+         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+       }
+     }
+   }
+ 
+   closeVideoWindow() : void {
+     this.openVideoWindow = false;
+   }
 
   resetInputFile(controlName:string) {
     const settings = this.yesnoForm.get('settings') as FormGroup;
@@ -246,6 +268,7 @@ getOptionValue(option : string): void {
   resetFormState(): void {
     this.iconsType = 'hands';
     this.yesNoOptions = [];
+    this.qMessage = false;
     this.initializeFormValues();
     this.ToggleComponent?.reloadComponent();
     this.reloadAllControls();

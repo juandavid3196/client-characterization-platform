@@ -1,5 +1,12 @@
 <div class="main-container">
     <app-spiner *ngIf="spinner"></app-spiner>
+    <app-answer-menu
+        *ngIf="openVideoWindow"
+        [elementData]="elementData"
+        [videoType]="videoUrlType"
+        (formClose)="closeVideoWindow()"
+        (refreshData)="loadUrlsData()"
+    ></app-answer-menu>
     <div class="top-options-section">
         <span (click)="onChangeSection()" class="{{changeSection ?'section-active' : ''}} ">Editar</span>
         <span (click)="onChangeSection()" class="{{!changeSection ?'section-active' : ''}} ">Vista</span>
@@ -29,12 +36,11 @@
                 <div class="settings-s-container" formGroupName="settings">
                     <div class="c-section">
                         <div class="container-box">
-                            <span class="label">Adjuntar video/imagen para pregunta</span>
+                            <span class="label">Añadir video para pregunta</span>
                             <div class="answer-box">
                                 <div class="file-container">
-                                    <input type="file" class="attach-btn btn" value="Adjuntar"  id="question_multimedia" formControlName="question_multimedia" (change)="onFileChange($event, 'question_multimedia')">
-                                    <label for="question_multimedia">Adjuntar</label>
-                                    <span class="file-message" *ngIf="qMessage">Archivo cargado</span>
+                                    <button class="btn" (click)="addVideoUrl('question_multimedia')">Añadir URL</button>
+                                    <span class="file-message" *ngIf="qMessage">URL Añadida</span>
                                 </div>
                                 <div class="clean-file-container" *ngIf="qMessage">
                                     <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>

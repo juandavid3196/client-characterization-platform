@@ -32,6 +32,9 @@ export class TableQuestionComponent {
   spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
+  rowsSection: string = 'basic';
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
 
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
@@ -47,9 +50,7 @@ export class TableQuestionComponent {
   menu_open: boolean = false;
   selectedOption : string = '';
   DropOptions : any[] = [];
-  rowsSection: string = 'basic';
-  openVideoWindow : boolean = false;
-  videoUrlType : string = '';
+ 
   
   constructor(private fb:FormBuilder, 
     private dataBankService : DataBankService, 

@@ -24,6 +24,8 @@ export class OpenQuestionComponent {
   spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
   
 
   @Input() elementData : any = {};
@@ -111,6 +113,8 @@ export class OpenQuestionComponent {
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
       this.openForm.patchValue(element);
+      const settings = this.openForm.get('settings') as FormGroup;
+      this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
       this.spinner =  false;
     }else {
       this.spinner = true;
@@ -159,15 +163,34 @@ export class OpenQuestionComponent {
   }
 
 
+  //Video URL
 
-  onFileChange(event: any, controlName: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const settings = this.openForm.get('settings') as FormGroup;
-      settings.patchValue({ [controlName]: file });
-      this.qMessage = !this.qMessage;
-    }
-  }
+  addVideoUrl(controlName: string): void {
+    this.loadUrlsData();
+    this.videoUrlType = controlName;
+    this.openVideoWindow = true;
+   }
+ 
+ 
+   loadUrlsData() : void {
+     const storedQuestions = this.dashboardlsService.getDashboardOptions();
+     
+     if (storedQuestions && this.elementData.id) {
+       this.dashboardOptions = storedQuestions;
+       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
+   
+       if (element) {
+         this.openForm.patchValue(element);
+         const settings = this.openForm.get('settings') as FormGroup;
+         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+       }
+     }
+   }
+ 
+   closeVideoWindow() : void {
+     this.openVideoWindow = false;
+   }
+
 
   resetInputFile(controlName:string) {
     const settings = this.openForm.get('settings') as FormGroup;
@@ -206,6 +229,7 @@ export class OpenQuestionComponent {
   
   
   resetFormState(): void {
+    this.qMessage =  false;
     this.initializeFormValues();
     this.reloadAllControls();
   }

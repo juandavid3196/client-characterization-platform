@@ -18,10 +18,10 @@ export class CheckboxQuestionComponent {
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
   checkBoxForm : FormGroup;
-  addNote !: boolean;
-  defectedAnswer !: boolean;
-  anotherField !: boolean;
-  required !:boolean;
+  addNote : boolean = false;
+  defectedAnswer : boolean = false;
+  anotherField : boolean =  false;
+  required :boolean =  false;
   optionsAnswer : string[] = [];
   qMessage : boolean = false;
   aMessage : boolean = false;
@@ -31,6 +31,8 @@ export class CheckboxQuestionComponent {
   spinner: boolean = false;
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
 
   @Input() elementData : any = {};
   @Output() refreshList =  new EventEmitter();
@@ -119,8 +121,11 @@ export class CheckboxQuestionComponent {
       this.dashboardOptions = storedQuestions;
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
-        console.log(element);
+
       this.checkBoxForm.patchValue(element);
+      const settings = this.checkBoxForm.get('settings') as FormGroup;
+      this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+      this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
   
       // Load options
       const optionsArray = this.checkBoxForm.get('options') as FormArray;
@@ -199,19 +204,34 @@ getOptionValue(option : string): void {
   }
 
 
-  onFileChange(event: any, controlName: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const settings = this.checkBoxForm.get('settings') as FormGroup;
-      settings.patchValue({ [controlName]: file });
+  // Video Url
 
-      if(controlName == 'question_multimedia'){
-        this.qMessage = !this.qMessage;
-      }else if(controlName == 'options_multimedia'){
-        this.aMessage = !this.aMessage;
-      }
-    }
-  }
+  addVideoUrl(controlName: string): void {
+    this.loadUrlsData();
+    this.videoUrlType = controlName;
+    this.openVideoWindow = true;
+   }
+ 
+ 
+   loadUrlsData() : void {
+     const storedQuestions = this.dashboardlsService.getDashboardOptions();
+     
+     if (storedQuestions && this.elementData.id) {
+       this.dashboardOptions = storedQuestions;
+       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
+   
+       if (element) {
+         this.checkBoxForm.patchValue(element);
+         const settings = this.checkBoxForm.get('settings') as FormGroup;
+         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+         this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
+       }
+     }
+   }
+ 
+   closeVideoWindow() : void {
+     this.openVideoWindow = false;
+   }
 
   resetInputFile(controlName:string) {
     const settings = this.checkBoxForm.get('settings') as FormGroup;
@@ -298,6 +318,8 @@ getOptionValue(option : string): void {
   
   resetFormState(): void {
     this.optionsAnswer = [];
+    this.qMessage = false;
+    this.aMessage = false;
     this.initializeFormValues();
     this.ToggleComponent?.reloadComponent();
     this.reloadAllControls();

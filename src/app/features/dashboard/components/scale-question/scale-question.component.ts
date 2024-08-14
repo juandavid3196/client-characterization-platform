@@ -33,6 +33,8 @@ export class ScaleQuestionComponent {
   sliderOptions : number[] = [1,2,3,4,5];
   sliderMouseOptions : number[] = [];
   showValue : boolean = false;
+  openVideoWindow : boolean = false;
+  videoUrlType : string = '';
 
 
   @Input() elementData : any = {};
@@ -129,6 +131,8 @@ export class ScaleQuestionComponent {
       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
       if(element){
       this.scaleForm.patchValue(element);
+      const settings = this.scaleForm.get('settings') as FormGroup;
+      this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
       this.spinner =  false;
     }else {
       this.spinner = true;
@@ -248,31 +252,42 @@ getOptionValue(option : string): void {
     return label;
   }
 
-  onFileChange(event: any, controlName: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const settings = this.scaleForm.get('settings') as FormGroup;
-      settings.patchValue({ [controlName]: file });
 
-      if(controlName == 'question_multimedia'){
-        this.qMessage = !this.qMessage;
-      }else if(controlName == 'options_multimedia'){
-        this.aMessage = !this.aMessage;
-      }
-    }
-  }
+  //Video URL
+
+  addVideoUrl(controlName: string): void {
+    this.loadUrlsData();
+    this.videoUrlType = controlName;
+    this.openVideoWindow = true;
+   }
+ 
+ 
+   loadUrlsData() : void {
+     const storedQuestions = this.dashboardlsService.getDashboardOptions();
+     
+     if (storedQuestions && this.elementData.id) {
+       this.dashboardOptions = storedQuestions;
+       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
+   
+       if (element) {
+         this.scaleForm.patchValue(element);
+         const settings = this.scaleForm.get('settings') as FormGroup;
+         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+       }
+     }
+   }
+ 
+   closeVideoWindow() : void {
+     this.openVideoWindow = false;
+   }
 
   resetInputFile(controlName:string) {
     const settings = this.scaleForm.get('settings') as FormGroup;
     settings.patchValue({ [controlName]: '' });
     if(controlName == 'question_multimedia'){
       this.qMessage = !this.qMessage;
-    }else if(controlName == 'options_multimedia'){
-      this.aMessage = !this.aMessage;
     }
   }
-
-
 
   onChangeSection():void {
     this.changeSection = !this.changeSection;
@@ -314,6 +329,7 @@ getOptionValue(option : string): void {
   
   resetFormState(): void {
     this.sliderOptions = [1,2,3,4,5];
+    this.qMessage = false;
     this.initializeFormValues();
     this.ToggleComponent?.reloadComponent();
     this.reloadAllControls();

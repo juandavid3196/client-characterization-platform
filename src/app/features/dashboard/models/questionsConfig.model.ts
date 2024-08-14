@@ -49,11 +49,10 @@ export const questionConfigs = [
     icon:'scale-opinion-icon',
     note_text:'',
     addedToBank:  false,
-    scale_value: 0,
+    scale_value: 5,
     settings: {
       question_multimedia: '',
       answer_multimedia:'',
-      steps: 0,
       left_label : 'Menor',
       center_label:'Neutral',
       right_label:'Mayor',

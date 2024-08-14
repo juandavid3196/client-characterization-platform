@@ -26,7 +26,6 @@ export class AnswerMenuComponent {
   }
 
   ngOnInit():void {
-    console.log('enter');
     this.loadFromLocalStorage();
     if(this.videoForm.value.title != ''){
       this.editVideo = true;

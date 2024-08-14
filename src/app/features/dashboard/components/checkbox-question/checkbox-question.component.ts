@@ -175,6 +175,9 @@ export class CheckboxQuestionComponent {
 
       if(this.checkInfo(values)){
         settings.patchValue({ [values.name]: values.state }); // modify value
+        if(values.name === 'defected_answer' && values.state === false){
+          settings.patchValue({ ['answer_value']: '' });
+        }
         this.initializeFormValues();
       }else{
         return;
@@ -288,7 +291,7 @@ getOptionValue(option : string): void {
   resetCheckBoxForm(): void {
     this.checkBoxForm.reset({
       id: this.elementData.id || '',
-      numeral: null,
+      numeral: this.elementData.numeral || '',
       type: 'checkbox',
       text: '',
       description: '',

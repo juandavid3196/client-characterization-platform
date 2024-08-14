@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup} from '@angular/forms';
 import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
 import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
 import { DataBankService } from '../../services/data-bank.service';
@@ -30,7 +30,7 @@ export class ScaleQuestionComponent {
   dashboardOptions : any[] = [];
   formSubscription: Subscription | undefined;
   sliderValue: number = 5;
-  sliderOptions : number[] = [1,2,3,4,5];
+  sliderOptions : number[] = [];
   sliderMouseOptions : number[] = [];
   showValue : boolean = false;
   openVideoWindow : boolean = false;
@@ -54,11 +54,10 @@ export class ScaleQuestionComponent {
       icon:'scale-opinion-icon',
       note_text:'',
       addedToBank: false,
-      scale_value : 0,
+      scale_value : 5,
       settings: this.fb.group({  
         question_multimedia: '',
         options_multimedia: '',
-        steps: 0,
         left_label : '',
         center_label:'',
         right_label:'',
@@ -79,6 +78,7 @@ export class ScaleQuestionComponent {
         this.updateDashboardOptions(value);
       }
     });
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -133,6 +133,8 @@ export class ScaleQuestionComponent {
       this.scaleForm.patchValue(element);
       const settings = this.scaleForm.get('settings') as FormGroup;
       this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
+      this.setSliderSteps(this.scaleForm.value.scale_value);
+      this.sliderValue = this.scaleForm.value.scale_value;
       this.spinner =  false;
     }else {
       this.spinner = true;
@@ -168,6 +170,9 @@ export class ScaleQuestionComponent {
 
       if(this.checkInfo(values)){
         settings.patchValue({ [values.name]: values.state }); // modify value
+        if(values.name === 'defected_answer' && values.state === false){
+          settings.patchValue({ ['answer_value']: '' });
+        }
         this.initializeFormValues();
       }else{
         return;
@@ -190,12 +195,20 @@ getOptionValue(option : string): void {
     if (settings.controls.hasOwnProperty('answer_value')) {
       settings.patchValue({ ['answer_value']: option });
      }
-     console.log(option);
      if(option !== ''){
        this.mouseOver(parseInt(option));
      }else {
       this.cleansliderOptions();
      }
+  }
+
+  setSliderSteps(steps:number) : void {
+    let item = 1;
+    this.sliderOptions  = [];
+    for (let index = 0; index < steps; index++) {
+      this.sliderOptions.push(item);
+      item += 1;
+    }
   }
 
   onSliderInput(event: Event): void {
@@ -207,6 +220,7 @@ getOptionValue(option : string): void {
       this.sliderOptions.push(item);
       item += 1;
     }
+    this.scaleForm.patchValue({ ['scale_value']: this.sliderValue });
     let numberOption = parseInt(inputElement.value);
     this.slideValueElement.nativeElement.style.left = (numberOption === 1) ? (numberOption * 0) :  ( (numberOption * 10) - 10) + '%';
     this.showValue = true;
@@ -227,7 +241,7 @@ getOptionValue(option : string): void {
   } 
 
   verifyIndex(item:number) : boolean {
-    if(this.sliderMouseOptions.includes(item)){
+    if(item <= this.scaleForm.value.settings.answer_value){
       return true;
     }
     return false;
@@ -296,13 +310,12 @@ getOptionValue(option : string): void {
   onResetForm(): void {
     this.resetscaleForm();
     this.resetFormState();
-    console.log(this.scaleForm.value);
   }
   
   resetscaleForm(): void {
     this.scaleForm.reset({
       id: this.elementData.id || '',
-      numeral: null,
+      numeral: this.elementData.numeral || '',
       type: 'scale',
       text: '',
       description:'',

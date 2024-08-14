@@ -30,7 +30,6 @@ ngOnInit() : void {
 
   this.getBanks();
   this.selectedIndexes = [];
-  console.log(this.IndexPosition);
 }
 
 
@@ -51,7 +50,6 @@ onClose():void {
 
 selectedQuestion(index:number) : void {
   this.selectedIndexes.push(index);
-  console.log(index);
 }
 
 verifyIndex(index:number): boolean {

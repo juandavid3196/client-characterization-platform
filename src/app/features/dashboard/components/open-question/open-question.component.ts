@@ -212,7 +212,7 @@ export class OpenQuestionComponent {
   resetopenForm(): void {
     this.openForm.reset({
       id: this.elementData.id || '',
-      numeral: null,
+      numeral: this.elementData.numeral || '',
       type: 'open',
       text: '',
       description:'',

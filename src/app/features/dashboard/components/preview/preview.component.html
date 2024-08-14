@@ -70,6 +70,25 @@
                 <div class="section-container" *ngIf="item.type === 'section'">
                     <span class="section-title">{{item.title}}</span>
                 </div>
+                <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
+                    <div class="checkbox-view-box">
+                        <span class="q-number">pregunta {{item.numeral}}</span>
+                        <span class="q-text">{{item.text}}</span>
+                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                        <div class="q-scale-section">
+                            <div class="scale-circle-box" *ngIf="this.item.settings.apply">
+                                <span class="scale-circle">N/A</span>
+                            </div>
+                            <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value)">
+                                <span class="scale-circle {{verifyIndex(number,item.settings.answer_value) ? 'scale-circle-selected' : ''}} ">{{number}}</span>
+                                <span class="scale-circle-label">{{labelTitle(number, getSliderOptions(item.scale_value), item)}}</span>
+                            </div>
+                        </div>
+                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                        <div class="required-message-view" *ngIf="item.settings.required">
+                            <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
+                        </div>    
+                </div>
             </div> 
         </div>
     </div>

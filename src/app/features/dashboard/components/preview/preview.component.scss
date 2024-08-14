@@ -95,6 +95,55 @@
                             font-weight: 500;
                         }
                     }
+
+                    .q-scale-section {
+                        width: auto;
+                        padding: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 15px;
+        
+                        .scale-circle-box{
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                            align-items: center;
+                            margin-bottom: auto;
+        
+                            .scale-circle-label {
+                                color: #b2b2b2;
+                                font-weight: 500;
+                                font-size: 16px;
+                                color: #333E48;
+                            }
+        
+                            .scale-circle {
+                                border-radius: 5px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-weight: 500;
+                                font-size: 23px;
+                                height: 60px;
+                                width: 60px;
+                                border: 1px solid #B2B2B2;
+                                background-color: #EFEFEF;
+                                color: #666666;
+                                gap: 10px;
+                            }
+        
+                            .scale-circle-selected, .scale-circle:hover {
+                                border: 1px solid #0D99FF;
+                                color: #0D99FF;
+                                background-color: #D8EEFF;
+                                transition: background-color, color 0.15s ease;
+                                cursor: pointer;
+                            }
+                        }
+        
+                        
+                    }
                 
                     .options-container {
                         display: flex;

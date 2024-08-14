@@ -39,4 +39,35 @@ getMaxLengthValue(item:any): number[] {
 }
 
 
+verifyIndex(item:number, answer : number) : boolean {
+  if(item <= answer){
+    return true;
+  }
+  return false;
+}
+
+
+labelTitle(number: number, sliderOptions:any, item:any): string {
+  let label = '';
+  if(number == 1 && sliderOptions.length > 1){
+    label = item.settings.left_label;
+  }else if(sliderOptions.length >= 3 && number === ((sliderOptions.length / 2) + 0.5)){
+    label  = item.settings.center_label;
+  }else if(number === sliderOptions.length) {
+    label  = item.settings.right_label;
+  }
+
+  return label;
+}
+
+ getSliderOptions(steps:number) : number[] {
+  let item = 1;
+    let sliderOptions = [];
+    for (let index = 0; index < steps; index++) {
+      sliderOptions.push(item);
+      item += 1;
+    }
+    return sliderOptions;
+ }
+
 }

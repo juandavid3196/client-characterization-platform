@@ -77,7 +77,6 @@
                 <app-table-question 
                     *ngSwitchCase="'table'"  
                     [elementData]="elementSelected"
-                    [questionId]="elementSelected.id" 
                     (refreshList)="onRefreshList()" 
                 ></app-table-question>
                 <app-checkbox-question 

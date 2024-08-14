@@ -38,7 +38,6 @@ export class TableQuestionComponent {
 
   @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
   
-  @Input() questionId : string = '';
   @Input() elementData : any = {};
   @Output() dataTable =  new EventEmitter<any>();
   @Output() refreshList =  new EventEmitter<void>();
@@ -84,21 +83,21 @@ export class TableQuestionComponent {
     this.initializeFormValues();
 
     this.formSubscription = this.tableForm.valueChanges.subscribe(value => {
-      if (this.questionId !== undefined) {
+      if (this.elementData.id !== undefined) {
         this.updateDashboardOptions(value);
       }
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['questionId']) {
+    if (changes['elementData'].currentValue.id) {
       this.loadFromQuestionData();
     }
   }
 
   updateDashboardOptions(value: any): void {
-    if (this.questionId !== undefined) {
-      const index = this.dashboardOptions.findIndex(e => e.id === this.questionId);
+    if (this.elementData.id !== undefined) {
+      const index = this.dashboardOptions.findIndex(e => e.id === this.elementData.id);
       if (index !== -1) {
         this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
         this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
@@ -152,9 +151,9 @@ export class TableQuestionComponent {
   async loadFromQuestionData(): Promise<void> {
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
     
-    if (storedQuestions && this.questionId) {
+    if (storedQuestions && this.elementData.id) {
       this.dashboardOptions = storedQuestions;
-      const element = storedQuestions.find((e: any) => e.id === this.questionId);
+      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
   
       if (element) {
         this.tableForm.patchValue(element);
@@ -273,9 +272,9 @@ export class TableQuestionComponent {
   loadUrlsData() : void {
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
     
-    if (storedQuestions && this.questionId) {
+    if (storedQuestions && this.elementData.id) {
       this.dashboardOptions = storedQuestions;
-      const element = storedQuestions.find((e: any) => e.id === this.questionId);
+      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
   
       if (element) {
         this.tableForm.patchValue(element);
@@ -478,8 +477,8 @@ getMaxLengthValue(): number[] {
 resetTableForm(): void {
 
   this.tableForm.reset({
-    id: this.questionId || '',
-    numeral: null,
+    id: this.elementData.id || '',
+    numeral: this.elementData.numeral || '',
     type: 'table',
     text: '',
     description: '',
@@ -499,7 +498,7 @@ resetTableForm(): void {
 
   // Reset FormArray controls
   this.resetFormArray(this.tableForm.get('no_visible_rows') as FormArray, ['']);
-  this.resetFormArray(this.tableForm.get('options') as FormArray, [this.createOption()]);
+  this.resetFormArray(this.tableForm.get('options') as FormArray, ['']);
 }
 
  resetFormArray(formArray: FormArray, initialValues: any[]): void {

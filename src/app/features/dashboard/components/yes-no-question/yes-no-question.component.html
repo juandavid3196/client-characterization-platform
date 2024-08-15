@@ -114,11 +114,11 @@
                 <span class="q-text">{{yesnoForm.value.text}}</span>
                 <div class="q-description"> <span class="dark-description" *ngIf="yesnoForm.value.description != '' " >Descripción: </span>{{yesnoForm.value.description}}</div>
                 <div class="buttons-yesno-section">
-                    <span class="q-yesno-box">
+                    <span class="q-yesno-box  {{yesnoForm.value.settings.answer_value === 'Si' ? 'q-yesno-box-selected' : ''}}">
                             <img src="assets/icons/{{iconsType === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
                             <span class="small-message">SI</span>
                     </span>
-                    <span class="q-yesno-box">
+                    <span class="q-yesno-box  {{yesnoForm.value.settings.answer_value === 'No' ? 'q-yesno-box-selected' : ''}}">
                             <img src="assets/icons/{{iconsType === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
                             <span class="small-message">NO</span>
                     </span>

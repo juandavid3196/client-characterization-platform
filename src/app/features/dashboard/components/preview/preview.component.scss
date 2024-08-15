@@ -144,7 +144,78 @@
         
                         
                     }
-                
+
+                    .text-section {
+                        width: auto;
+                        input {
+                            width: -webkit-fill-available;
+                            height: 100px;
+                            border: 1px solid #B2B2B2;
+                            border-radius: 5px;
+                            padding-left: 5px;
+                            font-size: 14px;
+                        }
+                        input:focus {
+                            outline: none;
+                            border: 1px solid #0D99FF;
+                        }
+                    }
+
+                    .buttons-yesno-section {
+                        width: auto;
+                        display: flex;
+                        align-items: center;
+                        margin: 0 auto;
+                        gap: 20px;
+                        
+                        .q-yesno-box {
+                            
+                            height: 70px;
+                            width: 70px;
+                            border-radius: 5px;
+                            border: 1px solid #B2B2B2;
+                            background-color: #EFEFEF;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+        
+                            img{
+                                filter: brightness(0) saturate(100%) invert(25%) sepia(7%) saturate(90%) hue-rotate(315deg) brightness(96%) contrast(86%);
+                                height: 35px;
+                            }
+        
+                            .small-message {
+                                font-size: 12px;
+                                position: absolute;
+                                bottom: 2px;
+                                left: 2px;
+                                height: 16px;
+                                color: #7D7D7D;
+                            }
+        
+                        }
+        
+                        .q-yesno-box-selected, .q-yesno-box:hover {
+                            background-color:#D8EEFF;
+                            border: 1px solid #0D99FF;
+        
+                            img {
+                                filter: brightness(0) saturate(100%) invert(58%) sepia(58%) saturate(6098%) hue-rotate(186deg) brightness(102%) contrast(104%);
+                            }
+        
+                            .small-message {
+                                color: #0D99FF;
+                            }
+                        }
+        
+                        .q-yesno-box:hover {
+                            cursor: pointer;
+                            transform: scale(1.2);
+                            transition: transform 0.2s ease-in-out;
+                        }
+                    }
+
                     .options-container {
                         display: flex;
                         flex-direction: column;
@@ -269,6 +340,10 @@
                         img {
                             height: 20px;
                         }
+                    }
+
+                    .notify-message {
+                        color: #0079CF;
                     }
                     
                     }

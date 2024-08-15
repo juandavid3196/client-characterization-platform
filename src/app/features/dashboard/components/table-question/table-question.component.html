@@ -1,0 +1,214 @@
+<div class="main-container">
+    <app-spiner *ngIf="spinner"></app-spiner>
+    <app-answer-menu
+        *ngIf="openVideoWindow"
+        [elementData]="elementData"
+        [videoType]="videoUrlType"
+        (formClose)="closeVideoWindow()"
+        (refreshData)="loadUrlsData()"
+    ></app-answer-menu>
+    <div class="top-options-section">
+        <span (click)="onChangeSection()" class="{{changeSection ?'section-active' : ''}} ">Editar</span>
+        <span (click)="onChangeSection()" class="{{!changeSection ?'section-active' : ''}} ">Vista</span>
+    </div>
+    <div class="edit-section" *ngIf="changeSection">
+        <div class="question-container">
+            <form  [formGroup]="tableForm" (ngSubmit)="onSubmit()">
+            <div class="question-section">
+                <div class="question-s-number">
+                    <span class="number">{{tableForm.value.numeral}}</span>
+                </div>
+                
+                <div class="question-s-container">
+                    <input type="text" class="q-s-title" placeholder="Ingrese la Pregunta"  formControlName="text">
+                    <input type="text" class="q-s-description" placeholder="Descripción" formControlName="description">
+                </div>
+            </div>
+            <div class="note-section" *ngIf="addNote">
+                <input type="text" placeholder="Añadir Nota (Solo para el creador de la encuesta)" formControlName="note_text">
+            </div>
+            <span class="section-subtitle">Ingrese Nombre y tipo de columna</span>
+            <div class="options-section">
+                <div formArrayName="options" class="options-s-container">
+                    <div class="options-form-container" *ngFor="let option of options.controls; let i = index" [formGroupName]="i">
+                        <div class="option-box">
+                            <input type="text" formControlName="text" (input)="updateAnswer($event,i)" placeholder="columna - {{i+1}}">
+                           <span class="type-option" [ngClass]="option.get('type')?.value === 'text' ? 'type-o-selected' : ''"  (click)="handleOptionsType(i,'text')">Texto</span>
+                           <span class="type-option" [ngClass]="option.get('type')?.value === 'radio button' ? 'type-o-selected' : ''" (click)="handleOptionsType(i,'radio button')">Radio Boton</span>
+                        </div>
+                        <div class="actions-box">
+                            <span class="plus-icon-top" *ngIf="i === 0 && options.length > 1" (click)="addOption(0,'back')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
+                            <img src="assets/icons/minus-icon.svg" alt="" (click)="removeOption(i)" > 
+                            <span class="plus-icon"   *ngIf="i != options.length - 1" (click)="addOption(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt="" ></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="o-buttons-container">
+                    <button class="btn" (click)="addOption(options.length + 1,null)">Añadir columna</button>
+                    <button class="btn {{noVisibleField ? 'disabled' : ''}}" (click)="addNoVisibleColumn()" [disabled]="noVisibleField ? true : false" >Añadir columna No visible</button>
+                </div>
+            </div>
+            <div class="no-visible-option-container"  *ngIf="noVisibleField">
+                <div class="option-box">
+                    <input type="text" placeholder="Columna no visible" (input)="updateNoVisibleValue($event)"  formControlName="no_visible_title">
+                    <span class="no-visible-box">No Visible</span>
+                </div>
+                <div class="actions-box">
+                    <img src="assets/icons/minus-icon.svg" alt="" (click)="removeVisibleColumn()" > 
+                </div>
+            </div>
+            <span class="section-subtitle">Seleccione la columna y añada los valores para cada fila</span>
+            <div class="columns-section">
+                <div class="c-top-section">
+                    <div class="dropdown-section">
+                        <div class="dropdown">
+                            <div class="select {{select_click ? 'select-clicked' : ''}}" (click)="toggleSelect()">
+                                <span class="selected">{{selectedOption ? selectedOption : 'Seleccionar'}}</span>
+                                <div class="caret {{caret_rotate ? 'caret-rotate' : ''}}"></div>
+                            </div>
+                            <ul class="menu {{select_click ? 'menu-open' : ''}}" *ngIf="DropOptions.length > 0" >
+                                <li (click)="handleOption(option,i)" *ngFor="let option of DropOptions; let i = index" >
+                                {{option.type =='text' ? option.text: ''}}</li>
+                            </ul>
+                        </div>      
+                    </div>
+                    <button class="btn no-visible-btn" *ngIf="noVisibleField && tableForm.value.no_visible_title !== ''"  (click)="addNoVisibleRows()">Agregar filas columna No visible</button>
+                </div>
+                  <div class="rows-section" *ngIf="rowsSection === 'basic'">
+                    <span class="column-index">{{selectedOption}}</span>
+                    <div *ngIf="selectedOption !== ''">
+                      <div formArrayName="options">
+                        <div [formGroupName]="selectedOptionIndex">
+                          <div formArrayName="rows" class="options-s-container">
+                            <div class="options-form-container" *ngFor="let row of getRows(selectedOptionIndex).controls; let j = index">
+                              <input type="text" placeholder="Fila - {{1 + j}}" [formControlName]="j">
+                              <div class="actions-box">
+                                <img src="assets/icons/plus-icon.svg" alt="" (click)="addRow(selectedOptionIndex, j)">
+                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeRow(selectedOptionIndex, j)"> 
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="rows-section" *ngIf="rowsSection === 'no-visible' ">
+                    <span class="column-index">No Visible</span>   
+                      <div formArrayName="no_visible_rows">
+                          <div  class="options-s-container">
+                            <div class="options-form-container" *ngFor="let row of no_visible_rows.controls; let i = index">
+                              <input type="text" placeholder="Fila - {{1 + i}}" [formControlName]="i">
+                              <div class="actions-box">
+                                <img src="assets/icons/plus-icon.svg" alt="" (click)="addVisibleRow(i)">
+                                <img src="assets/icons/minus-icon.svg" alt="" (click)="removeVisibleRow(i)"> 
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+            </div>
+            <div class="settings-section">
+                <div class="settings-s-top">
+                    <div class="eyelash-box">
+                        Opciones
+                    </div>
+                </div>
+                <div class="settings-s-container" formGroupName="settings">
+                    <div class="c-section">
+                        <div class="container-box">
+                            <span class="label">Añadir video para pregunta</span>
+                            <div class="answer-box">
+                                <div class="file-container">
+                                    <button class="btn" (click)="addVideoUrl('question_multimedia')">Añadir URL</button>
+                                    <span class="file-message" *ngIf="qMessage">URL Añadida</span>
+                                </div>
+                                <div class="clean-file-container" *ngIf="qMessage">
+                                    <span class="btn-clean-file" (click)="resetInputFile('question_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Añadir video para las opciones</span>
+                            <div class="answer-box">
+                                <div class="file-container">
+                                    <button class="btn" (click)="addVideoUrl('options_multimedia')">Añadir URL</button>
+                                    <span class="file-message" *ngIf="aMessage">Url añadida</span>
+                                </div>
+                                <div class="clean-file-container" *ngIf="aMessage">
+                                    <span class="btn-clean-file" (click)="resetInputFile('options_multimedia')"><img src="assets/icons/reset-icon.svg" alt=""></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-box">
+                            <span class="label">Obligatorio</span>
+                            <app-toggle-button name="required" #appToggleButton  (toggleValues)="getToggleValues($event)" [elementData]="tableForm.value" ></app-toggle-button>
+                        </div>  
+                        <div class="container-box">
+                            <span class="label">Añadir Nota</span>
+                            <app-toggle-button name="add_note" #appToggleButton (toggleValues)="getToggleValues($event)" [elementData]="tableForm.value"></app-toggle-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-section">
+                <div class="btn-s-left">
+                    <button class="btn btn-bank {{this.tableForm.value.addedToBank ? 'btn-bank-blocked' : ''}} "(click)="addToBank()" >{{this.tableForm.value.addedToBank ? 'Agregada' : 'Agregar'}}<img src="assets/icons/bank-blue-icon.svg" alt=""></button>
+                </div>
+                <div class="btn-s-right">
+                    <button class="btn-clean btn" type="button" (click)="onResetForm()">Restaurar <mat-icon>refresh</mat-icon> </button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div class="view-section"  *ngIf="!changeSection" >
+        <div class="table-view-container">
+            <div class="table-view-box">
+                <span class="q-number">pregunta {{tableForm.value.numeral}}</span>
+                <span class="q-text">{{tableForm.value.text}}</span>
+                <div class="q-description"> <span class="dark-description" *ngIf="tableForm.value.description != '' " >Descripción: </span>{{tableForm.value.description}}</div>
+                <div class="table-section" *ngIf="tableForm.value.options[0].text !== ''  || tableForm.value.no_visible_title !== ''">
+                    <div class="table-styled">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th *ngFor="let option of tableForm.value.options">{{ option.text }}</th>
+                                    <th *ngIf="tableForm.value.no_visible_title != ''" class="no-visible-clm">{{tableForm.value.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rowIndex of getMaxLengthValue(); let i = index">
+                                    <td *ngFor="let option of tableForm.value.options">
+                                      <ng-container *ngIf="option.type === 'text'">
+                                        {{ option.rows[i] || '' }}
+                                      </ng-container>
+                                      <ng-container *ngIf="option.type === 'radio button'">
+                                        <label class="custom-radio-btn">
+                                          <input type="radio" name="sample-{{ i }}">
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </ng-container>
+                                    </td>
+                                    <td  class="no-visible-clm" *ngIf="tableForm.value.no_visible_title !==  '' ">
+                                        {{tableForm.value.no_visible_rows[i] || '' }}
+                                    </td>
+                                  </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{tableForm.value.note_text}}</span>
+                <div class="required-message-view" *ngIf="required">
+                    <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>
+                </div>    
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

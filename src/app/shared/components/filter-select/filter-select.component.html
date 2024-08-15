@@ -1,10 +1,9 @@
-
-<div class="form-box">
-        <div class="select-container">
-            <select name="filter">
-                <option >--</option>
-                <option *ngFor="let option of options" [value]="option">{{option}}</option>
-            </select>
-            <mat-icon class="select-icon">keyboard_arrow_down</mat-icon>
-        </div>
+<div class="dropdown">
+    <div class="select {{select_click ? 'select-clicked' : ''}}" (click)="toggleSelect()">
+        <span class="selected">{{selectedOption ? selectedOption : 'Seleccionar'}}</span>
+        <div class="caret {{caret_rotate ? 'caret-rotate' : ''}}"></div>
+    </div>
+    <ul class="menu {{select_click ? 'menu-open' : ''}}" *ngIf="options.length > 0" >
+        <li (click)="handleOption(option)" *ngFor="let option of options" >{{option}}</li>
+    </ul>
 </div>

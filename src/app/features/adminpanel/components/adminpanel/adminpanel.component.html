@@ -1,0 +1,72 @@
+<div class="admin-container">
+    <aside>
+        <div class="icon-box">
+            <img src="assets/icons/udea-icon.svg" alt="">
+        </div>
+        <div class="options-box">
+            <div class="o-box {{sectionSelected === 'home' ? 'o-box-selected' : ''}}" (click)="onSectionSelected('home')">
+                <img src="assets/icons/home-admin-icon.svg" alt="">
+                <span class="o-name">Inicio</span>
+            </div>
+            <div class="o-box {{sectionSelected === 'surveys' ? 'o-box-selected' : ''}}" (click)="onSectionSelected('surveys')">
+                <img src="assets/icons/encuestas-icon.svg" alt="">
+                <span class="o-name">Encuestas</span>
+            </div>
+            <div class="o-box {{sectionSelected === 'users' ? 'o-box-selected' : ''}}" (click)="onSectionSelected('users')">
+                <img src="assets/icons/users-icon.svg" alt="">
+                <span class="o-name">Usuarios</span>
+            </div>
+            <div class="o-box {{sectionSelected === 'results' ? 'o-box-selected' : ''}}" (click)="onSectionSelected('results')">
+                <img src="assets/icons/results-icon.svg" alt="">
+                <span class="o-name">Resultados</span>
+            </div>
+        </div>
+        <div class="close-box">
+            <img src="assets/icons/close-session-icon.svg" alt="">
+            <span class="close-msg">Cerrar Sesión</span>
+        </div>
+    </aside>
+    <main>
+        <div class="top-section">
+            <div class="search-box">
+                <input type="text" placeholder="Buscar">
+                <mat-icon class="search-bar-icon">search</mat-icon>
+            </div>
+            <div class="right">
+                <div class="user-picture">
+                    <img src="../../../../assets/img/user-image.jpg" alt="">
+                </div>
+                <span class="user-name">Nombre usuario</span>
+                <mat-icon class="drop-menu-icon">arrow_drop_down</mat-icon>
+            </div>
+        </div>
+        <div class="main-section" [ngSwitch]="sectionSelected">
+            <div class="cards-box" *ngSwitchCase="'home'">
+                <div class="card g-card">
+                    <span class="card-icon">
+                        <img src="assets/icons/survey-white-icon.svg" alt="" class="card-icon">
+                    </span>
+                    <span class="card-title">Encuestas</span>
+                    <span class="elements-number">44</span>
+                </div>
+                <div class="card p-card">
+                    <span class="card-icon">
+                        <img src="assets/icons/users-white-icon.svg" alt="" class="card-icon">
+                    </span>
+                    <span class="card-title">Usuarios</span>
+                    <span class="elements-number">23</span>
+                </div>
+                <div class="card b-card">
+                    <span class="card-icon">
+                        <img src="assets/icons/results-white-icon.svg" alt="" class="card-icon">
+                    </span>
+                    <span class="card-title">Resultados</span>
+                    <span class="elements-number">29</span>
+                </div>
+            </div>
+            <app-survey-table [filteredWord]="searchTerm" *ngSwitchCase="'surveys'" ></app-survey-table>
+            <app-user-table *ngSwitchCase="'users'" ></app-user-table>
+        </div>
+    </main>
+</div>
+

@@ -1,0 +1,169 @@
+.survey-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .survey-colums-box {
+        width: auto;
+        height: 60px;
+        border-radius: 6px;
+        background-color: #D8EEFF;
+        font-size: 15px;
+        font-weight: 500;
+        color: #333E48;
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 5px 2px rgb(158 158 158 / 20%);
+
+        ul {
+            list-style: none;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0px 25px;
+
+            .right-menu {
+                width: 30%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .right-menu {
+                width: 70%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                li {
+                    width: calc(70% /4);
+                    display: flex;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+    .survey-rows-box {
+       
+            width: auto;
+            height: 70px;
+            display: flex;
+            padding: 0px 25px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0px 5px 2px rgb(158 158 158 / 20%);
+
+            .left-section {
+                display: flex;
+                align-items: center;
+                width: 30%;
+
+            .title-box {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                .survey-title {
+                    color: #484848;
+                    font-size: 16px;
+                }
+
+                .survey-update {
+                    color: #b2b2b2;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .right-section {
+            width: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .survey-number {
+                color: #333E48;
+                font-size: 18px;
+                font-weight: 500;
+            }
+
+            .btn {
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 5px;
+                cursor: pointer;
+
+                .btn-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                }
+               
+            }
+
+            .btn-clon {
+                background-color: #C4FFD5;
+                
+                .btn-icon{
+                    color: #128524;
+                }
+            }
+
+            .survey-state {
+                height: 30px;
+                width: 120px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                border-radius: 50px;
+                background-color: #C4FFD5;
+                color: #128524;
+
+            }
+
+            .actions-box {
+                display: flex;
+                gap: 5px;
+
+                .btn-delete {
+                    background-color: #FFC4C4;
+                    
+                    .btn-icon{
+                        color: #fa5252;
+                    }
+                }
+
+                .btn-edit {
+                    background-color: #D8EEFF;
+                    
+                    .btn-icon{
+                        color: #0d99ff;
+                    }
+                }
+
+                .btn-info {
+                    background-color: #E4E4E4;
+                    
+                    .btn-icon{
+                        color: #767676;
+                    }
+                }
+            }
+        
+        }  
+        
+        .right-section > * {
+            width: calc(70% /4);
+            display: flex;
+            justify-content: center;
+        }
+        
+    }
+
+}

@@ -7,10 +7,12 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { SurveysModule } from './features/surveys/surveys.module';
 import { HttpClientModule } from '@angular/common/http';
+import { DashboardModule } from './features/dashboard/dashboard.module';
+import { AdminpanelModule } from './features/adminpanel/adminpanel.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -18,7 +20,9 @@ import { HttpClientModule } from '@angular/common/http';
     CoreModule,
     SharedModule,
     SurveysModule,
-    HttpClientModule
+    HttpClientModule,
+    DashboardModule,
+    AdminpanelModule
 
   ],
   providers: [],

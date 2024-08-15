@@ -1,0 +1,106 @@
+
+<div class="container">
+    <app-questions-options 
+        *ngIf="openQuestion"   
+        (formClose)="openQuestionsMenu()"
+        (typeSelected)="onSelectedType($event)"  
+        (sectionSelected)="onSectionSelected($event)" 
+        (openBank)="openDataBankSection()"
+        (refreshList)="loadQuestionsFromLocalStorage()"
+        (closeEditWindow)="changeEditSection()"
+        [section]="elementSelected"
+        [editSection]="editSection"
+    ></app-questions-options>
+    <app-data-bank   
+        *ngIf="databankSection"  
+        (formClose)="openDataBankSection()" 
+        [IndexPosition]="bankIndex" 
+        (reloadList)="loadQuestionsFromLocalStorage()"
+        (selectedOption)="setIndexDataBank($event)"
+    ></app-data-bank>
+    <app-setting 
+        *ngIf="settingSection"  
+        (formClose)="openSettingSection()"  
+    ></app-setting>
+  <header>
+    <app-user-bar></app-user-bar>
+    <div class="dashboard-menu">
+        <div class="menu-left">
+            <span class="home-icon"> <img src="assets/icons/home-icon.svg" alt=""> </span>
+            <span class="survey-title">Example</span>
+        </div>
+        <div class="menu-right">
+            <button class="btn-save btn" (click)="saveDashboardData()" *ngIf="!openPreview" >Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
+            <button class="btn-view btn"  (click)="openPreviewSection()"> {{openPreview ? 'Editor' : 'Vista Previa'}}</button>
+        </div>
+    </div>
+  </header>
+  <main *ngIf="!openPreview">
+    <aside>
+        <div class="aside-options">
+            <div class="icon-box {{btnSelected == 'dashboard' ? 'icon-selected' : ''}}">
+                <span> <img src="assets/icons/pencil-icon.svg" alt=""></span>
+            </div>
+            <div class="icon-box {{btnSelected == 'databank' ? 'icon-selected' : ''}}" (click)="openDataBankSection()">
+                <span> <img src="assets/icons/pig-icon.svg" alt=""></span>
+            </div>
+            <div class="icon-box {{btnSelected == 'setting' ? 'icon-selected' : ''}}" (click)="openSettingSection()">
+                <span> <img src="assets/icons/setting-icon.svg" alt=""></span>
+            </div>
+        </div>
+        <div class="element-list">
+            <span class="plus-icon" *ngIf="dashboardOptions.length > 0" ><img src="assets/icons/plus-icon-blue.svg" alt="" (click)="addNewElement(0,'back')"></span>
+            <div class="element-box" *ngFor="let element of dashboardOptions, let i = index">
+                    <div class="question-type  {{indexSelected == i ? 'element-active' : '' }} " *ngIf="element.type !== 'section'" (click)="selectElement(i)">
+                        <span class="numeral">{{element.numeral}}</span>
+                        <span class="element-icon"> <img src='assets/icons/{{element.icon}}.svg' alt=""></span>
+                        <span class="element-text">{{element.text | truncate:20}}</span>
+                        <span class="delete-icon" (click)="deleteQuestion(i)"> <mat-icon >delete</mat-icon> </span>
+                    </div>
+                    <div class="section-type {{indexSelected == i ? 'element-active' : '' }}" *ngIf="element.type === 'section'" (click)="selectElement(i)">
+                        <span class="element-icon"><img src='assets/icons/{{element.icon}}.svg' alt=""></span>
+                        <span class="element-text">{{element.title | truncate:23}}</span>
+                        <span class="delete-icon" (click)="deleteSection(i)"><mat-icon >delete</mat-icon></span>
+                    </div>
+                    <span class="plus-icon-down" *ngIf="i != dashboardOptions.length -1 " (click)="addNewElement(i,'forward')"><img src="assets/icons/plus-icon-blue.svg" alt=""></span>
+            </div>
+            <div class="add-question-container">
+                <div class="add-question-box">
+                    <span class="add-q-icon"> <mat-icon>add</mat-icon> </span>
+                    <span class="add-q-text" (click)="addNewElement(dashboardOptions.length -1, 'end')">Agregar pregunta</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <div class="main-panel">
+            <ng-container [ngSwitch]="elementSelected.type" *ngIf="elementSelected.type !== 'section'">
+                <app-table-question 
+                    *ngSwitchCase="'table'"  
+                    [elementData]="elementSelected"
+                    (refreshList)="onRefreshList()" 
+                ></app-table-question>
+                <app-checkbox-question 
+                    *ngSwitchCase="'checkbox'"   
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-checkbox-question>
+                <app-scale-question 
+                    *ngSwitchCase="'scale'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-scale-question>
+                <app-yes-no-question 
+                    *ngSwitchCase="'yes/no'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-yes-no-question>
+                <app-open-question 
+                    *ngSwitchCase="'open'"  
+                    [elementData]="elementSelected" 
+                    (refreshList)="onRefreshList()"
+                ></app-open-question>
+            </ng-container>
+    </div>
+  </main>
+  <app-preview *ngIf="openPreview"></app-preview>
+</div>

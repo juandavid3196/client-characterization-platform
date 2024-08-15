@@ -1,0 +1,38 @@
+<div class="survey-container">
+    <div class="survey-colums-box">
+        <ul>
+            <span class="left-menu">
+                <li>Usuario y Fecha de Modificacción</li>
+            </span>
+            <span class="right-menu">
+                <li>Role</li>
+                <li>Encuestas</li>
+                <li>Acciones</li>
+            </span>
+        </ul>
+    </div>
+    <div class="survey-rows-box" *ngFor="let user of filteredUsers" >
+        <div class="left-section">
+            <div class="title-box">
+                <span class="survey-title">{{user.name}}</span>
+                <span class="survey-update">Modificado {{user.updated_date}}</span>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="row-box">
+                <span class="survey-state">{{user.role}}</span>
+            </div>
+            <div class="row-box">
+                <span class="survey-number"> {{user.surveys_count}}</span>
+            </div>
+            <div class="row-box">
+                <div class="actions-box">
+                    <span class="btn-delete btn" (click)="deleteSurvey(user.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
+                    <span class="btn-edit btn"> <mat-icon class="btn-icon">edit</mat-icon></span>
+                    <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

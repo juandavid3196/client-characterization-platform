@@ -1,0 +1,27 @@
+<div class="questions-container {{close ? 'close' : '' }}">
+    <div class="questions-box {{close ? 'close' : '' }}">
+        <div class="eyeslashes-section">
+            <span class="video-title"> <img class="camera-icon" src="assets/icons/camera-icon.svg" alt="">Insertar Video</span>
+            <img  class="close-icon" src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
+        </div>
+        <main>
+                <div class="main-section">
+                    <form  [formGroup]="videoForm"  (ngSubmit)="onSubmit()">
+                        <div class="form-box">
+                            <label for="title">Agregar URL</label>
+                            <input type="text" name="title"  formControlName="title">
+                            <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe de copiar una URL</span>
+                        </div>
+                        <div class="btns-section">
+                        <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
+                        <div class="btn-bottom-box">
+                            <button class="btn-confirm" type="submit">{{editVideo ? "Editar" : "Aceptar"}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>      
+        </main>
+       
+    </div>
+</div>
+

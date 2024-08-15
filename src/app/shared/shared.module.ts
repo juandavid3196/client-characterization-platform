@@ -2,16 +2,20 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserBarComponent } from './components/user-bar/user-bar.component';
 import { MatIconModule } from '@angular/material/icon';
-import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { FilterSelectComponent } from './components/filter-select/filter-select.component';
+import { ToggleButtonComponent } from './components/toggle-button/toggle-button.component';
+import { SpinerComponent } from './components/spiner/spiner.component';
+import { ZoomDirective } from './directives/zoom.directive';
 
 
 
 @NgModule({
   declarations: [
     UserBarComponent,
-    ConfirmButtonComponent,
     FilterSelectComponent,
+    ToggleButtonComponent,
+    SpinerComponent,
+    ZoomDirective,
 
   ],
   imports: [
@@ -19,9 +23,11 @@ import { FilterSelectComponent } from './components/filter-select/filter-select.
     MatIconModule
   ],
   exports: [
+    ToggleButtonComponent,
     UserBarComponent,
-    ConfirmButtonComponent,
-    FilterSelectComponent
+    FilterSelectComponent,
+    SpinerComponent,
+    ZoomDirective
   ]
 })
 export class SharedModule { }

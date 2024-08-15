@@ -1,0 +1,31 @@
+<div class="databank-container {{close ? 'close' : '' }}">
+    <div class="databank-box {{close ? 'close' : '' }}">
+        <div class="top-section">
+            <span class="databank-title">Banco de Preguntas</span>
+            <img src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
+        </div>
+        <main>
+            <div class="search-bar-container">
+                <div class="filter-box">
+                    <app-filter-select [options]="types" (optionValue)="filterByType($event)"></app-filter-select>
+                </div>
+                <input type="text" (input)="filterByText($event)">
+                <img src="assets/icons/search-icon.svg" alt="" class="search-icon">
+            </div>
+            <span class="questions-total">{{arrayQuestions.length}} {{arrayQuestions.length == 1 ? 'pregunta' : 'preguntas'}} </span>
+            <div class="questions-container">
+                <div class="question-box {{verifyIndex(i) ? 'q-box-selected' : ''}}"  *ngFor="let item of arrayQuestions; let i = index">
+                    <img src="assets/icons/{{item.icon}}.svg" alt="" class="q-icon">
+                    <span class="q-text">{{item.text | truncate: 90 }}</span>
+                    <span class="q-state">
+                        <img src="assets/icons/plus-icon-blue.svg" alt="" (click)="selectedQuestion(i)" *ngIf="!verifyIndex(i)" >
+                        <img src="assets/icons/cancel-icon.svg" alt="" *ngIf="verifyIndex(i)" (click)="deselectQuestion(i)">
+                        <img src="assets/icons/delete-basket-icon.svg" alt="" *ngIf="!verifyIndex(i)" (click)="deleteQuestion(item.id)">
+                    </span>
+                </div>
+            </div>
+            <button class="btn-confirm" (click)="sendQuestions()" >Agregar ({{selectedIndexes.length}}) {{selectedIndexes.length == 1 ? 'pregunta' : 'preguntas'}} </button>
+        </main>
+    </div>
+</div>
+

@@ -1,0 +1,258 @@
+.admin-container {
+    height: 100vh;
+    background-color: white;
+    padding: 0 15px;
+    display: flex;
+
+    aside {
+        display: flex;
+        padding: 0  20px 0 5px;
+        width: 200px;
+        flex-direction: column;
+
+        .icon-box {
+            height: 40px;
+            margin: 0 auto;
+            padding: 20px 0;
+
+            img {
+                height: 28px;
+            }
+        }
+
+        .options-box {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            .o-box {
+                display: flex;
+                align-items: center;
+                border-radius: 50px;
+                gap: 20px;
+                background-color: white;
+                color: #B2B2B2;
+                font-size: 15px;
+                font-weight: 500;
+                padding: 8px 20px;
+                cursor: pointer;
+
+                img {
+                    height: 23px;
+                }
+            }
+
+            .o-box-selected, .o-box:hover {
+                background-color:#4EB4FF;
+                color: white;
+                transform: background-color,color 0.2s ease;
+
+                img {
+                    filter: brightness(0) saturate(100%) invert(100%) sepia(93%) saturate(28%) hue-rotate(107deg) brightness(107%) contrast(109%);
+                    transform: filter 0.2s ease;
+                }
+            }
+        }
+
+        .close-box {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            height: 40px;
+            margin-top: auto;
+            padding: 20px;
+            color: #B2B2B2;
+            cursor: pointer;
+            border-top: 0.2px solid #B2B2B2;
+
+            img {
+                height: 23px;
+            }
+        }
+
+        .close-box:hover {
+            color: #4EB4FF;
+
+            img {
+                filter: brightness(0) saturate(100%) invert(74%) sepia(41%) saturate(5883%) hue-rotate(182deg) brightness(105%) contrast(101%);
+            }
+        }
+    }
+    main {
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(237, 234, 255, 0.61);
+        width: calc(100% - 200px);
+        margin: 15px 0;
+        padding: 30px 25px 5px;
+        gap: 35px;
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+           
+            .search-box {
+               
+                position: relative;
+                width: 50%;
+
+                input {
+                    width: 100%;
+                    height: 40px;
+                    border-radius: 10px;
+                    padding-left: 45px;
+                    border: none;
+                    box-shadow: 5px 6px 8px 1px rgb(234, 232, 244);
+                }
+
+                input:focus {
+                    border: 0.5px solid #0d99ff;
+                    outline: none;
+
+                    
+                }
+
+                input:focus ~ .search-bar-icon {
+                    filter: brightness(0) saturate(100%) invert(74%) sepia(69%) saturate(6694%) hue-rotate(183deg) brightness(100%) contrast(102%);
+                }
+
+
+                .search-bar-icon {
+                    position: absolute;
+                    top: 9px;
+                    left: 15px;
+                    color: #b2b2b2;
+                    font-size: 27px;
+                }
+                
+            }
+
+            .right {
+
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                color: #B9B9B9;
+
+                .user-picture {
+                    border-radius: 50%;
+                    background-image: linear-gradient(to bottom, #00427F 0%, #0D99FF 100%);
+                    height: 40px;
+                    width: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    img {
+                        border-radius: 50%;
+                        height: 85%;
+                        width: 85%;
+                    } 
+                    
+                    }
+
+                    span {
+                        font-size: 13px;
+                    }
+                        .drop-menu-icon {
+                            cursor: pointer;
+                            font-size: 35px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+            
+                        .drop-menu-icon:hover {
+                            color: #e6e6e6 ;
+                        }
+            }
+        }
+
+        .cards-box {
+            display: flex;
+            gap: 40px;
+            padding-top: 40px;
+
+            .card {
+                height: 230px;
+                width: 200px;
+                border-radius: 25px;
+                display: flex;
+                flex-direction: column;
+                padding: 20px 0 0 30px ;
+                gap: 50px;
+                box-shadow: 1px 6px 2px 1px rgb(234, 232, 244);
+
+
+                .card-icon {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    img {
+                        height: 25px;
+                    }
+                }
+
+                .card-title {
+                    color: white;
+                    font-weight: 500;
+                    font-size: 20px;
+                }
+
+                .elements-number {
+                    color: #333E48;
+                    font-size: 45px;
+                    font-weight: 550;
+                    margin: 0 auto;
+                    padding-right: 30px;
+
+                }
+
+            }
+
+            .g-card{
+                background: linear-gradient(
+                    to top, /* Dirección del degradado; puedes ajustar esto según tus necesidades */
+                    #FAFFC5 0%, /* Color en el 0% del degradado */
+                    #8FEE99 46%, /* Color en el 46% del degradado */
+                    #22E97E 100% /* Color en el 100% del degradado */
+                    );
+
+                .card-icon {
+                    background-color: rgb(19 196 101);
+                }
+            }
+
+            .p-card{
+                background: linear-gradient(
+                    to top, /* Dirección del degradado; puedes ajustar esto según tus necesidades */
+                    #FFC5F9 0%, /* Color en el 0% del degradado */
+                    #354AFF 100% /* Color en el 100% del degradado */
+                    );
+
+                    .card-icon {
+                        background-color:rgb(154 107 255);
+                    }
+            }
+
+            .b-card{
+                background: linear-gradient(
+                    to top, /* Dirección del degradado; puedes ajustar esto según tus necesidades */
+                    #C5F8FF 0%, /* Color en el 0% del degradado */
+                    #5A92FF 100% /* Color en el 100% del degradado */
+                    );
+
+                    .card-icon{
+                        background-color: rgb(67 132 255);
+                    }
+            }
+
+        }
+    }
+}

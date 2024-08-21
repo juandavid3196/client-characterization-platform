@@ -6,6 +6,8 @@ import { DashboardlsService } from '../../services/dashboardls.service';
 import { SurveyService } from 'src/app/features/surveys/services/survey.service';
 import { ToastrService } from 'ngx-toastr';
 import { format } from 'date-fns';
+import { EventBusService } from 'src/app/core/services/eventBus.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -37,12 +39,16 @@ export class DashboardMainComponent {
     private dashboardlsService : DashboardlsService,
     private surveyService: SurveyService,  
     private toastr: ToastrService,
+    private eventBusService: EventBusService,
+    private router: Router,
   ){
     window.addEventListener('beforeunload', (event) => {
-      this.saveDashboardData();
+        this.saveDashboardData();
     });
-    window.addEventListener('popstate', () => {
-      this.saveDashboardData();
+
+    window.addEventListener('popstate', (event) => {
+          this.saveDashboardData();
+          this.eventBusService.emit('dashboardDataSaved', { someData: 'data' });
     });
   }
 
@@ -53,6 +59,11 @@ export class DashboardMainComponent {
     this.getQuestions();
     this.initializeDashboardValues();
   } 
+
+  goToSurveyPage(): void {
+    this.saveDashboardData();
+    this.router.navigate(['/surveys']);
+  }
 
   getSurveyData() : void {
     const surveyString =  localStorage.getItem('survey');
@@ -68,6 +79,7 @@ export class DashboardMainComponent {
     return format(date, 'dd/MM/yyyy');
   }
 
+  
   async saveDashboardData(): Promise<void> {
     this.isLoading = true; // Mostrar el spinner
     try {
@@ -274,3 +286,7 @@ export class DashboardMainComponent {
 
 
 }
+function confirmAction() {
+  throw new Error('Function not implemented.');
+}
+

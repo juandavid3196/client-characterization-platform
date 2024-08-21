@@ -1,4 +1,5 @@
 <div class="form-container {{close ? 'close' : ''}}">
+    <app-spiner *ngIf="isLoading"></app-spiner>
     <div class="form-container-box {{close ? 'close' : ''}}">
         <div class="top-section">
            <span class="form-title">Ejemplo</span>

@@ -18,6 +18,7 @@ export class SurveyFormComponent {
   close : boolean = false;
   options:string[] = []; 
   errorMessage : boolean = false;
+  isLoading : boolean = false;
 
   surveyForm: FormGroup;
 
@@ -45,27 +46,31 @@ export class SurveyFormComponent {
     return format(date, 'dd/MM/yyyy');
   }
 
-  onSubmit(): void {
-    if(this.surveyForm.valid){
-      this.surveyService.createSurvey(this.surveyForm.value).subscribe((response: any) => {
-          if (response.survey) {
-            localStorage.setItem('survey', JSON.stringify(response.survey));
-            this.dashboardlsService.saveDashboardOptions(response.survey.questions);
-            this.router.navigate(['/dashboard']);
-            this.toastr.success("Encuesta Creada con Éxito");
-            this.surveySaved.emit();
-          }
-        },
-        (error) => {
-          console.error('Error creating survey', error);
+  async onSubmit(): Promise<void> {
+    if (this.surveyForm.valid) {
+      this.isLoading = true; // Mostrar el spinner
+      try {
+        const response: any = await this.surveyService.createSurvey(this.surveyForm.value).toPromise();
+        
+        if (response.survey) {
+          localStorage.setItem('survey', JSON.stringify(response.survey));
+          this.dashboardlsService.saveDashboardOptions(response.survey.questions);
+          this.router.navigate(['/dashboard']);
+          this.toastr.success("Encuesta Creada con Éxito");
+          this.surveySaved.emit();
         }
-      );
-  }else {
-    this.errorMessage = !this.errorMessage;
-    return;
+      } catch (error) {
+        console.error('Error creating survey', error);
+      } finally {
+        this.isLoading = false; // Ocultar el spinner
+        this.onClose();
+      }
+    } else {
+      this.errorMessage = !this.errorMessage;
+      return;
+    }
   }
-    this.onClose();
-  }
+  
 
   onClose():void {
     this.close =  true;

@@ -27,7 +27,7 @@
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
         <div class="menu-left">
-            <span class="home-icon"> <img src="assets/icons/home-icon.svg" alt=""> </span>
+            <span class="home-icon" (click)="goToSurveyPage()" > <img src="assets/icons/home-icon.svg" alt=""> </span>
             <span class="survey-title">{{survey.title}}</span>
         </div>
         <div class="menu-right">

@@ -4,6 +4,7 @@ import { SurveyService } from '../../services/survey.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DashboardlsService } from 'src/app/features/dashboard/services/dashboardls.service';
+import { EventBusService } from 'src/app/core/services/eventBus.service';
 
 @Component({
   selector: 'app-survey-list',
@@ -17,7 +18,8 @@ constructor(
   private surveyService : SurveyService, 
   private toastr: ToastrService,
   private router: Router,
-  private dashboardlsService : DashboardlsService
+  private dashboardlsService : DashboardlsService,
+  private eventBusService: EventBusService
 ){}
 
 options : string[] = ["Estado","Fecha de modificación"];
@@ -29,6 +31,11 @@ searchTerm : string = '';
 
 ngOnInit(): void {
   this.loadSurveys();
+  this.eventBusService.event$.subscribe(event => {
+    if (event.eventName === 'dashboardDataSaved') {
+      window.location.reload();
+    }
+  });
 }
 
  

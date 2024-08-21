@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { DashboardlsService } from 'src/app/features/dashboard/services/dashboardls.service';
 
 @Component({
   selector: 'app-survey-list',
@@ -13,7 +15,10 @@ export class SurveyListComponent {
 
 constructor( 
   private surveyService : SurveyService, 
-  private toastr: ToastrService){}
+  private toastr: ToastrService,
+  private router: Router,
+  private dashboardlsService : DashboardlsService
+){}
 
 options : string[] = ["Estado","Fecha de modificación"];
 isFormVisible: boolean = false;
@@ -43,9 +48,12 @@ openCreateSurveyForm(): void {
   this.isFormVisible = true;
 }
 
-openEditSurveyForm(survey: Survey): void {
-  this.selectedSurvey = survey;
-  this.isFormVisible = true;
+editSurvey(survey: Survey): void {
+  if (survey) {
+    localStorage.setItem('survey', JSON.stringify(survey));
+    this.dashboardlsService.saveDashboardOptions(survey.questions);
+    this.router.navigate(['/dashboard']);
+  }
 }
 
 deleteSurvey(id: number): void {

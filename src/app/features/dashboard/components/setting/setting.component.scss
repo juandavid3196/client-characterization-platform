@@ -130,6 +130,16 @@
                         border: 0.2px solid #0D99FF;
                     }
 
+                    .error-input-message {
+                        display: flex;
+                        align-items: center;
+                        color: #de1717e0;
+
+                        .error-icon {
+                            font-size: 20px;
+                        }
+                    }
+
                     .error-message {
                         display: flex;
                         gap: 5px;

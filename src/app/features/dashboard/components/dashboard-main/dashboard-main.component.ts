@@ -1,10 +1,12 @@
-import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { Component} from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { Section } from '../../models/section.model';
-import { DashboardService } from '../../services/dashboard.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DashboardlsService } from '../../services/dashboardls.service';
-import { TableQuestionComponent } from '../table-question/table-question.component';
+import { SurveyService } from 'src/app/features/surveys/services/survey.service';
+import { ToastrService } from 'ngx-toastr';
+import { format } from 'date-fns';
+
 
 @Component({
   selector: 'app-dashboard-main',
@@ -28,34 +30,64 @@ export class DashboardMainComponent {
   bankIndex : any = {index:0,position:''};
   editSection : boolean = false;
   openPreview : boolean = false;
+  isLoading : boolean = false;
+  survey : any = {};
 
-
-  constructor(private dashboardService : DashboardService, private dashboardlsService : DashboardlsService ){}
+  constructor(
+    private dashboardlsService : DashboardlsService,
+    private surveyService: SurveyService,  
+    private toastr: ToastrService,
+  ){
+    window.addEventListener('beforeunload', (event) => {
+      this.saveDashboardData();
+    });
+    window.addEventListener('popstate', () => {
+      this.saveDashboardData();
+    });
+  }
 
   // Local Storage Info
 
   ngOnInit() : void {
+    this.getSurveyData();
     this.getQuestions();
     this.initializeDashboardValues();
   } 
 
- 
+  getSurveyData() : void {
+    const surveyString =  localStorage.getItem('survey');
+    this.survey =  (surveyString) ? JSON.parse(surveyString) : '';
+  }
+
   getQuestions(): void {
     this.dashboardOptions = this.dashboardlsService.getDashboardOptions();
   }
 
-  saveDashboardData() : void {
-    this.loadQuestionsFromLocalStorage();
-    this.dashboardService.updateQuestion(this.dashboardOptions).subscribe(
-      (response) => {
-        console.log('questions updated', response);
-      },
-      (error) => {
-        console.error('Error updating questions', error);
-      }
-    );
+  formatDate(): string {
+    const date = new Date();
+    return format(date, 'dd/MM/yyyy');
   }
 
+  async saveDashboardData(): Promise<void> {
+    this.isLoading = true; // Mostrar el spinner
+    try {
+      const surveyString = localStorage.getItem('survey');
+      const survey = (surveyString) ? JSON.parse(surveyString) : '';  
+      survey.questions = this.dashboardlsService.getDashboardOptions();
+      survey.state = 'Editada';
+      survey.updated_date = this.formatDate();
+      const response = await this.surveyService.updateSurvey(survey.id, survey).toPromise();
+      if (response) {
+        this.toastr.success("Encuesta Guardada con Éxito");
+      }
+  
+    } catch (error) {
+      console.error('Error creating survey', error);
+    } finally {
+      this.isLoading = false; 
+    }
+  }
+  
   updateDashboardQuestions(item: any[]): void {
     this.addNumeralToQuestions();
     this.dashboardlsService.saveDashboardOptions(item);
@@ -240,9 +272,5 @@ export class DashboardMainComponent {
     this.loadQuestionsFromLocalStorage();
   }
 
-  ngOnDestroy(): void {
-    const localInfo = this.dashboardlsService.getDashboardOptions();
-    this.dashboardlsService.saveDashboardOptions(localInfo);
-  }
 
 }

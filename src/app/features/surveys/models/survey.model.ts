@@ -1,7 +1,7 @@
 export interface Survey {
     id: number,
     title: string,
-    question_count?: number;
+    questions: any[],
     description?:  string,
     state:string,
     date_creation?: string,

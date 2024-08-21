@@ -1,4 +1,4 @@
-<app-survey-form *ngIf="isFormVisible" [survey]="selectedSurvey"  (formClose)="closeForm()" (surveySaved)="onSurveySaved()" > </app-survey-form>
+<app-survey-form *ngIf="isFormVisible"  (formClose)="closeForm()" (surveySaved)="onSurveySaved()" > </app-survey-form>
 <div class="container">
     <div class="survey-menu">
         <div class="top-section">
@@ -42,7 +42,7 @@
                 </div>
                 <div class="right-section">
                     <div class="row-box">
-                        <span class="survey-number"> {{survey.question_count}}</span>
+                        <span class="survey-number"> {{survey.questions.length}}</span>
                     </div>
                     <div class="row-box">
                         <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon></span>
@@ -53,7 +53,7 @@
                     <div class="row-box">
                         <div class="actions-box">
                             <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
-                            <span class="btn-edit btn" (click)="openEditSurveyForm(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="btn-edit btn" (click)="editSurvey(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
                             <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
                         </div>
                     </div>

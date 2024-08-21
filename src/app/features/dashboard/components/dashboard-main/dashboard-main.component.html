@@ -1,5 +1,6 @@
 
 <div class="container">
+    <app-spiner *ngIf="isLoading"></app-spiner>
     <app-questions-options 
         *ngIf="openQuestion"   
         (formClose)="openQuestionsMenu()"
@@ -27,7 +28,7 @@
     <div class="dashboard-menu">
         <div class="menu-left">
             <span class="home-icon"> <img src="assets/icons/home-icon.svg" alt=""> </span>
-            <span class="survey-title">Example</span>
+            <span class="survey-title">{{survey.title}}</span>
         </div>
         <div class="menu-right">
             <button class="btn-save btn" (click)="saveDashboardData()" *ngIf="!openPreview" >Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>

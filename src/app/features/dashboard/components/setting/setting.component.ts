@@ -24,12 +24,14 @@ export class SettingComponent {
   ){
     this.settingForm = this.fb.group({
       title: ['', Validators.required],
+      description: '',
     });
   }
 
   ngOnInit() : void {
     const survey = this.getSurveyData();
     this.settingForm.patchValue({['title']:survey.title});
+    this.settingForm.patchValue({['description']:survey.description});
   }
 
   formatDate(): string {
@@ -46,17 +48,17 @@ export class SettingComponent {
   onSubmit() : void {
     
     if(this.settingForm.valid){
-
       const survey = this.getSurveyData();
       survey.state= 'Editada';
       survey.updated_date = this.formatDate();
       survey.title = this.settingForm.value.title;
+      survey.description = this.settingForm.value.description;
       
       this.surveyService.updateSurvey(survey.id, survey).subscribe((response:any) => {
       if(response){
         const newSurvey = JSON.stringify(response.survey);
         localStorage.setItem('survey',newSurvey);
-        this.toastr.success("Nombre editado con éxito");
+        this.toastr.success("Encuesta editada con éxito");
       }
       },
       (error) => {

@@ -1,4 +1,5 @@
 <app-survey-form *ngIf="isFormVisible"  (formClose)="closeForm()" (surveySaved)="onSurveySaved()" > </app-survey-form>
+<app-info-window *ngIf="infoWindow"  (formClose)="openInfoWindow(null)" [surveyData]="selectedSurvey"></app-info-window>
 <div class="container">
     <div class="survey-menu">
         <div class="top-section">
@@ -11,7 +12,12 @@
                 <mat-icon class="search-bar-icon">search</mat-icon>
             </div>
             <div class="menu-select-box">
-                <app-filter-select [options]="options"></app-filter-select>
+                <span class="filter-label">Filtrar por Estado</span>
+                <app-filter-select [options]="states" (optionValue)="filterByState($event)"></app-filter-select>
+            </div>
+            <div class="menu-select-box">
+                <span class="filter-label">Filtrar por Fecha</span>
+                <app-filter-select [options]="modificationDate" (optionValue)="filterByDate($event)"></app-filter-select>
             </div>
         </div>
     </div>
@@ -45,16 +51,16 @@
                         <span class="survey-number"> {{survey.questions.length}}</span>
                     </div>
                     <div class="row-box">
-                        <span class="btn-clon btn"> <mat-icon  class="btn-icon">content_copy</mat-icon></span>
+                        <span class="btn-clon btn" (click)="cloneSurvey(survey)"><mat-icon  class="btn-icon">content_copy</mat-icon></span>
                     </div>
                     <div class="row-box">
-                        <span class="survey-state">{{survey.state}}</span>
+                        <span class="survey-state" [ngStyle]="{ 'color': surveyColor(survey.state, 'color'), 'background-color': surveyColor(survey.state, 'background') }">{{survey.state}}</span>
                     </div>
                     <div class="row-box">
                         <div class="actions-box">
                             <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
                             <span class="btn-edit btn" (click)="editSurvey(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
-                            <span class="btn-info btn"><mat-icon class="btn-icon">info</mat-icon></span>
+                            <span class="btn-info btn" (click)="openInfoWindow(survey)"><mat-icon class="btn-icon">info</mat-icon></span>
                         </div>
                     </div>
                 </div>

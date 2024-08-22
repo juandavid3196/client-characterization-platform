@@ -12,6 +12,10 @@
                     <input type="text" name="title"  formControlName="title">
                     <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe añadir un nombre para crear la encuesta.</span>
                 </div>
+                <div class="form-box">
+                    <label for="title">Descripción</label>
+                    <textarea name="description" formControlName="description"></textarea>
+                </div>
                 <div class="btns-section">
                     <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
                     <div class="btn-bottom-box">

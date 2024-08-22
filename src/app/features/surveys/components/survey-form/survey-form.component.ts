@@ -33,6 +33,7 @@ export class SurveyFormComponent {
     
     this.surveyForm = this.fb.group({
       title: ['', Validators.required],
+      description:'',
       date_creation: this.formatDate(),
       updated_date: this.formatDate(),
       state: 'creada',

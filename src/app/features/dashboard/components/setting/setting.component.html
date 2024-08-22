@@ -13,6 +13,10 @@
                         <span class="error-input-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe agregar un nombre para la encuesta.</span>
                     </div>
                     <div class="setting-box">
+                        <span class="box-title">Editar descripción encuesta</span>
+                        <textarea formControlName="description" placeholder="descripción de la encuesta"></textarea>
+                    </div>
+                    <div class="setting-box">
                         <span class="box-title">Eliminar encuesta</span>
                         <span class="error-message"><img src="assets/icons/warning-yellow-icon.svg" alt="">Una vez eliminada la encuesta, no se podra recuperar la información.</span>
                         <button class="btn btn-delete" (click)="deleteSurvey()">Eliminar</button>

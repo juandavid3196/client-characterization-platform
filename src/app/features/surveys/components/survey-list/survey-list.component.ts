@@ -5,8 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DashboardlsService } from 'src/app/features/dashboard/services/dashboardls.service';
 import { EventBusService } from 'src/app/core/services/eventBus.service';
-import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
+import { Clipboard } from '@angular/cdk/clipboard';
+
 
 @Component({
   selector: 'app-survey-list',
@@ -21,7 +22,8 @@ constructor(
   private toastr: ToastrService,
   private router: Router,
   private dashboardlsService : DashboardlsService,
-  private eventBusService: EventBusService
+  private eventBusService: EventBusService,
+  private clipboard: Clipboard
 ){}
 
 states : string[] = ["Creada","Editada","Publicada","Todas"];
@@ -60,6 +62,7 @@ openCreateSurveyForm(): void {
 }
 
 editSurvey(survey: Survey): void {
+  if(survey.state === 'Publicada') return;
   if (survey) {
     localStorage.setItem('survey', JSON.stringify(survey));
     this.dashboardlsService.saveDashboardOptions(survey.questions);
@@ -67,7 +70,7 @@ editSurvey(survey: Survey): void {
   }
 }
 
-deleteSurvey(id: number): void {
+deleteSurvey(id: string): void {
   if(window.confirm("¿Desea eliminar la encuesta?")){
     this.surveyService.deleteSurvey(id).subscribe(() => {
       this.loadSurveys(); 
@@ -76,6 +79,14 @@ deleteSurvey(id: number): void {
   }else{
     return;
   }
+}
+
+copyUrlSurvey(survey:any) : void {
+ if(survey.state !== 'Publicada'){
+  return
+ }
+ this.clipboard.copy(`${'http://localhost:4200'}/${'test'}/${survey.id}`);
+ this.toastr.success("Url copiada");
 }
 
 closeForm(): void {
@@ -100,6 +111,7 @@ formatDate(): string {
 async cloneSurvey(survey: Survey) :  Promise<void> {
   survey.title =  survey.title + ' - copia';
   survey.updated_date =  this.formatDate();
+  survey.state = 'Editada';
   const response: any = await this.surveyService.createSurvey(survey).toPromise();
   if(response.survey){
       this.toastr.success('Encusta clonada con exito');

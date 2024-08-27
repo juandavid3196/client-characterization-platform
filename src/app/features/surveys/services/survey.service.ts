@@ -15,7 +15,7 @@ export class SurveyService {
     return this.apiService.get<Survey>(this.endpoint);
   }
 
-  getSurveyById(id: number): Observable<Survey> {
+  getSurveyById(id: string): Observable<Survey> {
     return this.apiService.getById<Survey>(this.endpoint, id);
   }
 
@@ -23,11 +23,11 @@ export class SurveyService {
     return this.apiService.create<Survey>(this.endpoint, survey);
   }
 
-  updateSurvey(id: number, survey: Survey): Observable<Survey> {
+  updateSurvey(id: string, survey: Survey): Observable<Survey> {
     return this.apiService.update<Survey>(this.endpoint, id, survey);
   }
 
-  deleteSurvey(id: number): Observable<void> {
+  deleteSurvey(id: string): Observable<void> {
     return this.apiService.delete(this.endpoint, id);
   }
 }

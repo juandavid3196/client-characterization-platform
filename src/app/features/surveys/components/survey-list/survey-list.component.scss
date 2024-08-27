@@ -232,11 +232,26 @@
                             }
                         }
     
-                        .btn-info {
+                        .btn-blocked {
                             background-color: #E4E4E4;
                             
                             .btn-icon{
                                 color: #767676;
+                            }
+                        }
+
+                        .btn-info {
+                            background-color: #fffbd8;
+                            .btn-icon{
+                                color:#cda642;
+                            }
+                        }
+
+                        .btn-publish {
+                            background-color: #c4b9ff;
+                            
+                            .btn-icon{
+                                color: #4e50ad;
                             }
                         }
                     }

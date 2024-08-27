@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DashboardlsService } from 'src/app/features/dashboard/services/dashboardls.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-survey-form',
@@ -32,6 +33,7 @@ export class SurveyFormComponent {
     
     
     this.surveyForm = this.fb.group({
+      id: uuidv4(),
       title: ['', Validators.required],
       description:'',
       date_creation: this.formatDate(),

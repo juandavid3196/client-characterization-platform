@@ -59,7 +59,8 @@
                     <div class="row-box">
                         <div class="actions-box">
                             <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
-                            <span class="btn-edit btn" (click)="editSurvey(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="{{survey.state === 'Publicada' ? 'btn-blocked btn' : 'btn btn-edit'}}" (click)="editSurvey(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
+                            <span class="{{survey.state !== 'Publicada' ? 'btn-blocked btn' : 'btn btn-publish'}}"  (click)="copyUrlSurvey(survey)" > <mat-icon class="btn-icon">link</mat-icon></span>
                             <span class="btn-info btn" (click)="openInfoWindow(survey)"><mat-icon class="btn-icon">info</mat-icon></span>
                         </div>
                     </div>

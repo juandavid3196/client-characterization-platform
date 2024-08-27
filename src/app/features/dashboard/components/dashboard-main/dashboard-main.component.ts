@@ -284,9 +284,28 @@ export class DashboardMainComponent {
     this.loadQuestionsFromLocalStorage();
   }
 
+  async publishSurvey(): Promise<void> {
+    this.isLoading = true; // Mostrar el spinner
+    try {
+      const surveyString = localStorage.getItem('survey');
+      const survey = (surveyString) ? JSON.parse(surveyString) : '';  
+      survey.questions = this.dashboardlsService.getDashboardOptions();
+      survey.state = 'Publicada';
+      survey.updated_date = this.formatDate();
+      const response = await this.surveyService.updateSurvey(survey.id, survey).toPromise();
+      if (response) {
+        this.router.navigate(['/surveys']);
+        this.toastr.success("Encuesta Publicada con Éxito");
+      }
+  
+    } catch (error) {
+      console.error('Error creating survey', error);
+    } finally {
+      this.isLoading = false; 
+    }
+  }
+  
 
 }
-function confirmAction() {
-  throw new Error('Function not implemented.');
-}
+
 

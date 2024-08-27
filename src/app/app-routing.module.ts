@@ -15,6 +15,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/adminpanel/adminpanel.module').then(m => m.AdminpanelModule)
   },
   {
+    path: 'userpanel',
+    loadChildren: () => import('./features/usersurvey/user-survey.module').then(m => m.UserSurveyModule)
+  },
+  {
     path: '',
     redirectTo: '/surveys',
     pathMatch: 'full'

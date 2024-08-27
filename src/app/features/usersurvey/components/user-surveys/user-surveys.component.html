@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="survey-menu">
+        <div class="top-section">
+            <app-user-bar></app-user-bar>
+        </div>
+        <div class="bottom-section">
+            <div class="search-box">
+                <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="filterSurveys()">
+                <mat-icon class="search-bar-icon">search</mat-icon>
+            </div>
+            <div class="menu-select-box">
+                <span class="filter-label">Filtrar por Estado</span>
+                <app-filter-select [options]="states" (optionValue)="filterByState($event)"></app-filter-select>
+            </div>
+            <div class="menu-select-box">
+                <span class="filter-label">Filtrar por Fecha</span>
+                <app-filter-select [options]="modificationDate" (optionValue)="filterByDate($event)"></app-filter-select>
+            </div>
+        </div>
+    </div>
+    <main>
+        <div class="main-title">
+            Encuestas
+        </div>
+        <div class="survey-container">
+            <div class="survey-colums-box">
+                <ul>
+                    <span class="left-menu">
+                        <li>Nombre y Fecha de Modificacción</li>
+                    </span>
+                    <span class="right-menu">
+                        <li>Preguntas</li>
+                        <li>Estado</li>
+                        <li>Acciones</li>
+                    </span>
+                </ul>
+            </div>
+            <div class="survey-rows-box" *ngFor="let survey of filteredSurveys" >
+                <div class="left-section">
+                    <div class="title-box">
+                        <span class="survey-title">{{survey.title}}</span>
+                        <span class="survey-update">Modificado {{ survey.updated_date}}</span>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="row-box">
+                        <span class="survey-number"> {{survey.questions.length}}</span>
+                    </div>
+                    <div class="row-box">
+                        <span class="survey-state" [ngStyle]="{ 'color': surveyColor(survey.state, 'color'), 'background-color': surveyColor(survey.state, 'background') }">{{survey.state}}</span>
+                    </div>
+                    <div class="row-box">
+                        <div class="actions-box">
+                            <span class="btn-view btn"><mat-icon class="btn-icon">visibility</mat-icon> </span>
+                            <span class="btn-edit btn"><mat-icon class="btn-icon">edit</mat-icon> </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+

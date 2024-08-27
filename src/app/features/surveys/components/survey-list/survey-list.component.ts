@@ -85,7 +85,7 @@ copyUrlSurvey(survey:any) : void {
  if(survey.state !== 'Publicada'){
   return
  }
- this.clipboard.copy(`${'http://localhost:4200'}/${'test'}/${survey.id}`);
+ this.clipboard.copy(`${'http://localhost:4200'}/${'userpanel'}/id:${survey.id}`);
  this.toastr.success("Url copiada");
 }
 
@@ -108,7 +108,7 @@ formatDate(): string {
   return format(date, 'dd/MM/yyyy');
 }
 
-async cloneSurvey(survey: Survey) :  Promise<void> {
+async cloneSurvey(survey: Survey) : Promise<void> {
   survey.title =  survey.title + ' - copia';
   survey.updated_date =  this.formatDate();
   survey.state = 'Editada';

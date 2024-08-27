@@ -9,6 +9,7 @@ import { SurveysModule } from './features/surveys/surveys.module';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardModule } from './features/dashboard/dashboard.module';
 import { AdminpanelModule } from './features/adminpanel/adminpanel.module';
+import { UserSurveyModule } from './features/usersurvey/user-survey.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { AdminpanelModule } from './features/adminpanel/adminpanel.module';
     SurveysModule,
     HttpClientModule,
     DashboardModule,
-    AdminpanelModule
+    AdminpanelModule,
+    UserSurveyModule
 
   ],
   providers: [],

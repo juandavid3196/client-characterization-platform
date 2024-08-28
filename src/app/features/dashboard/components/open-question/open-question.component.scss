@@ -393,18 +393,20 @@
 
             .text-section {
                 width: auto;
-                input {
+                textarea {
+                    min-height: 80px;
+                    resize: none;
+                    padding: 3px 5px;
                     width: -webkit-fill-available;
-                    height: 100px;
-                    border: 1px solid #B2B2B2;
                     border-radius: 5px;
-                    padding-left: 5px;
-                    font-size: 14px;
+                    font-family: 'Poppins';
                 }
-                input:focus {
+
+                textarea:focus {
                     outline: none;
-                    border: 1px solid #0D99FF;
+                    border: 0.2px solid #0D99FF;
                 }
+
             }
 
 

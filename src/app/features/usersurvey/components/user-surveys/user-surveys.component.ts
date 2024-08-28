@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { userSurvey } from '../../models/user-survey.model';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
+import { UserSurveyService } from '../../services/user-survey.service';
 
 @Component({
   selector: 'app-user-surveys',
@@ -14,9 +15,10 @@ export class UserSurveysComponent {
   constructor( 
     private toastr: ToastrService,
     private router: Router,
+    private userSurveyService : UserSurveyService,
   ){}
   
-  states : string[] = ["Creada","Editada","Publicada","Todas"];
+  states : string[] = ["Terminada","Sin Resolver","Cancelada","Todas"];
   modificationDate : string[] = ["Más Reciente", "Más Antiguo"];
   isFormVisible: boolean = false;
   surveys  : userSurvey[] = [];
@@ -30,7 +32,10 @@ export class UserSurveysComponent {
   
    
   loadSurveys(): void {
-    
+    this.userSurveyService.getSurveys().subscribe(surveys => {
+      this.surveys = surveys;
+      this.filteredSurveys =surveys;
+    });
   }
   
   filterSurveys(): void {
@@ -67,15 +72,15 @@ export class UserSurveysComponent {
     let color = '';
     let background = '';
     switch(state){
-      case 'Publicada': 
+      case 'Terminada': 
         color = '#128524';
         background = '#ACFFBA';
       break;
-      case 'Editada': 
+      case 'Cancelada': 
         color = '#898C08';
         background = '#F3FFAC';
       break;
-      case 'Creada': 
+      case 'Sin Resolver': 
         color = '#666666';
         background= "#E4E4E4";
       break;
@@ -87,4 +92,12 @@ export class UserSurveysComponent {
       return background;
     }
   }
+
+  viewResults(survey: any) : void {
+  }
+
+  solveSurvey(survey:any) : void {
+    this.router.navigate(['/userpanel', survey.id]);
+  }
+
 }

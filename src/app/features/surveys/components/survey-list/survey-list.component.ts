@@ -26,7 +26,7 @@ constructor(
   private clipboard: Clipboard
 ){}
 
-states : string[] = ["Creada","Editada","Publicada","Todas"];
+states : string[] =["Creada","Editada","Publicada","Todas"];
 modificationDate : string[] = ["Más Reciente", "Más Antiguo"];
 isFormVisible: boolean = false;
 surveys  : Survey[] = [];

@@ -7,7 +7,7 @@ import { IpGuard } from './guards/ip.guard';
 
 const routes: Routes = [
   { path: '', component: UserSurveysComponent },
-  { path: '/id', component: SurveyTestComponent },
+  { path: ':id', component: SurveyTestComponent },
 ];
 
 @NgModule({

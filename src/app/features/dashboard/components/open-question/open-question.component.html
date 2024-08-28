@@ -77,7 +77,7 @@
                 <div class="q-description"> <span class="dark-description" *ngIf="openForm.value.description != '' " >Descripción: </span>{{openForm.value.description}}</div>
                 <span class="note-message"><span class="dark-message" *ngIf="addNote">Nota  </span>{{openForm.value.note_text}}</span>
                 <div class="text-section">
-                    <input type="text" formControlName="text_answer" placeholder="Ingrese su Respuesta" [attr.disabled]="true">
+                    <textarea formControlName="text_answer" placeholder="Ingrese su Respuesta" [attr.disabled]="true"></textarea>
                 </div>
                 <div class="required-message-view" *ngIf="required">
                     <img src="assets/icons/warning-icon.svg" alt=""> Pregunta Obligatoria ACTIVADA</div>

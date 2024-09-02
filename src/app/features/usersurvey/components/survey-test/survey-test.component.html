@@ -1,132 +1,145 @@
 <app-spiner *ngIf="isLoading"></app-spiner>
-<div class="preview-container">
-    <div class="zoom-control-box" >
-        <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
-        <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
-    </div>
-    <div class="preview-box" appZoom *ngIf="survey.questions.length > 0">
-        <div class="p-inner-box">
-            <div class="questions-container" *ngFor="let item of survey.questions">
-                <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
-                    <div class="checkbox-view-box">
-                        <span class="q-number">pregunta {{item.numeral}}</span>
-                        <span class="q-text">{{item.text}}</span>
-                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
-                        <div class="options-container">
-                            <div class="option-box"  *ngFor="let option of item.options; let i = index">
-                                <div class="checkbox-box" *ngIf="item.options.length > 0">
-                                    <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === item.settings.answer_value"  [disabled]="true">
-                                    <label for="{{i}}"></label>
-                                </div>
-                                <span class="option-text">{{option}}</span>
-                            </div>
-                        </div>
-                        <div class="another-field-container" *ngIf="item.settings.another_field">
-                           <span class="af-text">Otra (Especifique)</span>
-                           <input type="text" class="af-input">
-                        </div>
-                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.add_note">Nota  </span>{{item.note_text}}</span> 
-                        <div class="required-message-view" *ngIf="item.settings.required">
-                            <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
-                        </div>
-                    </div>
-                </div>
-                <div class="checkbox-view-container" *ngIf="item.type === 'table'">
-                    <div class="checkbox-view-box">
-                        <span class="q-number">pregunta {{item.numeral}}</span>
-                        <span class="q-text">{{item.text}}</span>
-                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
-                        <div class="table-section" *ngIf="item.options[0].text !== ''  || item.no_visible_title !== ''">
-                            <div class="table-styled">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th *ngFor="let option of item.options">{{ option.text }}</th>
-                                            <th *ngIf="item.no_visible_title != ''" class="no-visible-clm">{{item.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let rowIndex of getMaxLengthValue(item); let i = index">
-                                            <td *ngFor="let option of item.options">
-                                              <ng-container *ngIf="option.type === 'text'">
-                                                {{ option.rows[i] || '' }}
-                                              </ng-container>
-                                              <ng-container *ngIf="option.type === 'radio button'">
-                                                <label class="custom-radio-btn">
-                                                  <input type="radio" name="sample-{{ i }}">
-                                                  <span class="checkmark"></span>
-                                                </label>
-                                              </ng-container>
-                                            </td>
-                                            <td  class="no-visible-clm" *ngIf="item.no_visible_title !==  '' ">
-                                                {{item.no_visible_rows[i] || '' }}
-                                            </td>
-                                          </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
-                        <div class="required-message-view" *ngIf="item.settings.required">
-                            <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
-                        </div>
-                    </div>
-                </div>
-                <div class="section-container" *ngIf="item.type === 'section'">
-                    <span class="section-title">{{item.title}}</span>
-                </div>
-                <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
-                    <div class="checkbox-view-box">
-                        <span class="q-number">pregunta {{item.numeral}}</span>
-                        <span class="q-text">{{item.text}}</span>
-                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
-                        <div class="q-scale-section">
-                            <div class="scale-circle-box" *ngIf="this.item.settings.apply">
-                                <span class="scale-circle">N/A</span>
-                            </div>
-                            <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value)">
-                                <span class="scale-circle {{verifyIndex(number,item.settings.answer_value) ? 'scale-circle-selected' : ''}} ">{{number}}</span>
-                                <span class="scale-circle-label">{{labelTitle(number, getSliderOptions(item.scale_value), item)}}</span>
-                            </div>
-                        </div>
-                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
-                        <div class="required-message-view" *ngIf="item.settings.required">
-                            <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
-                        </div>    
-                </div>
-                <div class="checkbox-view-container" *ngIf="item.type === 'yes/no'">
-                    <div class="checkbox-view-box">
-                        <span class="q-number">pregunta {{item.numeral}}</span>
-                        <span class="q-text">{{item.text}}</span>
-                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
-                        <div class="buttons-yesno-section">
-                            <span class="q-yesno-box {{item.settings.answer_value === 'Si' ? 'q-yesno-box-selected' : ''}}">
-                                    <img src="assets/icons/{{item.selected_icons === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
-                                    <span class="small-message">SI</span>
-                            </span>
-                            <span class="q-yesno-box {{item.settings.answer_value === 'No' ? 'q-yesno-box-selected' : ''}}">
-                                    <img src="assets/icons/{{item.selected_icons === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
-                                    <span class="small-message">NO</span>
-                            </span>
-                        </div>
-                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
-                        <div class="required-message-view" *ngIf="item.settings.required"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
-                        <div class="required-message-view notify-message" *ngIf="item.settings.enlarge_answer"><img src="assets/icons/notify-fill-icon.svg" alt="">Ampliar respuesta ACTIVADA</div>         
-                        </div>    
-                </div>
-                <div class="checkbox-view-container" *ngIf="item.type === 'open'">
-                    <div class="checkbox-view-box">
-                        <span class="q-number">pregunta {{item.numeral}}</span>
-                        <span class="q-text">{{item.text}}</span>
-                        <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
-                        <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
-                        <div class="text-section">
-                            <textarea formControlName="text_answer" placeholder="Ingrese su Respuesta"></textarea>
-                        </div>
-                        <div class="required-message-view" *ngIf="item.settings.required"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
-                    </div>    
-                </div>
-            </div> 
+<header>
+    <app-user-bar></app-user-bar>
+    <div class="dashboard-menu">
+        <div class="menu-left">
+            <span class="home-icon" (click)="goToUserSurveyPage()" > <img src="assets/icons/home-icon.svg" alt=""> </span>
+            <span class="survey-title">{{survey.title}}</span>
+        </div>
+        <div class="menu-right">
+            <button class="btn-save btn" (click)="saveSurveyAnswers()">Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
+            <button class="btn-publish btn"  (click)="finishSurvey()">Finalizar Encuesta</button>
         </div>
     </div>
-</div>
+  </header>
+  <div class="preview-container">
+      <div class="zoom-control-box" >
+          <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
+          <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
+      </div>
+      <div class="preview-box" appZoom *ngIf="survey.questions && survey.questions.length > 0">
+          <div class="p-inner-box">
+              <div class="questions-container" *ngFor="let item of survey.questions">
+                  <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
+                      <div class="checkbox-view-box">
+                          <span class="q-number">pregunta {{item.numeral}}</span>
+                          <span class="q-text">{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="options-container">
+                              <div class="option-box"  *ngFor="let option of item.options; let i = index">
+                                  <div class="checkbox-box" *ngIf="item.options.length > 0">
+                                      <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === item.settings.answer_value" (click)="setAnswer({item:item,answer:option})">
+                                      <label for="{{i}}"></label>
+                                  </div>
+                                  <span class="option-text">{{option}}</span>
+                              </div>
+                          </div>
+                          <div class="another-field-container" *ngIf="item.settings.another_field">
+                             <span class="af-text">Otra (Especifique)</span>
+                             <input type="text" class="af-input">
+                          </div>
+                          <span class="note-message"><span class="dark-message" *ngIf="item.settings.add_note">Nota  </span>{{item.note_text}}</span> 
+                          <div class="required-message-view" *ngIf="item.settings.required">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
+                          </div>
+                      </div>
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'table'">
+                      <div class="checkbox-view-box">
+                          <span class="q-number">pregunta {{item.numeral}}</span>
+                          <span class="q-text">{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="table-section" *ngIf="item.options[0].text !== ''  || item.no_visible_title !== ''">
+                              <div class="table-styled">
+                                  <table>
+                                      <thead>
+                                          <tr>
+                                              <th *ngFor="let option of item.options">{{ option.text }}</th>
+                                              <th *ngIf="item.no_visible_title != ''" class="no-visible-clm">{{item.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr *ngFor="let rowIndex of getMaxLengthValue(item); let i = index">
+                                              <td *ngFor="let option of item.options; let y = index">
+                                                <ng-container *ngIf="option.type === 'text'">
+                                                  {{ option.rows[i] || '' }}
+                                                </ng-container>
+                                                <ng-container *ngIf="option.type === 'radio button'">
+                                                  <label class="custom-radio-btn">
+                                                    <input type="radio" name="sample-{{ i }}" (click)="setAnswer({item:item,answer:{row:i, column:y, value:item.options[0]?.rows[i], columnName:option.text}})">
+                                                    <span class="checkmark"></span>
+                                                  </label>
+                                                </ng-container>
+                                              </td>
+                                              <td  class="no-visible-clm" *ngIf="item.no_visible_title !==  '' ">
+                                                  {{item.no_visible_rows[i] || '' }}
+                                              </td>
+                                            </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                          <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                          <div class="required-message-view" *ngIf="item.settings.required">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
+                          </div>
+                      </div>
+                  </div>
+                  <div class="section-container" *ngIf="item.type === 'section'">
+                      <span class="section-title">{{item.title}}</span>
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
+                      <div class="checkbox-view-box">
+                          <span class="q-number">pregunta {{item.numeral}}</span>
+                          <span class="q-text">{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="q-scale-section">
+                              <div class="scale-circle-box" *ngIf="this.item.settings.apply">
+                                  <span class="scale-circle">N/A</span>
+                              </div>
+                              <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value)">
+                                  <span class="scale-circle {{verifyIndex(number,item.settings.answer_value) ? 'scale-circle-selected' : ''}} " (click)="setAnswer({item:item,answer:number})">{{number}}</span>
+                                  <span class="scale-circle-label">{{labelTitle(number, getSliderOptions(item.scale_value), item)}}</span>
+                              </div>
+                          </div>
+                          <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                          <div class="required-message-view" *ngIf="item.settings.required">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                          </div>    
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'yes/no'">
+                      <div class="checkbox-view-box">
+                          <span class="q-number">pregunta {{item.numeral}}</span>
+                          <span class="q-text">{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="buttons-yesno-section">
+                              <span class="q-yesno-box {{item.settings.answer_value === 'Si' ? 'q-yesno-box-selected' : ''}}" (click)="setAnswer({item:item,answer:'SI'})">
+                                      <img src="assets/icons/{{item.selected_icons === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
+                                      <span class="small-message">SI</span>
+                              </span> 
+                              <span class="q-yesno-box {{item.settings.answer_value === 'No' ? 'q-yesno-box-selected' : ''}}" (click)="setAnswer({item:item,answer:'NO'})">
+                                      <img src="assets/icons/{{item.selected_icons === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
+                                      <span class="small-message">NO</span>
+                              </span>
+                          </div>
+                          <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                          <div class="required-message-view" *ngIf="item.settings.required"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                          <div class="required-message-view notify-message" *ngIf="item.settings.enlarge_answer"><img src="assets/icons/notify-fill-icon.svg" alt="">Ampliar respuesta ACTIVADA</div>         
+                          </div>    
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'open'">
+                      <div class="checkbox-view-box">
+                          <span class="q-number">pregunta {{item.numeral}}</span>
+                          <span class="q-text">{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <span class="note-message"><span class="dark-message" *ngIf="item.settings.addNote">Nota  </span>{{item.note_text}}</span>
+                          <div class="text-section">
+                              <textarea placeholder="Ingrese su Respuesta" [(ngModel)]="textAreaAnswer" (blur)="setAnswer({item:item,answer:textAreaAnswer})" ></textarea>
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                      </div>    
+                  </div>
+              </div> 
+          </div>
+      </div>
+  </div>

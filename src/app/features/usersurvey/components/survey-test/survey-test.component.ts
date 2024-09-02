@@ -4,6 +4,8 @@ import { UserSurveyService } from '../../services/user-survey.service';
 import { ZoomDirective } from 'src/app/shared/directives/zoom.directive';
 import { SurveyService } from 'src/app/features/surveys/services/survey.service';
 import { map, take } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey-test',
@@ -14,14 +16,24 @@ export class SurveyTestComponent {
 
   survey : any = {};
   isLoading : boolean = false;
+  textAreaAnswer: string = '';
+  answerArray : any[] = [];
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService,
     private userSurveyService : UserSurveyService,
     private surveyService : SurveyService,
 
-  ) {}
+  ) {
+    window.addEventListener('beforeunload', (event) => {
+      this.saveSurveyAnswers();
+  });
+
+
+  }
 
   ngOnInit(): void {
    this.loadSurvey();
@@ -39,6 +51,7 @@ export class SurveyTestComponent {
   async getSurveyById(): Promise<any> {
     this.isLoading = true; // Mostrar el spinner
     try {
+      //tomar id desde la URL
       const id = await new Promise<string>(resolve => {
         this.route.params.pipe(
           take(1),
@@ -50,10 +63,26 @@ export class SurveyTestComponent {
           resolve(cleanId);
         });
       });
-      const response: any = await this.surveyService.getSurveyById(id).toPromise();
-      if(response){
-        return response;
+
+      //Verificar si el usuario ya tiene esa encuesta
+      const userSurveys: any = await this.userSurveyService.getSurveys().toPromise();
+      if(userSurveys){
+        let survey = userSurveys.find((s:any) => s.id === id);
+        if(survey === undefined){
+          const response: any = await this.surveyService.getSurveyById(id).toPromise();
+          if(response){
+            response.state = 'Sin Resolver';
+            const userResponse: any = await this.userSurveyService.createSurvey(response).toPromise();
+              if(userResponse){
+                this.toastr.success('Encuesta agregada con exito');
+                return userResponse;
+              }
+          }
+        }else {
+          return survey;
+        }
       }
+      
       
     } catch (error) {
       console.error('Error fetching survey', error);
@@ -109,6 +138,51 @@ let item = 1;
     item += 1;
   }
   return sliderOptions;
+}
+
+goToUserSurveyPage() : void {
+  this.saveSurveyAnswers();
+  this.router.navigate(['/userpanel']);
+}
+
+saveSurveyAnswers() :  void {
+this.isLoading = true; // Mostrar el spinner
+let result = {};
+    try {
+        // Servicio EDITAR respuestas
+    } catch (error) {
+      console.error('Error creating survey', error);
+    } finally {
+      this.isLoading = false; 
+    }
+}
+
+finishSurvey() : void {
+  // Servicio Guardar Respuestas
+}
+
+setAnswer(answer:any) :  void {
+  let body = {
+    questionInfo: answer.item,
+    answer :  answer.answer,   
+  }
+
+  const checkIndex =  this.answerArray.findIndex((q:any)=>q.questionInfo.id ==  body.questionInfo.id);
+
+  if(checkIndex === -1){
+    if(body.questionInfo.type === 'open' && body.answer !== '' || body.questionInfo.type !== 'open'){
+      this.answerArray.push(body);
+    }else {
+      return;
+    }
+  }else {
+    if(body.questionInfo.type === 'open' && body.answer !== '' || body.questionInfo.type !== 'open'){
+      this.answerArray[checkIndex].answer = body.answer;
+    }else{
+      return;
+    }
+  }
+  console.log(this.answerArray);
 }
 
 }

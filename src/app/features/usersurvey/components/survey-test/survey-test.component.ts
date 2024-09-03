@@ -6,6 +6,9 @@ import { SurveyService } from 'src/app/features/surveys/services/survey.service'
 import { map, take } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
+import { format } from 'date-fns';
+import { AnswerService } from '../../services/answer.service';
 
 @Component({
   selector: 'app-survey-test',
@@ -18,6 +21,7 @@ export class SurveyTestComponent {
   isLoading : boolean = false;
   textAreaAnswer: string = '';
   answerArray : any[] = [];
+  questionsToWarn : string[] =  [];
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -26,6 +30,7 @@ export class SurveyTestComponent {
     private toastr: ToastrService,
     private userSurveyService : UserSurveyService,
     private surveyService : SurveyService,
+    private answerService : AnswerService,
 
   ) {
     window.addEventListener('beforeunload', (event) => {
@@ -43,6 +48,7 @@ export class SurveyTestComponent {
   async loadSurvey() : Promise<void> {
     try {
       this.survey = await this.getSurveyById();
+      this.CheckingAnswerByDefect();
     } catch (error) {
       console.error('Error initializing survey', error);
     }
@@ -157,8 +163,81 @@ let result = {};
     }
 }
 
-finishSurvey() : void {
-  // Servicio Guardar Respuestas
+async  finishSurvey() : Promise<void> {
+  this.isLoading = true; // Mostrar el spinner
+
+  try {
+    // Cheking required questions without answer
+   if(this.ChekingRequiredQuestions()){
+    return;
+   }
+   //Saving answers in Database
+   const answerBody = {
+    id_survey: this.survey.id,
+    id: uuidv4(),
+    state:'Finalizada',
+    date_creation :  this.formatDate(),
+    updated_date: this.formatDate(),
+    asnwers : this.answerArray,
+   } 
+
+   const response: any = await this.answerService.createAnswer(answerBody).toPromise();
+    if(response){
+      this.toastr.success('Encuesta Finalizada con exito');
+      console.log(response)
+    }
+  } catch (error) {
+    console.error('Error fetching survey', error);
+  } finally {
+    this.isLoading = false;
+  }
+   
+}
+
+formatDate(): string {
+  const date = new Date();
+  return format(date, 'dd/MM/yyyy');
+}
+
+
+checkRequiredProperty(numeral:string) : boolean {
+  const checkNumeral =  this.questionsToWarn.find((e:any) => e === numeral);
+  if(checkNumeral === undefined){
+    return  false;
+  }else{
+    return true;  
+  }
+}
+
+ChekingRequiredQuestions() :  boolean {
+  this.questionsToWarn = [];
+  for (let index = 0; index < this.survey.questions.length; index++) {
+    if(this.survey.questions[index].settings.required === true){ // Cheking if the asnwer is in the answers Array.
+       const questions = this.answerArray.find((e:any)=>e.questionInfo.id === this.survey.questions[index].id);
+       if(questions === undefined){
+         this.questionsToWarn.push(this.survey.questions[index].numeral);
+       }
+    } 
+   }
+   if(this.questionsToWarn.length > 0){
+     return  true;
+   }
+   return false;
+}
+
+CheckingAnswerByDefect() : void {
+  for (let index = 0; index < this.survey.questions.length; index++) {
+    if(this.survey.questions[index].settings.answer_value !== ''){ // Cheking if answer_defect contains one. 
+        this.setAnswer({item:this.survey.questions[index],answer:this.survey.questions[index].settings.answer_value});
+    } 
+   }
+}
+
+getAnswerValue(numeral : string ) :  any {
+  const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
+  if(questionAnswer) {
+    return questionAnswer.answer;
+  } 
 }
 
 setAnswer(answer:any) :  void {
@@ -169,6 +248,15 @@ setAnswer(answer:any) :  void {
 
   const checkIndex =  this.answerArray.findIndex((q:any)=>q.questionInfo.id ==  body.questionInfo.id);
 
+  // If press click twice in a checked answer
+  if(body.answer === this.getAnswerValue(body.questionInfo.numeral)){
+    if(checkIndex !== -1){
+      this.answerArray.splice(checkIndex,1);
+    }
+    return;
+  }
+
+  // Adding or Updating
   if(checkIndex === -1){
     if(body.questionInfo.type === 'open' && body.answer !== '' || body.questionInfo.type !== 'open'){
       this.answerArray.push(body);

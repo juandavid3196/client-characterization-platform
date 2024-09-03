@@ -159,20 +159,32 @@ header{
                         .checkbox-view-box {
                         display: flex;
                         flex-direction: column;
-                        padding: 40px 10px  20px 40px;
+                        padding: 60px 20px 60px 40px;
                         gap: 20px;
                         height: -webkit-fill-available;
                     
-                        .q-number {
-                            color: #7D7D7D;
-                            font-weight: 500;
-                            font-size: 15px;
-                        }
                     
                         .q-text {
                             color: #333E48;
                             font-size: 20px;
                             font-weight: 500;
+                            display: flex;
+                            gap: 10px;
+                            align-items: center;
+
+                            .q-number {
+                                border: 1.5px solid #0e98fd;
+                                border-radius: 5px;
+                                height: 30px;
+                                width: 30px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background-color: white;
+                                font-weight: 600;
+                                color: #333E48;
+                                font-size: 15px;
+                            }
                         }
             
                         .q-description {
@@ -190,7 +202,7 @@ header{
                                 border-radius: 5px; 
                                 border:0.2px solid #B9B9B9;
                                 overflow: hidden; 
-                                max-width: 90%;
+                                max-width: fit-content;
                                 margin: auto;
                                 table {
                                    
@@ -199,13 +211,13 @@ header{
                                     border-top: hidden;
                                     border-bottom: hidden;
                                     border-collapse: collapse;
-                                    width: -webkit-fill-available;
+                                    width: auto;
                                     
                                     thead {
                                         tr{
                                             th {
                                                 border: 0.2px solid #B9B9B9;
-                                                padding: 14px 0;
+                                                padding: 14px 30px;
                                                 text-align: center;
                                                 font-size: 20px;
                                                 font-weight: 500;
@@ -553,6 +565,17 @@ header{
                         }
                         
                     
+                    }
+
+                    .checkbox-view-container::after {
+                        content: '';
+                        display: block;
+                        width: 90%; /* Ancho de la línea */
+                        height: 0.5px; /* Grosor de la línea */
+                        background-color: #B2B2B2; /* Color de la línea */
+                        position: absolute;
+                        left: 5%
+
                     }
         
                     .section-container {

@@ -22,8 +22,22 @@
               <div class="questions-container" *ngFor="let item of survey.questions">
                   <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
                       <div class="checkbox-view-box">
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')">
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                          </div>
                           <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'answer')">
+                            <button class="btn-save btn" (click)="openVideo(item,'answer')">Video Explicación Opciones <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'answer'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                          </div>
                           <div class="options-container">
                               <div class="option-box"  *ngFor="let option of item.options; let i = index">
                                   <div class="checkbox-box" *ngIf="item.options.length > 0">
@@ -43,16 +57,29 @@
                       </div>
                   </div>
                   <div class="checkbox-view-container" *ngIf="item.type === 'table'">
-                      <div class="checkbox-view-box">  
+                      <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                            <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                            <div [innerHTML]="iframeHtml"></div>
+                            </div>  
+                        </div>
                           <span class="q-text"><span class="q-number">{{item.numeral}}</span>{{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'answer')"> 
+                              <button class="btn-save btn" (click)="openVideo(item,'answer')">Video Explicación Tabla<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'answer'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                          </div>
                           <div class="table-section" *ngIf="item.options[0].text !== ''  || item.no_visible_title !== ''">
                               <div class="table-styled">
                                   <table>
                                       <thead>
                                           <tr>
                                               <th *ngFor="let option of item.options">{{ option.text }}</th>
-                                              <th *ngIf="item.no_visible_title != ''" class="no-visible-clm">{{item.no_visible_title}} <img src="assets/icons/no-visible-icon.svg" alt=""></th>
                                           </tr>
                                       </thead>
                                       <tbody>
@@ -67,9 +94,6 @@
                                                     <span class="checkmark"></span>
                                                   </label>
                                                 </ng-container>
-                                              </td>
-                                              <td  class="no-visible-clm" *ngIf="item.no_visible_title !==  '' ">
-                                                  {{item.no_visible_rows[i] || '' }}
                                               </td>
                                             </tr>
                                       </tbody>
@@ -86,6 +110,13 @@
                   </div>
                   <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
                       <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                        </div>
                         <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
                           <div class="q-scale-section">
@@ -103,6 +134,13 @@
                   </div>
                   <div class="checkbox-view-container" *ngIf="item.type === 'yes/no'">
                       <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                        </div>
                         <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
                           <div class="buttons-yesno-section">
@@ -121,6 +159,13 @@
                   </div>
                   <div class="checkbox-view-container" *ngIf="item.type === 'open'">
                       <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Opciones <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                              <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                              <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                        </div>
                           <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
                           <div class="text-section">

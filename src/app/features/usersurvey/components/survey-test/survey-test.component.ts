@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
 import { AnswerService } from '../../services/answer.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-survey-test',
@@ -22,6 +23,9 @@ export class SurveyTestComponent {
   textAreaAnswer: string = '';
   answerArray : any[] = [];
   questionsToWarn : string[] =  [];
+  openVideoNumeral :  string =  '';
+  openVideoType :  string =  '';
+  iframeHtml ?: SafeHtml;
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -31,6 +35,7 @@ export class SurveyTestComponent {
     private userSurveyService : UserSurveyService,
     private surveyService : SurveyService,
     private answerService : AnswerService,
+    private sanitizer: DomSanitizer
 
   ) {
     window.addEventListener('beforeunload', (event) => {
@@ -48,6 +53,7 @@ export class SurveyTestComponent {
   async loadSurvey() : Promise<void> {
     try {
       this.survey = await this.getSurveyById();
+      console.log(this.survey);
       this.CheckingAnswerByDefect();
     } catch (error) {
       console.error('Error initializing survey', error);
@@ -238,6 +244,32 @@ getAnswerValue(numeral : string ) :  any {
   if(questionAnswer) {
     return questionAnswer.answer;
   } 
+}
+
+openVideo(item:any,type:string) : void {
+ this.openVideoNumeral  = item.numeral;
+ this.openVideoType = type;
+ if(type === 'question'){
+   this.getVideoLabel(item.settings.question_multimedia);
+  }else {
+   this.getVideoLabel(item.settings.options_multimedia);
+ }
+}
+
+closeVideo() :  void {
+  this.openVideoNumeral  = 'close';
+}
+
+getVideoLabel(label:string) : void {
+  this.iframeHtml = this.sanitizer.bypassSecurityTrustHtml(label);
+}
+
+verifyVideoLink(item:any,type:string) : boolean{
+  if(item.settings.question_multimedia === '' && type === 'question' 
+    ||item.settings.options_multimedia === '' && type === 'answer'){
+    return false 
+  }
+  return true;
 }
 
 setAnswer(answer:any) :  void {

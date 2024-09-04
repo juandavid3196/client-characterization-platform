@@ -8,8 +8,8 @@
                 <div class="main-section">
                     <form  [formGroup]="videoForm"  (ngSubmit)="onSubmit()">
                         <div class="form-box">
-                            <label for="title">Agregar URL</label>
-                            <input type="text" name="title"  formControlName="title">
+                            <label for="title">Inserta el Video</label>
+                            <textarea formControlName="title" name="title" placeholder="Inserta el iframe del video en Youtube "></textarea>
                             <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe de copiar una URL</span>
                         </div>
                         <div class="btns-section">

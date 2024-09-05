@@ -17,7 +17,7 @@
           <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
           <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
       </div>
-      <div class="preview-box" appZoom *ngIf="survey.questions && survey.questions.length > 0">
+      <div class="preview-box" appZoom *ngIf="!isLoading && survey">
           <div class="p-inner-box">
               <div class="questions-container" *ngFor="let item of survey.questions">
                   <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
@@ -41,15 +41,15 @@
                           <div class="options-container">
                               <div class="option-box"  *ngFor="let option of item.options; let i = index">
                                   <div class="checkbox-box" *ngIf="item.options.length > 0">
-                                      <input type="checkbox" id="{{i}}" [checked]="option != '' &&  option === getAnswerValue(item.numeral)" (click)="setAnswer({item:item,answer:option})">
-                                      <label for="{{i}}"></label>
+                                      <input type="checkbox"  name="{{item.id}}"   id="{{item.numeral}}-{{i}}" [checked]="option != '' &&  option === getAnswerValue(item.numeral)" (click)="setAnswer({item:item,answer:{option:option,another_field:''}})">
+                                      <label for="{{item.numeral}}-{{i}}"></label>
                                   </div>
                                   <span class="option-text">{{option}}</span>
                               </div>
                           </div>
                           <div class="another-field-container" *ngIf="item.settings.another_field">
                              <span class="af-text">Otra (Especifique)</span>
-                             <input type="text" class="af-input">
+                             <input type="text" id="{{item.numeral}}-{{item.id}}"  name="{{item.id}}"  [value]="getTextFieldValue(item.numeral)" (input)="setAnswer({item:item,answer:{option:'',another_field:getTextareaValue($event)}})"  class="af-input">
                           </div>
                           <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)">
                               <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
@@ -90,7 +90,13 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="option.type === 'radio button'">
                                                   <label class="custom-radio-btn">
-                                                    <input type="radio" name="sample-{{ i }}" (click)="setAnswer({item:item,answer:{row:i, column:y, value:item.options[0]?.rows[i], columnName:option.text}})">
+                                                    <input type="radio" 
+                                                     name="'{{item.id}}"
+                                                     id="{{item.numeral}}--{{item.id}}" 
+                                                     value="{{i}}--{{y}}"
+                                                     [checked]="getTableQuestionAnswer(item.numeral,y,i)"
+                                                     (click)="setAnswer({item:item,answer:{row:i, column:y, value:item.options[0]?.rows[i], columnName:option.text}})    
+                                                     ">
                                                     <span class="checkmark"></span>
                                                   </label>
                                                 </ng-container>
@@ -123,8 +129,8 @@
                               <div class="scale-circle-box" *ngIf="this.item.settings.apply">
                                   <span class="scale-circle">N/A</span>
                               </div>
-                              <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value)">
-                                  <span class="scale-circle {{(number  <= getAnswerValue(item.numeral)) ? 'scale-circle-selected' : ''}} " (click)="setAnswer({item:item,answer:number})">{{number}}</span>
+                              <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value); let i = index">
+                                  <span class="scale-circle {{(number  <= getAnswerValue(item.numeral)) ? 'scale-circle-selected' : ''}}" id="{{item.numeral}}-{{i}}" (click)="setAnswer({item:item,answer:number})">{{number}}</span>
                                   <span class="scale-circle-label">{{labelTitle(number, getSliderOptions(item.scale_value), item)}}</span>
                               </div>
                           </div>
@@ -169,7 +175,11 @@
                           <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
                           <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
                           <div class="text-section">
-                              <textarea placeholder="Ingrese su Respuesta" [(ngModel)]="textAreaAnswer" (blur)="setAnswer({item:item,answer:textAreaAnswer})" ></textarea>
+                              <textarea placeholder="Ingrese su Respuesta"  
+                              id="{{item.numeral}}-{{item.id}}"
+                              name="{{item.id}}"
+                              [value]="getTextFieldValue(item.numeral)"
+                              (input)="setAnswer({ item: item, answer:getTextareaValue($event) })"></textarea>
                           </div>
                           <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
                       </div>    

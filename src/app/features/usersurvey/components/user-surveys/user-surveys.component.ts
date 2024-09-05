@@ -18,7 +18,7 @@ export class UserSurveysComponent {
     private userSurveyService : UserSurveyService,
   ){}
   
-  states : string[] = ["Terminada","Sin Resolver","Cancelada","Todas"];
+  states : string[] = ["Finalizada","Sin Resolver","En Progreso","Cancelada","Todas",];
   modificationDate : string[] = ["Más Reciente", "Más Antiguo"];
   isFormVisible: boolean = false;
   surveys  : userSurvey[] = [];
@@ -72,7 +72,7 @@ export class UserSurveysComponent {
     let color = '';
     let background = '';
     switch(state){
-      case 'Terminada': 
+      case 'Finalizada': 
         color = '#128524';
         background = '#ACFFBA';
       break;
@@ -83,6 +83,10 @@ export class UserSurveysComponent {
       case 'Sin Resolver': 
         color = '#666666';
         background= "#E4E4E4";
+      break;
+      case 'En Progreso': 
+        color = '#898C08';
+        background= "#F3FFAC";
       break;
     }
   

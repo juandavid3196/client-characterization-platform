@@ -51,8 +51,8 @@
                     </div>
                     <div class="row-box">
                         <div class="actions-box">
-                            <span class="btn-view btn" *ngIf="survey.state === 'Terminada' " (click)="viewResults(survey)" ><mat-icon class="btn-icon">visibility</mat-icon> </span>
-                            <span class="btn-edit btn" *ngIf="survey.state === 'Sin Resolver' "><mat-icon class="btn-icon" (click)="solveSurvey(survey)">edit</mat-icon> </span>
+                            <span class="btn-view btn" *ngIf="survey.state === 'Finalizada' " (click)="viewResults(survey)" ><mat-icon class="btn-icon">visibility</mat-icon> </span>
+                            <span class="btn-edit btn" *ngIf="survey.state === 'Sin Resolver' || survey.state === 'En Progreso' "><mat-icon class="btn-icon" (click)="solveSurvey(survey)">edit</mat-icon> </span>
                         </div>
                     </div>
                 </div>

@@ -24,7 +24,7 @@ export class UserSurveyService {
     return this.apiService.create<userSurvey>(this.endpoint, survey);
   }
 
-  updateSurvey(id: string, survey: userSurvey): Observable<userSurvey> {
+  updateSurvey(id: string, survey: any): Observable<userSurvey> {
     return this.apiService.update<userSurvey>(this.endpoint, id, survey);
   }
 

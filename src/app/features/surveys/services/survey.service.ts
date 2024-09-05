@@ -23,7 +23,7 @@ export class SurveyService {
     return this.apiService.create<Survey>(this.endpoint, survey);
   }
 
-  updateSurvey(id: string, survey: Survey): Observable<Survey> {
+  updateSurvey(id: string, survey: any): Observable<Survey> {
     return this.apiService.update<Survey>(this.endpoint, id, survey);
   }
 

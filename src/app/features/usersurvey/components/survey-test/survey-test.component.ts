@@ -20,12 +20,12 @@ export class SurveyTestComponent {
 
   survey : any = {};
   isLoading : boolean = false;
-  textAreaAnswer: string = '';
   answerArray : any[] = [];
   questionsToWarn : string[] =  [];
   openVideoNumeral :  string =  '';
   openVideoType :  string =  '';
   iframeHtml ?: SafeHtml;
+  finalAnswerId :  string = '';
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -42,21 +42,26 @@ export class SurveyTestComponent {
       this.saveSurveyAnswers();
   });
 
+  window.addEventListener('popstate', (event) => {
+    this.saveSurveyAnswers();
+});
 
   }
 
   ngOnInit(): void {
-   this.loadSurvey();
+      this.loadSurvey();
   }
 
 
-  async loadSurvey() : Promise<void> {
+  async loadSurvey(): Promise<void> {
+    this.isLoading = true; // Inicia el estado de carga
     try {
       this.survey = await this.getSurveyById();
-      console.log(this.survey);
       this.CheckingAnswerByDefect();
     } catch (error) {
       console.error('Error initializing survey', error);
+    } finally {
+      this.isLoading = false; // Finaliza el estado de carga
     }
   }
 
@@ -91,15 +96,26 @@ export class SurveyTestComponent {
               }
           }
         }else {
+          this.getAnswers(survey.id);
           return survey;
         }
-      }
-      
+      }      
       
     } catch (error) {
       console.error('Error fetching survey', error);
     } finally {
       this.isLoading = false; 
+    }
+  }
+
+  async getAnswers (surveyId:string) : Promise<void> {
+    const answers : any = await this.answerService.getAnswer().toPromise();
+    if(answers) {
+      const answer = answers.find((e:any)=> e.id_survey === surveyId);
+      if(answer){
+        this.answerArray = answer.answers;
+        console.log(this.answerArray);
+      }
     }
   }
 
@@ -157,47 +173,91 @@ goToUserSurveyPage() : void {
   this.router.navigate(['/userpanel']);
 }
 
-saveSurveyAnswers() :  void {
-this.isLoading = true; // Mostrar el spinner
-let result = {};
-    try {
-        // Servicio EDITAR respuestas
-    } catch (error) {
-      console.error('Error creating survey', error);
-    } finally {
-      this.isLoading = false; 
-    }
+
+async surveyStateInProgress() : Promise<void> {
+  const editBody = {
+    state:'En Progreso',
+  } 
+  try {
+    await this.userSurveyService.updateSurvey(this.survey.id, editBody).toPromise();  
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-async  finishSurvey() : Promise<void> {
+async saveSurveyAnswers() :  Promise<void>{
   this.isLoading = true; // Mostrar el spinner
+      try {
+          const answers : any = await this.answerService.getAnswer().toPromise();
+          if(answers){
+            const checkAnswer =  answers.find((e:any)=> this.survey.id === e.id_survey);
+            const editBody = {
+              state:'En Progreso',
+              updated_date: this.formatDate(),
+              answers : this.answerArray,
+             } 
+            if(checkAnswer){
+              const editedAnswer : any = await this.answerService.updateAnswer(checkAnswer.id, editBody) .toPromise();
+              if(editedAnswer){
+                this.surveyStateInProgress();
+                this.finalAnswerId = checkAnswer.id;
+                this.toastr.success('Respuestas guardadas con Exito');
+              }
+            }else{
+              const createBody = {
+                id_survey: this.survey.id,
+                id: uuidv4(),
+                state:'Creada',
+                date_creation :  this.formatDate(),
+                updated_date: this.formatDate(),
+                answers : this.answerArray,
+               } 
+              const createdAnswer : any = await this.answerService.createAnswer(createBody).toPromise();
+              if(createdAnswer){
+                this.surveyStateInProgress();
+                this.finalAnswerId = createdAnswer.id;
+                this.toastr.success('Respuestas guardadas con Exito');
+              }
+            }
+          }
+      } catch (error) {
+        console.error('Error creating survey', error);
+      } finally {
+        this.isLoading = false; 
+      }
+}
 
-  try {
-    // Cheking required questions without answer
+async finishAndSaveSurvey() :  Promise<void>{
+  this.isLoading = true; // Mostrar el spinner
+      try {
+        await this.saveSurveyAnswers();
+          const editBody = {
+            state:'Finalizada',
+          } 
+          const editedAnswer : any = await this.answerService.updateAnswer(this.finalAnswerId, editBody).toPromise();
+          if(editedAnswer){
+            console.log(editedAnswer);
+            const editedUserSurvey : any = await this.userSurveyService.updateSurvey(this.survey.id, editBody).toPromise();
+            if(editedUserSurvey){
+              this.toastr.success('Respuestas Enviadas con Exito');
+              this.router.navigate(['/userpanel']);
+            }
+          }
+      } catch (error) {
+        console.error('Error creating survey', error);
+      } finally {
+        this.isLoading = false; 
+      }
+}
+
+finishSurvey() : void {
+  
+  // Cheking required questions without answer
    if(this.ChekingRequiredQuestions()){
-    return;
+    this.toastr.info('Debes contestar las preguntas Obligatorias');
+   }else{
+    this.finishAndSaveSurvey();
    }
-   //Saving answers in Database
-   const answerBody = {
-    id_survey: this.survey.id,
-    id: uuidv4(),
-    state:'Finalizada',
-    date_creation :  this.formatDate(),
-    updated_date: this.formatDate(),
-    asnwers : this.answerArray,
-   } 
-
-   const response: any = await this.answerService.createAnswer(answerBody).toPromise();
-    if(response){
-      this.toastr.success('Encuesta Finalizada con exito');
-      console.log(response)
-    }
-  } catch (error) {
-    console.error('Error fetching survey', error);
-  } finally {
-    this.isLoading = false;
-  }
-   
 }
 
 formatDate(): string {
@@ -242,8 +302,37 @@ CheckingAnswerByDefect() : void {
 getAnswerValue(numeral : string ) :  any {
   const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
   if(questionAnswer) {
+    if(questionAnswer.questionInfo.type === 'checkbox'){
+      return questionAnswer.answer.option;
+    }
     return questionAnswer.answer;
   } 
+}
+
+
+getTextFieldValue(numeral : string) : string {
+  const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
+  if(questionAnswer) {
+    if(questionAnswer.questionInfo.type === 'checkbox' && questionAnswer.answer.another_field !== ''){
+      return questionAnswer.answer.another_field;
+    } else if (questionAnswer.questionInfo.type === 'open' && questionAnswer.answer !== '') {
+      return questionAnswer.answer;
+    }
+  } else {
+    return '';
+  }
+  return '';
+}
+
+
+getTableQuestionAnswer(numeral:string,y:number,i:number) : boolean {
+  const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
+  if(questionAnswer) {
+     if(questionAnswer.answer.row === i && questionAnswer.answer.column === y ){
+      return true;
+     }
+  }
+  return  false;
 }
 
 openVideo(item:any,type:string) : void {
@@ -272,37 +361,91 @@ verifyVideoLink(item:any,type:string) : boolean{
   return true;
 }
 
+deepEqual(obj1: any, obj2: any): boolean {
+  if (obj1 === obj2) {
+    return true;
+  }
+
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (!keys2.includes(key) || !this.deepEqual(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+areFieldsEmpty(obj: any): boolean {
+  if (obj == null) return true;
+  if (Array.isArray(obj) && obj.length === 0) return true;
+  if (Object.keys(obj).length === 0) return true;
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (
+        value !== null &&          // No es null
+        value !== undefined &&     // No es undefined
+        value !== '' &&            // No es una cadena vacía
+        !(Array.isArray(value) && value.length === 0) &&  // No es un array vacío
+        !(typeof value === 'object' && Object.keys(value).length === 0) // No es un objeto vacío
+      ) {
+        return false; 
+      }
+    }
+  }
+  return true; 
+}
+
+
+
+compareAnswer(numeral:string,obj2:any) : boolean {
+  const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
+  if(questionAnswer) {
+   const check = this.deepEqual(questionAnswer.answer,obj2);
+   return check;
+  }
+  return false;
+}
+
+getTextareaValue(event: Event): string {
+  const target = event.target as HTMLTextAreaElement;
+  return target?.value || '';
+}
+
 setAnswer(answer:any) :  void {
+  
   let body = {
     questionInfo: answer.item,
     answer :  answer.answer,   
   }
 
-  const checkIndex =  this.answerArray.findIndex((q:any)=>q.questionInfo.id ==  body.questionInfo.id);
+  const checkIndex =  this.answerArray.findIndex((q:any)=> q.questionInfo.id ===  body.questionInfo.id);
 
-  // If press click twice in a checked answer
-  if(body.answer === this.getAnswerValue(body.questionInfo.numeral)){
-    if(checkIndex !== -1){
-      this.answerArray.splice(checkIndex,1);
-    }
-    return;
-  }
-
-  // Adding or Updating
   if(checkIndex === -1){
-    if(body.questionInfo.type === 'open' && body.answer !== '' || body.questionInfo.type !== 'open'){
       this.answerArray.push(body);
-    }else {
-      return;
-    }
   }else {
-    if(body.questionInfo.type === 'open' && body.answer !== '' || body.questionInfo.type !== 'open'){
-      this.answerArray[checkIndex].answer = body.answer;
-    }else{
-      return;
-    }
+      if(this.compareAnswer(body.questionInfo.numeral, body.answer)){
+        this.answerArray.splice(checkIndex,1);
+      }else if(this.areFieldsEmpty(body.answer)){
+        this.answerArray.splice(checkIndex,1);
+      }
+      else {
+        this.answerArray[checkIndex].answer = body.answer;
+      }
   }
-  console.log(this.answerArray);
 }
 
 }
+

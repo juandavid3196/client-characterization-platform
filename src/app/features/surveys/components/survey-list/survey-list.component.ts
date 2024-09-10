@@ -7,6 +7,8 @@ import { DashboardlsService } from 'src/app/features/dashboard/services/dashboar
 import { EventBusService } from 'src/app/core/services/eventBus.service';
 import { format } from 'date-fns';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -48,6 +50,7 @@ ngOnInit(): void {
 loadSurveys(): void {
   this.surveyService.getSurveys().subscribe(surveys => {
     this.surveys = surveys;
+    console.log(this.surveys);
     this.filteredSurveys =surveys;
   });
 }
@@ -71,14 +74,28 @@ editSurvey(survey: Survey): void {
 }
 
 deleteSurvey(id: string): void {
-  if(window.confirm("¿Desea eliminar la encuesta?")){
-    this.surveyService.deleteSurvey(id).subscribe(() => {
-      this.loadSurveys(); 
+
+  Swal.fire({
+    title: "¿Esta seguro?",
+    text: "No podras revertir los cambios!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: "Si, Eliminar!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.surveyService.deleteSurvey(id).subscribe(() => {
+        this.loadSurveys(); 
+        });
+      Swal.fire({
+        title: "Eliminada!",
+        text: "La encuesta ha sido eliminada .",
+        icon: "success"
       });
-    this.toastr.success("Encuesta Eliminada con Exito");
-  }else{
-    return;
-  }
+    }
+  });
 }
 
 copyUrlSurvey(survey:any) : void {
@@ -108,7 +125,21 @@ formatDate(): string {
   return format(date, 'dd/MM/yyyy');
 }
 
+getSurveyLength(questions:any) : number {
+  if(questions){
+    let count = 0;
+    for (let index = 0; index < questions.length; index++) {
+     if(questions[index].type !== 'section') {
+      count += 1;
+     }
+    }
+    return count;
+  }
+  return 0;
+}
+
 async cloneSurvey(survey: Survey) : Promise<void> {
+  survey.id = uuidv4();
   survey.title =  survey.title + ' - copia';
   survey.updated_date =  this.formatDate();
   survey.state = 'Editada';

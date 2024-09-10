@@ -17,7 +17,14 @@
           <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
           <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
       </div>
-      <div class="preview-box" appZoom *ngIf="!isLoading && survey">
+      <div class="gotosurvey-message" *ngIf="goToSurvey">
+        <span class="gts-title">Encuesta cargada Exitosamente, presione comenzar para resolverla.</span>
+        <div class="btn-section">
+             <button class="btn-save btn" (click)="goToHome()">Ir a Encuestas</button>
+            <button class="btn-publish btn" (click)="reloadPage()">Comenzar Encuesta</button>
+        </div>
+    </div>
+      <div class="preview-box" appZoom *ngIf="!isLoading && survey && !goToSurvey">       
           <div class="p-inner-box">
               <div class="questions-container" *ngFor="let item of survey.questions">
                   <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { ToastrService } from 'ngx-toastr';
 import { SurveyService } from 'src/app/features/surveys/services/survey.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-setting',
@@ -15,6 +16,7 @@ export class SettingComponent {
   close : boolean = false;
   errorMessage : boolean = false;
   @Output() formClose = new EventEmitter<void>();
+  @Output() editName = new EventEmitter<void>();
 
   constructor(
     private surveyService : SurveyService, 
@@ -58,6 +60,7 @@ export class SettingComponent {
       if(response){
         const newSurvey = JSON.stringify(response.survey);
         localStorage.setItem('survey',newSurvey);
+        this.editName.emit();
         this.toastr.success("Encuesta editada con éxito");
       }
       },
@@ -74,16 +77,29 @@ export class SettingComponent {
 
   deleteSurvey(): void {
     const survey = this.getSurveyData();
-    if(window.confirm("¿Desea eliminar la encuesta?")){
-      this.surveyService.deleteSurvey(survey.id).subscribe(() => {
-        this.router.navigate(['/surveys']);
-        this.toastr.success("Encuesta Eliminada con Exito");
-        localStorage.clear();
-      });
-    }else{
-      return;
-    }
-    this.onClose();
+    Swal.fire({
+      title: "¿Esta seguro?",
+      text: "No podras revertir los cambios!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Si, Eliminar!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.surveyService.deleteSurvey(survey.id).subscribe(() => {
+          this.router.navigate(['/surveys']);
+          localStorage.clear();
+          this.onClose();
+        });
+        Swal.fire({
+          title: "Eliminada!",
+          text: "La encuesta ha sido eliminada .",
+          icon: "success"
+        });
+      }
+    });
   }
   
   onClose():void {

@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
 import { AnswerService } from '../../services/answer.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-survey-test',
@@ -26,6 +27,7 @@ export class SurveyTestComponent {
   openVideoType :  string =  '';
   iframeHtml ?: SafeHtml;
   finalAnswerId :  string = '';
+  goToSurvey :  boolean =  false;
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -56,7 +58,10 @@ export class SurveyTestComponent {
   async loadSurvey(): Promise<void> {
     this.isLoading = true; // Inicia el estado de carga
     try {
-      this.survey = await this.getSurveyById();
+      const surveyState = await this.getSurveyById();
+      if(surveyState === 'created'){
+        this.goToSurvey =  true;
+      }
       this.CheckingAnswerByDefect();
     } catch (error) {
       console.error('Error initializing survey', error);
@@ -92,12 +97,14 @@ export class SurveyTestComponent {
             const userResponse: any = await this.userSurveyService.createSurvey(response).toPromise();
               if(userResponse){
                 this.toastr.success('Encuesta agregada con exito');
-                return userResponse;
+                 this.survey = userResponse; 
+                 return 'created';
               }
           }
         }else {
           this.getAnswers(survey.id);
-          return survey;
+          this.survey = survey; 
+          return 'finded';
         }
       }      
       
@@ -119,6 +126,15 @@ export class SurveyTestComponent {
     }
   }
 
+
+  reloadPage() :  void {
+    window.location.reload();
+    this.goToSurvey = false;
+  }
+
+  goToHome() :  void {
+    this.router.navigate(['/userpanel']);
+  }
   
 zoomIn() {
   this.zoomDirective.zoomIn();
@@ -177,6 +193,7 @@ goToUserSurveyPage() : void {
 async surveyStateInProgress() : Promise<void> {
   const editBody = {
     state:'En Progreso',
+    updated_date:  this.formatDate(),
   } 
   try {
     await this.userSurveyService.updateSurvey(this.survey.id, editBody).toPromise();  
@@ -236,10 +253,8 @@ async finishAndSaveSurvey() :  Promise<void>{
           } 
           const editedAnswer : any = await this.answerService.updateAnswer(this.finalAnswerId, editBody).toPromise();
           if(editedAnswer){
-            console.log(editedAnswer);
             const editedUserSurvey : any = await this.userSurveyService.updateSurvey(this.survey.id, editBody).toPromise();
             if(editedUserSurvey){
-              this.toastr.success('Respuestas Enviadas con Exito');
               this.router.navigate(['/userpanel']);
             }
           }
@@ -256,7 +271,26 @@ finishSurvey() : void {
    if(this.ChekingRequiredQuestions()){
     this.toastr.info('Debes contestar las preguntas Obligatorias');
    }else{
-    this.finishAndSaveSurvey();
+    Swal.fire({
+      title: "¿Esta seguro?",
+      text: "No podras revertir los cambios!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Si, Enviar!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.finishAndSaveSurvey();
+        Swal.fire({
+          title: "Enviada!",
+          text: "La encuesta ha sido enviada.",
+          icon: "success"
+        });
+      }
+    });
+    
    }
 }
 

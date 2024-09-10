@@ -44,7 +44,7 @@
                 </div>
                 <div class="right-section">
                     <div class="row-box">
-                        <span class="survey-number"> {{survey.questions.length}}</span>
+                        <span class="survey-number"> {{getSurveyLength(survey.questions)}}</span>
                     </div>
                     <div class="row-box">
                         <span class="survey-state" [ngStyle]="{ 'color': surveyColor(survey.state, 'color'), 'background-color': surveyColor(survey.state, 'background') }">{{survey.state}}</span>

@@ -100,6 +100,19 @@ export class UserSurveysComponent {
   viewResults(survey: any) : void {
   }
 
+  getSurveyLength(questions:any) : number {
+    if(questions){
+      let count = 0;
+      for (let index = 0; index < questions.length; index++) {
+       if(questions[index].type !== 'section') {
+        count += 1;
+       }
+      }
+      return count;
+    }
+    return 0;
+  }
+
   solveSurvey(survey:any) : void {
     this.router.navigate(['/userpanel', survey.id]);
   }

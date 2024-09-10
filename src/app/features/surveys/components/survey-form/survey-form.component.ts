@@ -49,6 +49,11 @@ export class SurveyFormComponent {
     return format(date, 'dd/MM/yyyy');
   }
 
+  closeWindow(event: Event) :  void {
+    event.preventDefault();
+    this.onClose();
+  }
+
   async onSubmit(): Promise<void> {
     if (this.surveyForm.valid) {
       this.isLoading = true; // Mostrar el spinner

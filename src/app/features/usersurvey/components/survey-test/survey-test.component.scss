@@ -1,3 +1,20 @@
+.btn {
+    display: flex;
+    width: auto;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 5px;
+    height: 35px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Poppins";
+    border: 0.2px solid #0D99FF;
+    color: #0D99FF;
+    cursor: pointer;
+}
+
 header{
     height: 25%;
    
@@ -34,22 +51,6 @@ header{
                 gap: 10px;
                 align-items: center;
 
-                .btn {
-                    display: flex;
-                    width: auto;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 15px 5px;
-                    height: 35px;
-                    border-radius: 6px;
-                    border: none;
-                    font-size: 12px;
-                    font-weight: 500;
-                    font-family: "Poppins";
-                    border: 0.2px solid #0D99FF;
-                    color: #0D99FF;
-                    cursor: pointer;
-                }
 
                 .btn-save {
                     display: flex;
@@ -95,6 +96,53 @@ header{
         overflow-x: scroll;
         position: relative;
         height: calc(100% - 170px);
+
+        .gotosurvey-message {
+            
+            height: 250px;
+            width: 350px;
+            background-color: white;
+            border-radius: 5px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            margin: 0 auto;
+            margin-top: 50px;
+            justify-content: center;
+            border: 1px solid #b2b2b2;
+
+            .gts-title {
+                font-size: 20px;
+                text-align: center;
+                color: #333E48;
+                line-height: 1.2;
+            }
+
+            .btn-section {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                align-items: center;
+
+                .btn-publish, .btn-save {
+                    font-size: 15px;
+                    width: fit-content;
+                    margin: 0 auto;
+                    padding: 5px 20px;
+                }
+
+                .btn-publish {
+                    background-color: #0D99FF ;
+                    color: white;
+                }
+    
+                .btn-publish:hover {
+                    color: white;
+                    background-color: #047cd2;
+                }
+            }
+        }
     
         .zoom-control-box {
             position: fixed;
@@ -163,23 +211,6 @@ header{
                         gap: 20px;
                         height: -webkit-fill-available;
 
-                        .btn {
-                            display: flex;
-                            width: fit-content;
-                            justify-content: center;
-                            align-items: center;
-                            padding: 15px 5px;
-                            height: 35px;
-                            border-radius: 6px;
-                            border: none;
-                            font-size: 12px;
-                            font-weight: 500;
-                            font-family: "Poppins";
-                            border: 0.2px solid #0D99FF;
-                            color: #0D99FF;
-                            cursor: pointer;
-                        }
-        
                         .btn-save {
                             display: flex;
                             gap: 8px;

@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { format } from 'date-fns';
 import { EventBusService } from 'src/app/core/services/eventBus.service';
 import { Router } from '@angular/router';
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -204,6 +204,7 @@ export class DashboardMainComponent {
 
     
   addNewElement(index:number,position:string): void {
+    this.loadQuestionsFromLocalStorage();
     this.questionIndex= index;
     this.indexPosition = position;
     this.openQuestionsMenu(index,position);
@@ -284,6 +285,30 @@ export class DashboardMainComponent {
     this.loadQuestionsFromLocalStorage();
   }
 
+
+ onPublishSurvey() :  void {
+  Swal.fire({
+    title: "¿Esta seguro?",
+    text: "No podras editarla de nuevo!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: "Si, Publicar!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.publishSurvey();
+      Swal.fire({
+        title: "Publicada!",
+        text: "La encuesta ha sido publicada.",
+        icon: "success"
+      });
+    }
+  });
+ }
+
+
   async publishSurvey(): Promise<void> {
     this.isLoading = true; // Mostrar el spinner
     try {
@@ -294,8 +319,8 @@ export class DashboardMainComponent {
       survey.updated_date = this.formatDate();
       const response = await this.surveyService.updateSurvey(survey.id, survey).toPromise();
       if (response) {
+        console.log(response);
         this.router.navigate(['/surveys']);
-        this.toastr.success("Encuesta Publicada con Éxito");
       }
   
     } catch (error) {

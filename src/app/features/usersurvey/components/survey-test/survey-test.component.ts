@@ -335,7 +335,7 @@ CheckingAnswerByDefect() : void {
 
 getAnswerValue(numeral : string ) :  any {
   const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
-  if(questionAnswer) {
+  if(questionAnswer !== undefined) {
     if(questionAnswer.questionInfo.type === 'checkbox'){
       return questionAnswer.answer.option;
     }
@@ -346,10 +346,10 @@ getAnswerValue(numeral : string ) :  any {
 
 getTextFieldValue(numeral : string) : string {
   const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
-  if(questionAnswer) {
-    if(questionAnswer.questionInfo.type === 'checkbox' && questionAnswer.answer.another_field !== ''){
+  if(questionAnswer !== undefined) {
+    if(questionAnswer.questionInfo.type === 'checkbox' && questionAnswer.answer.another_field !== '' && questionAnswer.answer.another_field !== undefined){
       return questionAnswer.answer.another_field;
-    } else if (questionAnswer.questionInfo.type === 'open' && questionAnswer.answer !== '') {
+    } else if (questionAnswer.questionInfo.type === 'open' && questionAnswer.answer !== '' && questionAnswer.answer != undefined) {
       return questionAnswer.answer;
     }
   } else {
@@ -360,13 +360,14 @@ getTextFieldValue(numeral : string) : string {
 
 
 getTableQuestionAnswer(numeral:string,y:number,i:number) : boolean {
-  const questionAnswer =  this.answerArray.find((e:any)=>e.questionInfo.numeral === numeral);
-  if(questionAnswer) {
-     if(questionAnswer.answer.row === i && questionAnswer.answer.column === y ){
-      return true;
+  for (let index = 0; index < this.answerArray.length; index++) {
+    if(this.answerArray[index].questionInfo.numeral === numeral && this.answerArray[index].answer !== undefined){
+        if(this.answerArray[index].answer.row === i && this.answerArray[index].answer.column === y){
+         return true;
+         }
      }
   }
-  return  false;
+  return false;
 }
 
 openVideo(item:any,type:string) : void {
@@ -421,9 +422,10 @@ deepEqual(obj1: any, obj2: any): boolean {
 }
 
 areFieldsEmpty(obj: any): boolean {
-  if (obj == null) return true;
-  if (Array.isArray(obj) && obj.length === 0) return true;
-  if (Object.keys(obj).length === 0) return true;
+    if(typeof obj === 'number' && obj !== undefined && obj !== null) return false; 
+    if (obj === null) return true;
+    if (Array.isArray(obj) && obj.length === 0) return true;
+    if (Object.keys(obj).length === 0) return true;
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -456,6 +458,42 @@ compareAnswer(numeral:string,obj2:any) : boolean {
 getTextareaValue(event: Event): string {
   const target = event.target as HTMLTextAreaElement;
   return target?.value || '';
+}
+
+veirifyRows(item:any) :  void {
+  const updatedAnswers = [];
+  let foundAndUpdated = false;
+
+  for (let index = 0; index < this.answerArray.length; index++) {
+    const currentAnswer = this.answerArray[index];
+
+    if (currentAnswer.questionInfo.numeral === item.questionInfo.numeral  && currentAnswer.answer !== undefined ) {
+      if (currentAnswer.answer.row === item.answer.row && currentAnswer.answer.column === item.answer.column) {
+        foundAndUpdated = true;} 
+      else if (currentAnswer.answer.row === item.answer.row && currentAnswer.answer.column !== item.answer.column) {
+        updatedAnswers.push(item);
+        foundAndUpdated = true; 
+      } 
+      else {
+        updatedAnswers.push(currentAnswer);
+      }
+    } else {
+      updatedAnswers.push(currentAnswer); 
+    }
+  }
+
+  if (!foundAndUpdated) {
+    updatedAnswers.push(item);
+  }
+  this.answerArray = updatedAnswers;
+}
+
+setAnswerTable(answer : any) : void {
+  let body = {
+    questionInfo: answer.item,
+    answer : answer.answer,   
+  }
+  this.veirifyRows(body);
 }
 
 setAnswer(answer:any) :  void {

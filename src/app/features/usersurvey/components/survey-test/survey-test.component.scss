@@ -7,7 +7,7 @@
     height: 35px;
     border-radius: 6px;
     border: none;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     font-family: "Poppins";
     border: 0.2px solid #0D99FF;
@@ -36,11 +36,16 @@ header{
                         cursor: pointer;
                         height: 28px;
                         width: 28px;
+                       
+                    }
+                    img:hover {
+                        transform: scale(1.2);
+                        transition: transform 0.2s ease-in-out;
                     }
                 }
 
                 .survey-title {
-                    font-size: 15px;
+                    font-size: 18px;
                     font-weight: 500;
                     color: #333E48;
                 }
@@ -207,28 +212,33 @@ header{
                         .checkbox-view-box {
                         display: flex;
                         flex-direction: column;
-                        padding: 60px 20px 60px 40px;
-                        gap: 20px;
+                        padding: 80px 20px 80px 40px;
+                        gap: 25px;
                         height: -webkit-fill-available;
 
-                        .btn-save {
-                            display: flex;
-                            gap: 8px;
-                            align-items: center;
-                            background-color: white;
-        
-                            img {
-                                height: 20px;
-                            }
-                        }
+                        
 
                         .video-controls-container {
                             display: flex;
                             flex-direction: column;
                             gap: 15px;
+
+                            .btn-save {
+                                display: flex;
+                                gap: 8px;
+                                align-items: center;
+                                background-color: white;
+                                width: fit-content;
+                                font-size: 14px;
+            
+                                img {
+                                    height: 20px;
+                                }
+                            }
                             .video-container {
                                 width: fit-content;
                                 position: relative;
+
     
                                 .close-icon {
                                     position: absolute;
@@ -449,7 +459,7 @@ header{
                         .text-section {
                             width: auto;
                             textarea {
-                                min-height: 80px;
+                                min-height: 150px;
                                 resize: none;
                                 padding: 3px 5px;
                                 width: 80%;
@@ -689,9 +699,10 @@ header{
     }
     
     .preview-container::-webkit-scrollbar {
-        height: 9.5px; 
-        width: 9.5px;
+        height: 13px; 
+        width: 13px;
         background-color: #ececec;
+        
      }
     
       .preview-container::-webkit-scrollbar-thumb {

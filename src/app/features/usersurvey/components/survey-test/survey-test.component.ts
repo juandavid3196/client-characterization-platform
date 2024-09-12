@@ -52,6 +52,7 @@ export class SurveyTestComponent {
 
   ngOnInit(): void {
       this.loadSurvey();
+      console.log(this.answerArray);
   }
 
 
@@ -121,7 +122,6 @@ export class SurveyTestComponent {
       const answer = answers.find((e:any)=> e.id_survey === surveyId);
       if(answer){
         this.answerArray = answer.answers;
-        console.log(this.answerArray);
       }
     }
   }
@@ -269,6 +269,7 @@ finishSurvey() : void {
   
   // Cheking required questions without answer
    if(this.ChekingRequiredQuestions()){
+    console.log(this.questionsToWarn, this.answerArray);
     this.toastr.info('Debes contestar las preguntas Obligatorias');
    }else{
     Swal.fire({
@@ -313,8 +314,8 @@ ChekingRequiredQuestions() :  boolean {
   this.questionsToWarn = [];
   for (let index = 0; index < this.survey.questions.length; index++) {
     if(this.survey.questions[index].settings.required === true){ // Cheking if the asnwer is in the answers Array.
-       const questions = this.answerArray.find((e:any)=>e.questionInfo.id === this.survey.questions[index].id);
-       if(questions === undefined){
+       const question = this.answerArray.find((e:any)=>e.questionInfo.id === this.survey.questions[index].id);
+       if(question === undefined  || !question.hasOwnProperty('answer')){
          this.questionsToWarn.push(this.survey.questions[index].numeral);
        }
     } 
@@ -328,7 +329,12 @@ ChekingRequiredQuestions() :  boolean {
 CheckingAnswerByDefect() : void {
   for (let index = 0; index < this.survey.questions.length; index++) {
     if(this.survey.questions[index].settings.answer_value !== ''){ // Cheking if answer_defect contains one. 
+      if(this.survey.questions[index].type === 'checkbox'){
+        this.setAnswer({item:this.survey.questions[index],answer:{option:this.survey.questions[index].settings.answer_value}});
+      }else {
         this.setAnswer({item:this.survey.questions[index],answer:this.survey.questions[index].settings.answer_value});
+
+      }
     } 
    }
 }
@@ -493,7 +499,16 @@ setAnswerTable(answer : any) : void {
     questionInfo: answer.item,
     answer : answer.answer,   
   }
+  console.log(this.answerArray);
+  this.removeRequiredQuestionMessage(body);
   this.veirifyRows(body);
+}
+
+removeRequiredQuestionMessage(item:any) : void {
+  const checkNumeral =  this.questionsToWarn.findIndex((e:any) => e === item.questionInfo.numeral);
+  if(checkNumeral !== -1){
+    this.questionsToWarn.splice(checkNumeral,1);
+  }
 }
 
 setAnswer(answer:any) :  void {
@@ -503,6 +518,8 @@ setAnswer(answer:any) :  void {
     answer :  answer.answer,   
   }
 
+  this.removeRequiredQuestionMessage(body);
+ 
   const checkIndex =  this.answerArray.findIndex((q:any)=> q.questionInfo.id ===  body.questionInfo.id);
 
   if(checkIndex === -1){

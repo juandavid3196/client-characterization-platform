@@ -1,0 +1,196 @@
+<app-spiner *ngIf="isLoading"></app-spiner>
+<header>
+    <app-user-bar></app-user-bar>
+    <div class="dashboard-menu">
+        <div class="menu-left">
+            <span class="home-icon" (click)="goToUserSurveyPage()" > <img src="assets/icons/home-icon.svg" alt=""> </span>
+            <span class="survey-title">{{survey.title}}</span>
+        </div>
+        <div class="menu-right">
+            <button class="btn-save btn" (click)="saveSurveyAnswers()">Guardar <img src="assets/icons/save-icon.svg" alt=""> </button>
+            <button class="btn-publish btn"  (click)="finishSurvey()">Finalizar Encuesta</button>
+        </div>
+    </div>
+  </header>
+  <div class="preview-container">
+      <div class="zoom-control-box" >
+          <span class="zoom-box"><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"></span>
+          <span class="zoom-box"><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"></span>
+      </div>
+      <div class="gotosurvey-message" *ngIf="goToSurvey">
+        <span class="gts-title">Encuesta cargada Exitosamente, presione comenzar para resolverla.</span>
+        <div class="btn-section">
+             <button class="btn-save btn" (click)="goToHome()">Ir a Encuestas</button>
+            <button class="btn-publish btn" (click)="reloadPage()">Comenzar Encuesta</button>
+        </div>
+    </div>
+      <div class="preview-box" appZoom *ngIf="!isLoading && survey && !goToSurvey">       
+          <div class="p-inner-box">
+              <div class="questions-container" *ngFor="let item of survey.questions">
+                  <div class="checkbox-view-container" *ngIf="item.type === 'checkbox'">
+                      <div class="checkbox-view-box">
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')">
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                          </div>
+                          <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'answer')">
+                            <button class="btn-save btn" (click)="openVideo(item,'answer')">Video Explicación Opciones <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'answer'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                          </div>
+                          <div class="options-container">
+                              <div class="option-box"  *ngFor="let option of item.options; let i = index">
+                                  <div class="checkbox-box" *ngIf="item.options.length > 0">
+                                      <input type="checkbox"  name="{{item.id}}"   id="{{item.numeral}}-{{i}}" [checked]="option != '' &&  option === getAnswerValue(item.numeral)" (click)="setAnswer({item:item,answer:{option:option,another_field:''}})">
+                                      <label for="{{item.numeral}}-{{i}}"></label>
+                                  </div>
+                                  <span class="option-text">{{option}}</span>
+                              </div>
+                          </div>
+                          <div class="another-field-container" *ngIf="item.settings.another_field">
+                             <span class="af-text">Otra (Especifique)</span>
+                             <input type="text" id="{{item.numeral}}-{{item.id}}"  name="{{item.id}}--{{item.numeral}}"  [value]="getTextFieldValue(item.numeral)" (input)="setAnswer({item:item,answer:{option:'',another_field:getTextareaValue($event)}})"  class="af-input">
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
+                          </div>
+                      </div>
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'table'">
+                      <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                            <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                            <div [innerHTML]="iframeHtml"></div>
+                            </div>  
+                        </div>
+                          <span class="q-text"><span class="q-number">{{item.numeral}}</span>{{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="video-controls-container" *ngIf="verifyVideoLink(item,'answer')"> 
+                              <button class="btn-save btn" (click)="openVideo(item,'answer')">Video Explicación Tabla<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'answer'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                          </div>
+                          <div class="table-section" *ngIf="item.options[0].text !== ''">
+                              <div class="table-styled">
+                                  <table>
+                                      <thead>
+                                          <tr>
+                                              <th *ngFor="let option of item.options">{{ option.text }}</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr *ngFor="let rowIndex of getMaxLengthValue(item); let i = index">
+                                              <td *ngFor="let option of item.options; let y = index">
+                                                <ng-container *ngIf="option.type === 'text'">
+                                                  {{ option.rows[i] || '' }}
+                                                </ng-container>
+                                                <ng-container *ngIf="option.type === 'radio button'">
+                                                  <label class="custom-radio-btn">
+                                                    <input type="radio" 
+                                                     name="{{ item.numeral }}--{{ i }}"
+                                                     id="{{item.numeral}}--{{item.id}}" 
+                                                     [checked]="getTableQuestionAnswer(item.numeral,y,i)"
+                                                     (click)="setAnswerTable({item:item,answer:{row:i, column:y, value:item.options[0]?.rows[i], columnName:option.text}})    
+                                                     ">
+                                                    <span class="checkmark"></span>
+                                                  </label>
+                                                </ng-container>
+                                              </td>
+                                            </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
+                          </div>
+                      </div>
+                  </div>
+                  <div class="section-container" *ngIf="item.type === 'section'">
+                      <span class="section-title">{{item.title}}</span>
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
+                      <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                        </div>
+                        <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="q-scale-section">
+                              <div class="scale-circle-box" *ngIf="this.item.settings.apply">
+                                  <span class="scale-circle {{(getAnswerValue(item.numeral)) === 'N/A' ? 'scale-circle-selected' : ''}}" (click)="setAnswer({item:item,answer:'N/A'})">N/A</span>
+                              </div>
+                              <div class="scale-circle-box" *ngFor="let number of getSliderOptions(item.scale_value); let i = index">
+                                  <span class="scale-circle {{(number  <= getAnswerValue(item.numeral)) ? 'scale-circle-selected' : ''}}" id="{{item.numeral}}-{{i}}" (click)="setAnswer({item:item,answer:number})">{{number}}</span>
+                                  <span class="scale-circle-label">{{labelTitle(number, getSliderOptions(item.scale_value), item)}}</span>
+                              </div>
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)">
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                          </div>    
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'yes/no'">
+                      <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta<img src="assets/icons/play-video-icon.svg" alt=""></button>
+                              <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                                <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                                <div [innerHTML]="iframeHtml"></div>
+                              </div>
+                        </div>
+                        <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="buttons-yesno-section">
+                              <span class="q-yesno-box {{getAnswerValue(item.numeral) === 'Si' ? 'q-yesno-box-selected' : ''}}" (click)="setAnswer({item:item,answer:'Si'})">
+                                      <img src="assets/icons/{{item.selected_icons === 'hands' ? 'like-hand-icon' : 'checking-icon'}}.svg" alt="">
+                                      <span class="small-message">SI</span>
+                              </span> 
+                              <span class="q-yesno-box {{getAnswerValue(item.numeral) === 'No' ? 'q-yesno-box-selected' : ''}}" (click)="setAnswer({item:item,answer:'No'})">
+                                      <img src="assets/icons/{{item.selected_icons === 'hands' ? 'dislike-hand-icon' : 'deny-icon'}}.svg" alt="">
+                                      <span class="small-message">NO</span>
+                              </span>
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                          <div class="required-message-view notify-message" *ngIf="item.settings.enlarge_answer"><img src="assets/icons/notify-fill-icon.svg" alt="">Ampliar respuesta ACTIVADA</div>         
+                          </div>    
+                  </div>
+                  <div class="checkbox-view-container" *ngIf="item.type === 'open'">
+                      <div class="checkbox-view-box">
+                        <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Opciones <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
+                              <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
+                              <div [innerHTML]="iframeHtml"></div>
+                            </div>
+                        </div>
+                          <span class="q-text"><span class="q-number">{{item.numeral}}</span> {{item.text}}</span>
+                          <div class="q-description"> <span class="dark-description" *ngIf="item.description != '' " >Descripción: </span>{{item.description}}</div>
+                          <div class="text-section">
+                              <textarea placeholder="Ingrese su Respuesta"  
+                              id="{{item.numeral}}-{{item.id}}"
+                              name="{{item.id}}{{item.numeral}}"
+                              [value]="getTextFieldValue(item.numeral)"
+                              (input)="setAnswer({ item: item, answer:getTextareaValue($event) })"></textarea>
+                          </div>
+                          <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)"><img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria</div>
+                      </div>    
+                  </div>
+              </div> 
+          </div>
+      </div>
+  </div>

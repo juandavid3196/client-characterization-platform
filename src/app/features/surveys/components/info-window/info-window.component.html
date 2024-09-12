@@ -1,0 +1,43 @@
+<div class="info-container {{close ? 'close' : ''}}">
+    <div class="info-container-box {{close ? 'close' : ''}}">
+        <div class="top-section">
+           <span class="info-title">Información de la Encuesta</span>
+           <mat-icon class="btn-close"(click)="onClose()">close</mat-icon>
+        </div>
+        <div class="main-section">
+            <div class="item-box">
+                <span class="item-name">Nombre</span>
+                <span class="item-value">{{surveyData?.title}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Descripción</span>
+                <span class="item-value">{{surveyData?.description}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Numero de Preguntas</span>
+                <span class="item-value">{{surveyData?.questions?.length}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Estado</span>
+                <span class="item-value">{{surveyData?.state}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Fecha de Modificación</span>
+                <span class="item-value">{{surveyData?.updated_date}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Actualizado Por</span>
+                <span class="item-value">{{surveyData?.updated_by}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Fecha de Creación</span>
+                <span class="item-value">{{surveyData?.date_creation}}</span>
+            </div>
+            <div class="item-box">
+                <span class="item-name">Creado Por</span>
+                <span class="item-value">{{surveyData?.updated_by}}</span>
+            </div>
+        </div>    
+    </div>
+</div>
+

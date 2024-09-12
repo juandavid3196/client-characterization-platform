@@ -34,7 +34,7 @@ export class SurveyTableComponent {
     this.filteredSurveys = this.surveys.filter(event => event.title.toLowerCase().includes(this.filteredWord.toLowerCase()));
   }
   
-  deleteSurvey(id: number): void {
+  deleteSurvey(id: string): void {
     if(window.confirm("¿Desea eliminar la encuesta?")){
       this.surveyService.deleteSurvey(id).subscribe(() => {
         this.loadSurveys(); 

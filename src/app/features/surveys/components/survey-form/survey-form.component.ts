@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter} from '@angular/core';
-import { Survey } from '../../models/survey.model';
+import { Component,Output, EventEmitter} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SurveyService } from '../../services/survey.service';
 import { format } from 'date-fns';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { DashboardlsService } from 'src/app/features/dashboard/services/dashboardls.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-survey-form',
@@ -12,69 +14,71 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SurveyFormComponent {
       
-  @Input() survey : Survey | null = null;
   @Output() formClose = new EventEmitter<void>();
   @Output() surveySaved = new EventEmitter<void>();
   close : boolean = false;
   options:string[] = []; 
+  errorMessage : boolean = false;
+  isLoading : boolean = false;
 
   surveyForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder, private surveyService: SurveyService,  
-    private toastr: ToastrService) {
+    private fb: FormBuilder, 
+    private surveyService: SurveyService,  
+    private toastr: ToastrService,
+    private router: Router,
+    private dashboardlsService : DashboardlsService
+  ) {
     
-    const currentDate = this.formatDate();
     
     this.surveyForm = this.fb.group({
+      id: uuidv4(),
       title: ['', Validators.required],
-      date_creation: currentDate,
-      updated_date: currentDate,
+      description:'',
+      date_creation: this.formatDate(),
+      updated_date: this.formatDate(),
       state: 'creada',
-      question_count: 0
+      questions:this.fb.array([]),
     });
   }
 
-  ngOnInit(): void {
-    if (this.survey) {
-      this.surveyForm.patchValue(this.survey);
-    }
-  }
 
  formatDate(): string {
     const date = new Date();
     return format(date, 'dd/MM/yyyy');
   }
 
-  chargeData(survey: Survey): void {
-      const currentDate = this.formatDate();
-      survey.title =  this.surveyForm.value.title,
-      survey.updated_date= currentDate,
-      survey.state= 'En Progreso';
-    }
-  
-
-  onSubmit(): void {
-    
-    if (this.surveyForm.valid) {
-      
-      if (this.survey) {
-        // Editar encuesta existente
-        this.chargeData(this.survey);
-        this.surveyService.updateSurvey(this.survey.id, this.survey).subscribe(() => {
-          this.surveySaved.emit();
-        });
-        this.toastr.success("Encuesta Editada con Exito");
-      } else {
-        // Crear nueva encuesta
-        this.surveyService.createSurvey(this.surveyForm.value).subscribe(() => {
-          this.surveySaved.emit();
-        });
-        this.toastr.success("Encuesta Creada con Exito");
-      }
-    }
+  closeWindow(event: Event) :  void {
+    event.preventDefault();
     this.onClose();
   }
+
+  async onSubmit(): Promise<void> {
+    if (this.surveyForm.valid) {
+      this.isLoading = true; // Mostrar el spinner
+      try {
+        const response: any = await this.surveyService.createSurvey(this.surveyForm.value).toPromise();
+        
+        if (response.survey) {
+          localStorage.setItem('survey', JSON.stringify(response.survey));
+          this.dashboardlsService.saveDashboardOptions(response.survey.questions);
+          this.router.navigate(['/dashboard']);
+          this.toastr.success("Encuesta Creada con Éxito");
+          this.surveySaved.emit();
+        }
+      } catch (error) {
+        console.error('Error creating survey', error);
+      } finally {
+        this.isLoading = false; // Ocultar el spinner
+        this.onClose();
+      }
+    } else {
+      this.errorMessage = !this.errorMessage;
+      return;
+    }
+  }
+  
 
   onClose():void {
     this.close =  true;

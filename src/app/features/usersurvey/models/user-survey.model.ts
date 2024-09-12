@@ -1,4 +1,4 @@
-export interface Survey {
+export interface userSurvey {
     id: string,
     title: string,
     questions: any[],

@@ -5,25 +5,28 @@
             <img src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
         </div>
         <main>
-            <div class="settings-container">
-                <div class="setting-box">
-                    <span class="box-title">Editar nombre encuesta</span>
-                    <input type="text" name="" id="">
+            <form  [formGroup]="settingForm"  (ngSubmit)="onSubmit()">
+                <div class="settings-container">
+                    <div class="setting-box">
+                        <span class="box-title">Editar nombre encuesta</span>
+                        <input type="text" placeholder="Nombre de la Encuesta" formControlName="title"> 
+                        <span class="error-input-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe agregar un nombre para la encuesta.</span>
+                    </div>
+                    <div class="setting-box">
+                        <span class="box-title">Editar descripción encuesta</span>
+                        <textarea formControlName="description" placeholder="descripción de la encuesta"></textarea>
+                    </div>
+                    <div class="setting-box">
+                        <span class="box-title">Eliminar encuesta</span>
+                        <span class="error-message"><img src="assets/icons/warning-yellow-icon.svg" alt="">Una vez eliminada la encuesta, no se podra recuperar la información.</span>
+                        <button class="btn btn-delete" (click)="deleteSurvey()">Eliminar</button>
+                    </div>
                 </div>
-                <div class="setting-box">
-                    <span class="box-title">Seleccionar categoria</span>
-                    <app-filter-select></app-filter-select>
+                <div class="btn-container">
+                    <button class="btn btn-cancel" (click)="onClose()">Cancelar</button>
+                    <button class="btn btn-confirm" type="submit">Aplicar cambios</button>
                 </div>
-                <div class="setting-box">
-                    <span class="box-title">Eliminar encuesta</span>
-                    <span class="error-message"><img src="assets/icons/warning-yellow-icon.svg" alt="">Una vez eliminada la encuesta, no se podra recuperar la información.</span>
-                    <button class="btn btn-delete">Eliminar</button>
-                </div>
-            </div>
-            <div class="btn-container">
-                <button class="btn btn-cancel">Cancelar</button>
-                <button class="btn btn-confirm">Aplicar cambios</button>
-            </div>
+            </form>
         </main>
     </div>
 </div>

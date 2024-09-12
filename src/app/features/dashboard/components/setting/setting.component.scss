@@ -86,91 +86,128 @@
 
         main {
             height: calc(100% - 80px);
-            padding: 40px 60px 20px;
+            overflow-y: auto;
             background-color: #EFEFEF;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-
-            .settings-container{
-                background-color: #E4E4E4;
+            
+            form {
+                padding: 15px 60px 15px;
                 display: flex;
                 flex-direction: column;
-                gap: 25px;
-                height: 90%;
-                padding: 20px;
+                gap: 10px;
 
-                .setting-box{
+                .settings-container{
+                    background-color: #E4E4E4;
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
-                    height: auto;
-                    background-color: #E4E4E4;
-
-                    .box-title {
-                        color: #333E48;
-                        font-size: 14px;
-                        font-weight: 500;
-                    }
-
-                    ::ng-deep .select {
-                        height: 35px;
-                        border-radius: 5px;
-                    }
-                    
-
-                    input {
-                        height: 35px;
-                        border: 0.2px solid #b9b9b9;
-                        border-radius: 5px;
-                        padding: 0 8px;
-                    }
-                    input:focus {
-                        outline: none;
-                        border: 0.2px solid #0D99FF;
-                    }
-
-                    .error-message {
+                    gap: 25px;
+                    height: 90%;
+                    padding: 20px;
+    
+                    .setting-box{
                         display: flex;
-                        gap: 5px;
-                        color: #DF1C1C;
-                        font-size: 12px;
-                        font-weight: 500;
-
-                        img {
-                            height: 18px;
+                        flex-direction: column;
+                        gap: 10px;
+                        height: auto;
+                        background-color: #E4E4E4;
+    
+                        .box-title {
+                            color: #333E48;
+                            font-size: 14px;
+                            font-weight: 500;
+                        }
+    
+                        ::ng-deep .select {
+                            height: 35px;
+                            border-radius: 5px;
+                        }
+                        
+    
+                        input, textarea {
+                            height: 35px;
+                            border: 0.2px solid #b9b9b9;
+                            border-radius: 5px;
+                            padding: 0 8px;
+                        }
+                        input:focus {
+                            outline: none;
+                            border: 0.2px solid #0D99FF;
+                        }
+    
+                        textarea {
+                            height: 80px;
+                            resize: none;
+                            padding: 3px 5px;
+                        }
+    
+                        textarea:focus {
+                            outline: none;
+                            border: 0.2px solid #0D99FF;
+                        }
+    
+    
+                        .error-input-message {
+                            display: flex;
+                            align-items: center;
+                            color: #de1717e0;
+    
+                            .error-icon {
+                                font-size: 20px;
+                            }
+                        }
+    
+                        .error-message {
+                            display: flex;
+                            gap: 5px;
+                            color: #DF1C1C;
+                            font-size: 12px;
+                            font-weight: 500;
+    
+                            img {
+                                height: 18px;
+                            }
+                        }
+    
+                        .btn-delete {
+                            background-color: #FFC4C4;
+                            color: #FF1D1D;
+                            border:0.2px solid #FF1D1D;
+                            margin-right: auto;
                         }
                     }
+    
+    
+                }
 
-                    .btn-delete {
-                        background-color: #FFC4C4;
-                        color: #FF1D1D;
-                        border:0.2px solid #FF1D1D;
-                        margin-right: auto;
+                .btn-container{
+                    margin-left: auto;
+                    margin-top: auto;
+                    display: flex;
+                    gap: 20px;
+    
+                    .btn-confirm {
+                        background-color: #0D99FF;
+                        color: white;      
+                    }
+    
+                    .btn-cancel {
+                        color: black;
+                        background-color: white;
+                        border:0.2px solid #333E48;
                     }
                 }
-
-
             }
 
-            .btn-container{
-                margin-left: auto;
-                margin-top: auto;
-                display: flex;
-                gap: 20px;
 
-                .btn-confirm {
-                    background-color: #0D99FF;
-                    color: white;      
-                }
-
-                .btn-cancel {
-                    color: black;
-                    background-color: white;
-                    border:0.2px solid #333E48;
-                }
-            }
         }
+        main::-webkit-scrollbar {
+            width: 7.5px;
+            background-color: #ececec;
+         }
+        
+        main::-webkit-scrollbar-thumb {
+            background-color: #9b9b9b;
+            border-radius: 3px;
+         }
 
     }
     .setting-box.close {

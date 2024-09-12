@@ -53,7 +53,7 @@
                             <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>    El campo titulo es obligatorio</span>
                         </div>
                         <div class="btns-section">
-                        <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
+                        <button class="btn-cancel" (click)="closeSection($event)" >Cancelar</button>
                         <div class="btn-bottom-box">
                             <button class="btn-confirm" type="submit">{{editSection ? "Editar" : "Crear"}}</button>
                         </div>

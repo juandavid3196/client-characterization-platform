@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
+import { InfoWindowComponent } from './components/info-window/info-window.component';
 
 
 
@@ -16,6 +17,7 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     SurveyListComponent,
     SurveyFormComponent,
+    InfoWindowComponent,
   ],
   imports: [
     CommonModule,

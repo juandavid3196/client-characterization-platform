@@ -69,6 +69,13 @@ export class QuestionsOptionsComponent {
     },500);
   }
 
+  closeSection(event:Event) : void {
+    event.preventDefault();
+    this.editSection = false;
+    this.refreshList.emit();
+    this.onClose();
+  }
+
   onSubmit(): void {
     if (this.sectionForm.valid) {
       

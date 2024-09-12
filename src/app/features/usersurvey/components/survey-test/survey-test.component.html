@@ -59,7 +59,7 @@
                              <input type="text" id="{{item.numeral}}-{{item.id}}"  name="{{item.id}}--{{item.numeral}}"  [value]="getTextFieldValue(item.numeral)" (input)="setAnswer({item:item,answer:{option:'',another_field:getTextareaValue($event)}})"  class="af-input">
                           </div>
                           <div class="required-message-view" *ngIf="item.settings.required && checkRequiredProperty(item.numeral)">
-                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria
+                              <img src="assets/icons/warning-icon.svg" alt=""> Pregunta  Obligatoria 
                           </div>
                       </div>
                   </div>
@@ -172,7 +172,7 @@
                   <div class="checkbox-view-container" *ngIf="item.type === 'open'">
                       <div class="checkbox-view-box">
                         <div class="video-controls-container" *ngIf="verifyVideoLink(item,'question')"> 
-                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Opciones <img src="assets/icons/play-video-icon.svg" alt=""></button>
+                            <button class="btn-save btn" (click)="openVideo(item,'question')">Video Explicación Pregunta <img src="assets/icons/play-video-icon.svg" alt=""></button>
                             <div class="video-container" *ngIf="openVideoNumeral === item.numeral  && openVideoType === 'question'">
                               <span class="close-icon" (click)="closeVideo()"><img src="assets/icons/close-video-icon.svg" alt=""></span>
                               <div [innerHTML]="iframeHtml"></div>

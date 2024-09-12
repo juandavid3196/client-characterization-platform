@@ -122,7 +122,16 @@ export class SurveyTestComponent {
       const answer = answers.find((e:any)=> e.id_survey === surveyId);
       if(answer){
         this.answerArray = answer.answers;
+        this.checkUndefinedAnswer();
       }
+    }
+  }
+
+  checkUndefinedAnswer() :  void {
+    for (let index = 0; index < this.answerArray.length; index++) {
+      if(!this.answerArray[index].hasOwnProperty('answer')  || this.answerArray[index].answer === undefined){
+        this.answerArray.splice(index,1);
+      }     
     }
   }
 
@@ -300,6 +309,9 @@ formatDate(): string {
   return format(date, 'dd/MM/yyyy');
 }
 
+totalRows(rows:number) : number {
+  return rows;
+}
 
 checkRequiredProperty(numeral:string) : boolean {
   const checkNumeral =  this.questionsToWarn.find((e:any) => e === numeral);
@@ -492,6 +504,7 @@ veirifyRows(item:any) :  void {
     updatedAnswers.push(item);
   }
   this.answerArray = updatedAnswers;
+  console.log(this.answerArray);
 }
 
 setAnswerTable(answer : any) : void {
@@ -500,14 +513,27 @@ setAnswerTable(answer : any) : void {
     answer : answer.answer,   
   }
   console.log(this.answerArray);
-  this.removeRequiredQuestionMessage(body);
   this.veirifyRows(body);
+  this.removeRequiredQuestionMessage(body);
+  this.checkUndefinedAnswer();
 }
 
 removeRequiredQuestionMessage(item:any) : void {
   const checkNumeral =  this.questionsToWarn.findIndex((e:any) => e === item.questionInfo.numeral);
   if(checkNumeral !== -1){
-    this.questionsToWarn.splice(checkNumeral,1);
+    if(item.questionInfo.type === 'table'){
+      let count = 0;
+      for (let index = 0; index < this.answerArray.length; index++) {
+        if(this.answerArray[index].questionInfo.numeral === item.questionInfo.numeral){
+            count += 1;
+        }
+      }
+      if(item.questionInfo.options[0].rows.length === count){
+        this.questionsToWarn.splice(checkNumeral,1);
+      }
+    }else{
+      this.questionsToWarn.splice(checkNumeral,1);
+    }
   }
 }
 
@@ -533,8 +559,9 @@ setAnswer(answer:any) :  void {
       else {
         this.answerArray[checkIndex].answer = body.answer;
       }
+    }
+    this.checkUndefinedAnswer();
   }
-}
 
 }
 

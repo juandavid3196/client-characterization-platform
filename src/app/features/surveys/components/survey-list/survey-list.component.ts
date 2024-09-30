@@ -102,7 +102,7 @@ copyUrlSurvey(survey:any) : void {
  if(survey.state !== 'Publicada'){
   return
  }
- this.clipboard.copy(`${'http://localhost:4200'}/${'userpanel'}/id:${survey.id}`);
+ this.clipboard.copy(`${'https://client-characterization-platform-test.vercel.app'}/${'userpanel'}/id:${survey.id}`);
  this.toastr.success("Url copiada");
 }
 

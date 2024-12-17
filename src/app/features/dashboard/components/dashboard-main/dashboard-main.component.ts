@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { questionConfigs } from '../../models/questionsConfig.model';
 import { Section } from '../../models/section.model';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,61 +13,60 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-dashboard-main',
   templateUrl: './dashboard-main.component.html',
-  styleUrls: ['./dashboard-main.component.scss']
+  styleUrls: ['./dashboard-main.component.scss'],
 })
 export class DashboardMainComponent {
-
-  openQuestion : boolean = false;
-  sectionSelected : Section | null = null;
-  dashboardOptions: any[]= [];
-  numeralList !: number;
-  questionConfigs = questionConfigs; 
-  questionIndex : number =0;
-  indexPosition : string  = 'back';
-  indexSelected!:number | null;
-  elementSelected : any = {};
+  openQuestion: boolean = false;
+  sectionSelected: Section | null = null;
+  dashboardOptions: any[] = [];
+  numeralList!: number;
+  questionConfigs = questionConfigs;
+  questionIndex: number = 0;
+  indexPosition: string = 'back';
+  indexSelected!: number | null;
+  elementSelected: any = {};
   databankSection: boolean = false;
   settingSection: boolean = false;
-  btnSelected : string = 'dashboard';
-  bankIndex : any = {index:0,position:''};
-  editSection : boolean = false;
-  openPreview : boolean = false;
-  isLoading : boolean = false;
-  survey : any = {};
+  btnSelected: string = 'dashboard';
+  bankIndex: any = { index: 0, position: '' };
+  editSection: boolean = false;
+  openPreview: boolean = false;
+  isLoading: boolean = false;
+  survey: any = {};
 
   constructor(
-    private dashboardlsService : DashboardlsService,
-    private surveyService: SurveyService,  
+    private dashboardlsService: DashboardlsService,
+    private surveyService: SurveyService,
     private toastr: ToastrService,
     private eventBusService: EventBusService,
-    private router: Router,
-  ){
+    private router: Router
+  ) {
     window.addEventListener('beforeunload', (event) => {
-        this.saveDashboardData();
+      this.saveDashboardData();
     });
 
     window.addEventListener('popstate', (event) => {
-          this.saveDashboardData();
-          this.eventBusService.emit('dashboardDataSaved', { someData: 'data' });
+      this.saveDashboardData();
+      this.eventBusService.emit('dashboardDataSaved', { someData: 'data' });
     });
   }
 
   // Local Storage Info
 
-  ngOnInit() : void {
+  ngOnInit(): void {
     this.getSurveyData();
     this.getQuestions();
     this.initializeDashboardValues();
-  } 
+  }
 
   goToSurveyPage(): void {
     this.saveDashboardData();
     this.router.navigate(['/surveys']);
   }
 
-  getSurveyData() : void {
-    const surveyString =  localStorage.getItem('survey');
-    this.survey =  (surveyString) ? JSON.parse(surveyString) : '';
+  getSurveyData(): void {
+    const surveyString = localStorage.getItem('survey');
+    this.survey = surveyString ? JSON.parse(surveyString) : '';
   }
 
   getQuestions(): void {
@@ -79,34 +78,32 @@ export class DashboardMainComponent {
     return format(date, 'dd/MM/yyyy');
   }
 
-  
   async saveDashboardData(): Promise<void> {
     this.isLoading = true; // Mostrar el spinner
     try {
       const surveyString = localStorage.getItem('survey');
-      const survey = (surveyString) ? JSON.parse(surveyString) : '';  
+      const survey = surveyString ? JSON.parse(surveyString) : '';
       survey.questions = this.dashboardlsService.getDashboardOptions();
       survey.state = 'Editada';
       survey.updated_date = this.formatDate();
-      const response = await this.surveyService.updateSurvey(survey.id, survey).toPromise();
+      const response = await this.surveyService
+        .updateSurvey(survey.id, survey)
+        .toPromise();
       if (response) {
-        this.toastr.success("Encuesta Guardada con Éxito");
+        this.toastr.success('Encuesta Guardada con Éxito');
       }
-  
     } catch (error) {
       console.error('Error creating survey', error);
     } finally {
-      this.isLoading = false; 
+      this.isLoading = false;
     }
   }
-  
+
   updateDashboardQuestions(item: any[]): void {
     this.addNumeralToQuestions();
     this.dashboardlsService.saveDashboardOptions(item);
     this.onRefreshList();
   }
-
-
 
   loadQuestionsFromLocalStorage(): void {
     const storedOptions = this.dashboardlsService.getDashboardOptions();
@@ -116,153 +113,155 @@ export class DashboardMainComponent {
     }
   }
 
-
   initializeDashboardValues(): void {
-    if(this.dashboardOptions.length > 0 ){
+    if (this.dashboardOptions.length > 0) {
       this.elementSelected = this.dashboardOptions[0];
       this.indexSelected = 0;
     }
-  } 
+  }
 
-
-
-  openQuestionsMenu(index?:number,position?:string) : void {
+  openQuestionsMenu(index?: number, position?: string): void {
     this.openQuestion = !this.openQuestion;
-    if(typeof index === 'number'){
+    if (typeof index === 'number') {
       this.bankIndex.index = index;
       this.bankIndex.position = position;
     }
   }
 
-  onSelectedType(type:string): void {
-    let selectedQuestion = this.questionConfigs.find(q=> q.type === type);
-    if(selectedQuestion){
+  onSelectedType(type: string): void {
+    let selectedQuestion = this.questionConfigs.find((q) => q.type === type);
+    if (selectedQuestion) {
       // Asignar un ID único si no existe
-      selectedQuestion.id = uuidv4(); // Generar un nuevo ID único   
-        if(this.questionIndex === 0  && this.indexPosition === 'back'){
+      selectedQuestion.id = uuidv4(); // Generar un nuevo ID único
+      if (this.questionIndex === 0 && this.indexPosition === 'back') {
+        this.dashboardOptions.unshift(selectedQuestion);
+        this.updateDashboardQuestions(this.dashboardOptions);
+        this.onElementSelected(0, selectedQuestion);
+      } else if (this.questionIndex >= 0 && this.indexPosition === 'forward') {
+        this.dashboardOptions.splice(
+          this.questionIndex + 1,
+          0,
+          selectedQuestion
+        );
+        this.updateDashboardQuestions(this.dashboardOptions);
+        this.onElementSelected(this.questionIndex + 1, selectedQuestion);
+      } else if (this.indexPosition === 'end') {
+        this.dashboardOptions.push(selectedQuestion);
+        this.updateDashboardQuestions(this.dashboardOptions);
+        this.onElementSelected(
+          this.dashboardOptions.length - 1,
+          selectedQuestion
+        );
+      }
 
-          this.dashboardOptions.unshift(selectedQuestion);
-          this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(0,selectedQuestion);
-
-        }else if (this.questionIndex >= 0 && this.indexPosition === 'forward' ) {
-          
-          this.dashboardOptions.splice(this.questionIndex + 1, 0, selectedQuestion);
-          this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(this.questionIndex + 1, selectedQuestion);
-       
-        }else if(this.indexPosition === 'end'){  
-          
-          this.dashboardOptions.push(selectedQuestion);
-          this.updateDashboardQuestions(this.dashboardOptions);
-          this.onElementSelected(this.dashboardOptions.length -1,selectedQuestion);
+      this.questionIndex = 0;
+      this.indexPosition = '';
     }
-
-    this.questionIndex = 0;
-    this.indexPosition = '';
   }
 
-}
-
-  addNumeralToQuestions() : void {
+  addNumeralToQuestions(): void {
     let numeralList = 1;
-    for(let i =0; i< this.dashboardOptions.length; i++){
-      if(this.dashboardOptions[i].type !== 'section'){
+    for (let i = 0; i < this.dashboardOptions.length; i++) {
+      if (this.dashboardOptions[i].type !== 'section') {
         this.dashboardOptions[i].numeral = numeralList;
-        numeralList +=1;
+        numeralList += 1;
       }
     }
   }
 
-  onSectionSelected(section:string): void {
-    
-    if(this.questionIndex === 0  && this.indexPosition === 'back'){
-        this.dashboardOptions.unshift(section);
-        this.updateDashboardQuestions(this.dashboardOptions);
-        this.onElementSelected(0,{type:'section'});
-    }else if(this.questionIndex >= 0  && this.indexPosition === 'forward') {
-        this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
-        this.updateDashboardQuestions(this.dashboardOptions);
-        this.onElementSelected(this.questionIndex + 1,{type:'section'});
-    }else{
+  onSectionSelected(section: string): void {
+    if (this.questionIndex === 0 && this.indexPosition === 'back') {
+      this.dashboardOptions.unshift(section);
+      this.updateDashboardQuestions(this.dashboardOptions);
+      this.onElementSelected(0, { type: 'section' });
+    } else if (this.questionIndex >= 0 && this.indexPosition === 'forward') {
+      this.dashboardOptions.splice(this.questionIndex + 1, 0, section);
+      this.updateDashboardQuestions(this.dashboardOptions);
+      this.onElementSelected(this.questionIndex + 1, { type: 'section' });
+    } else {
       this.dashboardOptions.push(section);
       this.updateDashboardQuestions(this.dashboardOptions);
-      this.onElementSelected(this.dashboardOptions.length - 1,{type:'section'});
+      this.onElementSelected(this.dashboardOptions.length - 1, {
+        type: 'section',
+      });
     }
 
     this.questionIndex = 0;
     this.indexPosition = '';
   }
 
-
-  deleteQuestion(index:number): void {
-
+  deleteQuestion(index: number): void {
     this.selectAfterDelete(index);
     this.dashboardOptions.splice(index, 1);
     this.updateDashboardQuestions(this.dashboardOptions);
   }
 
-    
-  addNewElement(index:number,position:string): void {
+  addNewElement(index: number, position: string): void {
     this.loadQuestionsFromLocalStorage();
-    this.questionIndex= index;
+    this.questionIndex = index;
     this.indexPosition = position;
-    this.openQuestionsMenu(index,position);
+    this.openQuestionsMenu(index, position);
   }
 
-  onElementSelected(index:number, element:any):void {
+  onElementSelected(index: number, element: any): void {
     this.indexSelected = index;
-    if(element.type !== 'section'){
+    if (element.type !== 'section') {
       this.elementSelected = element;
-    }else{
-     this.elementSelected = {};
-    }
-  }
-
-  setIndexDataBank(data:any) : void {
-    this.onElementSelected(data.index,data.element);
-  }
-
-  selectElement(index: number) : void {
-      const storageElement = this.dashboardlsService.getDashboardOptions();
-      if(storageElement){
-        this.dashboardOptions = storageElement;
-        this.indexSelected = index;
-        this.elementSelected = this.dashboardOptions[index];
-        if(this.elementSelected.type === 'section'){
-          this.editSection = true;
-          this.openQuestionsMenu();
-        }
-      }
-  }
-
-  changeEditSection() :  void {
-    this.editSection =  false;
-  }
-
-  selectAfterDelete(index:number):void {
-    if(index ===  0 && this.dashboardOptions.length === 1){
+    } else {
       this.elementSelected = {};
-    }else if( this.dashboardOptions.length > 1 && index === this.dashboardOptions.length -1 ){
-      this.onElementSelected(index-1,this.dashboardOptions[index-1]);  
-    }else if(index === 0 && this.dashboardOptions.length === 2){
-      this.onElementSelected(0,{...this.dashboardOptions[index+1],numeral:1});
-    }else{
-      this.onElementSelected(index,this.dashboardOptions[index+1]);
     }
   }
 
-  deleteSection(index: number) : void {
-      this.selectAfterDelete(index);
-      this.dashboardOptions.splice(index, 1);  
-      this.updateDashboardQuestions(this.dashboardOptions);
+  setIndexDataBank(data: any): void {
+    this.onElementSelected(data.index, data.element);
   }
 
-  openDataBankSection():void {
+  selectElement(index: number): void {
+    const storageElement = this.dashboardlsService.getDashboardOptions();
+    if (storageElement) {
+      this.dashboardOptions = storageElement;
+      this.indexSelected = index;
+      this.elementSelected = this.dashboardOptions[index];
+      if (this.elementSelected.type === 'section') {
+        this.editSection = true;
+        this.openQuestionsMenu();
+      }
+    }
+  }
+
+  changeEditSection(): void {
+    this.editSection = false;
+  }
+
+  selectAfterDelete(index: number): void {
+    if (index === 0 && this.dashboardOptions.length === 1) {
+      this.elementSelected = {};
+    } else if (
+      this.dashboardOptions.length > 1 &&
+      index === this.dashboardOptions.length - 1
+    ) {
+      this.onElementSelected(index - 1, this.dashboardOptions[index - 1]);
+    } else if (index === 0 && this.dashboardOptions.length === 2) {
+      this.onElementSelected(0, {
+        ...this.dashboardOptions[index + 1],
+        numeral: 1,
+      });
+    } else {
+      this.onElementSelected(index, this.dashboardOptions[index + 1]);
+    }
+  }
+
+  deleteSection(index: number): void {
+    this.selectAfterDelete(index);
+    this.dashboardOptions.splice(index, 1);
+    this.updateDashboardQuestions(this.dashboardOptions);
+  }
+
+  openDataBankSection(): void {
     this.databankSection = !this.databankSection;
-    if(this.databankSection === false){
+    if (this.databankSection === false) {
       this.btnSelected = 'dashboard';
-    }else {
+    } else {
       this.btnSelected = 'databank';
     }
   }
@@ -270,67 +269,66 @@ export class DashboardMainComponent {
   openPreviewSection(): void {
     this.openPreview = !this.openPreview;
   }
- 
-  openSettingSection():void {
+
+  openSettingSection(): void {
     this.settingSection = !this.settingSection;
-    if(this.settingSection === false){
+    if (this.settingSection === false) {
       this.btnSelected = 'dashboard';
-    }else {
+    } else {
       this.btnSelected = 'setting';
     }
   }
 
-
-  onRefreshList() : void {
+  onRefreshList(): void {
     this.loadQuestionsFromLocalStorage();
   }
 
-
- onPublishSurvey() :  void {
-  Swal.fire({
-    title: "¿Esta seguro?",
-    text: "No podras editarla de nuevo!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    cancelButtonText: 'Cancelar',
-    confirmButtonText: "Si, Publicar!"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.publishSurvey();
-      Swal.fire({
-        title: "Publicada!",
-        text: "La encuesta ha sido publicada.",
-        icon: "success"
-      });
-    }
-  });
- }
-
+  onPublishSurvey(): void {
+    Swal.fire({
+      title: '¿Esta seguro?',
+      text: 'No podras editarla de nuevo!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si, Publicar!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.publishSurvey()
+          .then((res) => {
+            Swal.fire({
+              title: 'Publicada!',
+              text: 'La encuesta ha sido publicada.',
+              icon: 'success',
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  }
 
   async publishSurvey(): Promise<void> {
     this.isLoading = true; // Mostrar el spinner
     try {
       const surveyString = localStorage.getItem('survey');
-      const survey = (surveyString) ? JSON.parse(surveyString) : '';  
+      const survey = surveyString ? JSON.parse(surveyString) : '';
       survey.questions = this.dashboardlsService.getDashboardOptions();
-      survey.state = 'Publicada';
+      survey.state = 'Activa';
       survey.updated_date = this.formatDate();
-      const response = await this.surveyService.updateSurvey(survey.id, survey).toPromise();
+      const response = await this.surveyService
+        .updateSurvey(survey.id, survey)
+        .toPromise();
       if (response) {
         console.log(response);
         this.router.navigate(['/surveys']);
       }
-  
     } catch (error) {
       console.error('Error creating survey', error);
     } finally {
-      this.isLoading = false; 
+      this.isLoading = false;
     }
   }
-  
-
 }
-
-

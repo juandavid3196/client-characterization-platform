@@ -1,71 +1,141 @@
-<app-survey-form *ngIf="isFormVisible"  (formClose)="closeForm()" (surveySaved)="onSurveySaved()" > </app-survey-form>
-<app-info-window *ngIf="infoWindow"  (formClose)="openInfoWindow(null)" [surveyData]="selectedSurvey"></app-info-window>
+<app-survey-form
+  *ngIf="isFormVisible"
+  (formClose)="closeForm()"
+  (surveySaved)="onSurveySaved()"
+>
+</app-survey-form>
+<app-info-window
+  *ngIf="infoWindow"
+  (formClose)="openInfoWindow(null)"
+  [surveyData]="selectedSurvey"
+></app-info-window>
 <div class="container">
-    <div class="survey-menu">
-        <div class="top-section">
-            <app-user-bar></app-user-bar>
-        </div>
-        <div class="bottom-section">
-            <button class="btn-confirm" (click)="openCreateSurveyForm()">Crear Encuesta</button>
-            <div class="search-box">
-                <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="filterSurveys()">
-                <mat-icon class="search-bar-icon">search</mat-icon>
-            </div>
-            <div class="menu-select-box">
-                <span class="filter-label">Filtrar por Estado</span>
-                <app-filter-select [options]="states" (optionValue)="filterByState($event)"></app-filter-select>
-            </div>
-            <div class="menu-select-box">
-                <span class="filter-label">Filtrar por Fecha</span>
-                <app-filter-select [options]="modificationDate" (optionValue)="filterByDate($event)"></app-filter-select>
-            </div>
-        </div>
+  <div class="survey-menu">
+    <div class="top-section">
+      <app-user-bar></app-user-bar>
     </div>
-    <main>
-        <div class="main-title">
-            Encuestas
+    <div class="bottom-section">
+      <button class="btn-confirm" (click)="openCreateSurveyForm()">
+        Crear Encuesta
+      </button>
+      <div class="search-box">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="filterSurveys()"
+        />
+        <mat-icon class="search-bar-icon">search</mat-icon>
+      </div>
+      <div class="menu-select-box">
+        <span class="filter-label">Filtrar por Estado</span>
+        <app-filter-select
+          [options]="states"
+          (optionValue)="filterByState($event)"
+        ></app-filter-select>
+      </div>
+      <div class="menu-select-box">
+        <span class="filter-label">Filtrar por Fecha</span>
+        <app-filter-select
+          [options]="modificationDate"
+          (optionValue)="filterByDate($event)"
+        ></app-filter-select>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div class="main-title">Encuestas</div>
+    <div class="survey-container">
+      <div class="survey-colums-box">
+        <ul>
+          <span class="left-menu">
+            <li>Nombre y Fecha de Modificacción</li>
+          </span>
+          <span class="right-menu">
+            <li>Preguntas</li>
+            <li>Clonar</li>
+            <li>Estado</li>
+            <li>Acciones</li>
+          </span>
+        </ul>
+      </div>
+      <div class="survey-rows-box" *ngFor="let survey of filteredSurveys">
+        <div class="left-section">
+          <div class="title-box">
+            <span class="survey-title">{{ survey.title }}</span>
+            <span class="survey-update"
+              >Modificado {{ survey.updated_date }}</span
+            >
+          </div>
         </div>
-        <div class="survey-container">
-            <div class="survey-colums-box">
-                <ul>
-                    <span class="left-menu">
-                        <li>Nombre y Fecha de Modificacción</li>
-                    </span>
-                    <span class="right-menu">
-                        <li>Preguntas</li>
-                        <li>Clonar</li>
-                        <li>Estado</li>
-                        <li>Acciones</li>
-                    </span>
-                </ul>
+        <div class="right-section">
+          <div class="row-box">
+            <span class="survey-number">
+              {{ getSurveyLength(survey.questions) }}</span
+            >
+          </div>
+          <div class="row-box">
+            <span class="btn-clon btn" (click)="cloneSurvey(survey)"
+              ><mat-icon class="btn-icon">content_copy</mat-icon></span
+            >
+          </div>
+          <div class="row-box">
+            <span
+              class="survey-state"
+              [ngStyle]="{
+                color: surveyColor(survey.state, 'color'),
+                'background-color': surveyColor(survey.state, 'background')
+              }"
+              >{{ survey.state }}</span
+            >
+          </div>
+          <div class="row-box">
+            <div class="actions-box">
+              <span class="btn-delete btn" (click)="deleteSurvey(survey.id)">
+                <mat-icon class="btn-icon">delete</mat-icon>
+              </span>
+
+              <span
+                *ngIf="survey.state === 'Activa'"
+                class="btn-stop btn"
+                (click)="onStopSurvey(survey)"
+              >
+                <mat-icon class="btn-icon">stop_circle</mat-icon>
+              </span>
+
+              <span
+                *ngIf="survey.state === 'Suspendida'"
+                class="btn-activate btn"
+                (click)="onActivateSurvey(survey)"
+              >
+                <mat-icon class="btn-icon">play_circle</mat-icon>
+              </span>
+              <span
+                class="{{
+                  survey.state !== 'Editada'
+                    ? 'btn-blocked btn'
+                    : 'btn btn-edit'
+                }}"
+                (click)="editSurvey(survey)"
+              >
+                <mat-icon class="btn-icon">edit</mat-icon></span
+              >
+              <span
+                class="{{
+                  survey.state !== 'Activa'
+                    ? 'btn-blocked btn'
+                    : 'btn btn-publish'
+                }}"
+                (click)="copyUrlSurvey(survey)"
+              >
+                <mat-icon class="btn-icon">link</mat-icon></span
+              >
+              <span class="btn-info btn" (click)="openInfoWindow(survey)"
+                ><mat-icon class="btn-icon">info</mat-icon></span
+              >
             </div>
-            <div class="survey-rows-box" *ngFor="let survey of filteredSurveys" >
-                <div class="left-section">
-                    <div class="title-box">
-                        <span class="survey-title">{{survey.title}}</span>
-                        <span class="survey-update">Modificado {{ survey.updated_date}}</span>
-                    </div>
-                </div>
-                <div class="right-section">
-                    <div class="row-box">
-                        <span class="survey-number"> {{getSurveyLength(survey.questions)}}</span>
-                    </div>
-                    <div class="row-box">
-                        <span class="btn-clon btn" (click)="cloneSurvey(survey)"><mat-icon  class="btn-icon">content_copy</mat-icon></span>
-                    </div>
-                    <div class="row-box">
-                        <span class="survey-state" [ngStyle]="{ 'color': surveyColor(survey.state, 'color'), 'background-color': surveyColor(survey.state, 'background') }">{{survey.state}}</span>
-                    </div>
-                    <div class="row-box">
-                        <div class="actions-box">
-                            <span class="btn-delete btn" (click)="deleteSurvey(survey.id)" > <mat-icon class="btn-icon">delete</mat-icon> </span>
-                            <span class="{{survey.state === 'Publicada' ? 'btn-blocked btn' : 'btn btn-edit'}}" (click)="editSurvey(survey)" > <mat-icon class="btn-icon">edit</mat-icon></span>
-                            <span class="{{survey.state !== 'Publicada' ? 'btn-blocked btn' : 'btn btn-publish'}}"  (click)="copyUrlSurvey(survey)" > <mat-icon class="btn-icon">link</mat-icon></span>
-                            <span class="btn-info btn" (click)="openInfoWindow(survey)"><mat-icon class="btn-icon">info</mat-icon></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </main>
+      </div>
+    </div>
+  </main>
 </div>

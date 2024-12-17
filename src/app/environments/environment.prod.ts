@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://back-characterization-platform.vercel.app' // URL de la API de producción
-  };
+  production: true,
+  apiUrl: 'http://localhost:3000', // URL de la API de producción
+};

@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
+import { UserSurveyService } from 'src/app/features/usersurvey/services/user-survey.service';
 
 @Component({
   selector: 'app-survey-list',
@@ -18,6 +19,7 @@ import Swal from 'sweetalert2';
 export class SurveyListComponent {
   constructor(
     private surveyService: SurveyService,
+    private userSurveyService: UserSurveyService,
     private toastr: ToastrService,
     private router: Router,
     private dashboardlsService: DashboardlsService,
@@ -135,10 +137,20 @@ export class SurveyListComponent {
         .updateSurvey(survey.id, survey)
         .toPromise();
       if (response) {
-        console.log(response);
+        console.log(response, 'Survey updated');
+        try {
+          const response = await this.userSurveyService
+            .updateSurvey(survey.id, survey)
+            .toPromise();
+          if (response) {
+            console.log(response, 'User survey state updated');
+          }
+        } catch (error) {
+          console.error('Error creating survey', error);
+        }
       }
     } catch (error) {
-      console.error('Error creating survey', error);
+      console.error('Error suspending survey', error);
     } finally {
       this.isLoading = false;
     }
@@ -153,7 +165,17 @@ export class SurveyListComponent {
         .updateSurvey(survey.id, survey)
         .toPromise();
       if (response) {
-        console.log(response);
+        console.log(response, 'Survey updated');
+        try {
+          const response = await this.userSurveyService
+            .updateSurvey(survey.id, survey)
+            .toPromise();
+          if (response) {
+            console.log(response, 'User survey state updated');
+          }
+        } catch (error) {
+          console.error('Error creating survey', error);
+        }
       }
     } catch (error) {
       console.error('Error creating survey', error);

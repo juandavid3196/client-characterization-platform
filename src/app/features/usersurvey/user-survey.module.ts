@@ -3,16 +3,16 @@ import { CommonModule } from '@angular/common';
 import { UserSurveysComponent } from './components/user-surveys/user-surveys.component';
 import { UserSurveyRoutingModule } from './user-survey-routing.module';
 import { MatIconModule } from '@angular/material/icon';
-import { SharedModule } from "../../shared/shared.module";
+import { SharedModule } from '../../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SurveyTestComponent } from './components/survey-test/survey-test.component';
-
-
+import { InfoWindowUserComponent } from './components/info-window-user/info-window-user.component';
 
 @NgModule({
   declarations: [
     UserSurveysComponent,
-    SurveyTestComponent
+    SurveyTestComponent,
+    InfoWindowUserComponent,
   ],
   imports: [
     MatIconModule,
@@ -21,6 +21,6 @@ import { SurveyTestComponent } from './components/survey-test/survey-test.compon
     SharedModule,
     ReactiveFormsModule,
     FormsModule,
-]
+  ],
 })
-export class UserSurveyModule { }
+export class UserSurveyModule {}

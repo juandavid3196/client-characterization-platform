@@ -7,8 +7,6 @@ import { ToggleButtonComponent } from './components/toggle-button/toggle-button.
 import { SpinerComponent } from './components/spiner/spiner.component';
 import { ZoomDirective } from './directives/zoom.directive';
 
-
-
 @NgModule({
   declarations: [
     UserBarComponent,
@@ -16,18 +14,14 @@ import { ZoomDirective } from './directives/zoom.directive';
     ToggleButtonComponent,
     SpinerComponent,
     ZoomDirective,
-
   ],
-  imports: [
-    CommonModule,
-    MatIconModule
-  ],
+  imports: [CommonModule, MatIconModule],
   exports: [
     ToggleButtonComponent,
     UserBarComponent,
     FilterSelectComponent,
     SpinerComponent,
-    ZoomDirective
-  ]
+    ZoomDirective,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -11,14 +11,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { InfoWindowComponent } from './components/info-window/info-window.component';
 
-
-
 @NgModule({
-  declarations: [
-    SurveyListComponent,
-    SurveyFormComponent,
-    InfoWindowComponent,
-  ],
+  declarations: [SurveyListComponent, SurveyFormComponent, InfoWindowComponent],
   imports: [
     CommonModule,
     SurveysRoutingModule,
@@ -33,8 +27,6 @@ import { InfoWindowComponent } from './components/info-window/info-window.compon
     }),
     FormsModule,
   ],
-  providers: [
-    SurveyService
-  ]
+  providers: [SurveyService],
 })
-export class SurveysModule { }
+export class SurveysModule {}

@@ -17,6 +17,7 @@ import { ScaleQuestionComponent } from './components/scale-question/scale-questi
 import { YesNoQuestionComponent } from './components/yes-no-question/yes-no-question.component';
 import { AnswerMenuComponent } from './components/answer-menu/answer-menu.component';
 import { OpenQuestionComponent } from './components/open-question/open-question.component';
+import { DeadlineWindowComponent } from './deadline-window/deadline-window.component';
 
 
 
@@ -34,6 +35,7 @@ import { OpenQuestionComponent } from './components/open-question/open-question.
     YesNoQuestionComponent,
     AnswerMenuComponent,
     OpenQuestionComponent,
+    DeadlineWindowComponent,
   
   ],
   imports: [

@@ -59,8 +59,6 @@ export class SurveyTestComponent {
       const surveyState = await this.getSurveyById();
       if (surveyState === 'created') {
         this.goToSurvey = true;
-      } else {
-        this.goToHome();
       }
       this.CheckingAnswerByDefect();
     } catch (error) {
@@ -99,20 +97,16 @@ export class SurveyTestComponent {
             .getSurveyById(id)
             .toPromise();
           if (response) {
-            if (response.state !== 'Suspendida') {
-              response.state = 'Sin Resolver';
-            }
             const userResponse: any = await this.userSurveyService
               .createSurvey(response)
               .toPromise();
             if (userResponse) {
               this.toastr.success('Encuesta agregada con exito');
               this.survey = userResponse;
-              if (userResponse.state == 'Suspendida') {
-                return 'suspended';
-              } else {
-                return 'created';
+              if (this.survey.state === 'Suspendida') {
+                this.suspended = true;
               }
+              return 'created';
             }
           }
         } else {
@@ -217,7 +211,7 @@ export class SurveyTestComponent {
 
   async surveyStateInProgress(): Promise<void> {
     const editBody = {
-      state: 'En Progreso',
+      state: 'Activa',
       updated_date: this.formatDate(),
     };
     try {
@@ -229,6 +223,20 @@ export class SurveyTestComponent {
     }
   }
 
+  async getSurveyState(): Promise<any> {
+    try {
+      const survey: any = await this.surveyService
+        .getSurveyById(this.survey.id)
+        .toPromise();
+      if (survey) {
+        return survey.state;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
   async saveSurveyAnswers(): Promise<void> {
     this.isLoading = true; // Mostrar el spinner
     try {
@@ -238,7 +246,7 @@ export class SurveyTestComponent {
           (e: any) => this.survey.id === e.id_survey
         );
         const editBody = {
-          state: 'En Progreso',
+          state: 'Activa',
           updated_date: this.formatDate(),
           answers: this.answerArray,
         };
@@ -288,6 +296,7 @@ export class SurveyTestComponent {
         .updateAnswer(this.finalAnswerId, editBody)
         .toPromise();
       if (editedAnswer) {
+        let state = await this.getSurveyState();
         const editedUserSurvey: any = await this.userSurveyService
           .updateSurvey(this.survey.id, editBody)
           .toPromise();

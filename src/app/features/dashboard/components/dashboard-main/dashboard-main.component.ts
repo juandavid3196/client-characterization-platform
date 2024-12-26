@@ -29,6 +29,7 @@ export class DashboardMainComponent {
   settingSection: boolean = false;
   btnSelected: string = 'dashboard';
   bankIndex: any = { index: 0, position: '' };
+  openDeadlineWindow: boolean = false;
   editSection: boolean = false;
   openPreview: boolean = false;
   isLoading: boolean = false;
@@ -118,6 +119,10 @@ export class DashboardMainComponent {
       this.elementSelected = this.dashboardOptions[0];
       this.indexSelected = 0;
     }
+  }
+
+  handleDeadlineWindow(): void {
+    this.openDeadlineWindow = !this.openDeadlineWindow;
   }
 
   openQuestionsMenu(index?: number, position?: string): void {
@@ -284,30 +289,7 @@ export class DashboardMainComponent {
   }
 
   onPublishSurvey(): void {
-    Swal.fire({
-      title: '¿Esta seguro?',
-      text: 'No podras editarla de nuevo!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Si, Publicar!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.publishSurvey()
-          .then((res) => {
-            Swal.fire({
-              title: 'Publicada!',
-              text: 'La encuesta ha sido publicada.',
-              icon: 'success',
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    });
+    this.handleDeadlineWindow();
   }
 
   async publishSurvey(): Promise<void> {
@@ -322,7 +304,11 @@ export class DashboardMainComponent {
         .updateSurvey(survey.id, survey)
         .toPromise();
       if (response) {
-        console.log(response);
+        Swal.fire({
+          title: 'Publicada!',
+          text: 'La encuesta ha sido publicada.',
+          icon: 'success',
+        });
         this.router.navigate(['/surveys']);
       }
     } catch (error) {

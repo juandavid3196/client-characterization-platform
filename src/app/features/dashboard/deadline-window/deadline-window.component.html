@@ -1,0 +1,34 @@
+<div class="form-container {{ close ? 'close' : '' }}">
+  <app-spiner *ngIf="isLoading"></app-spiner>
+  <div class="form-container-box {{ close ? 'close' : '' }}">
+    <div class="top-section">
+      <span class="form-title">Fecha de Cierre</span>
+      <mat-icon class="btn-close" (click)="onClose()">close</mat-icon>
+    </div>
+    <div class="main-section">
+      <form [formGroup]="deadlineForm" (ngSubmit)="onSubmit()">
+        <div class="form-box">
+          <label for="title">Fecha de Cierre</label>
+          <input
+            type="date"
+            name="deadline"
+            [min]="minDate"
+            formControlName="deadline"
+          />
+          <span class="error-message" *ngIf="errorMessage"
+            ><mat-icon class="error-icon">error</mat-icon>Debe añadir una fecha
+            de cierre para publicar la encuesta.</span
+          >
+        </div>
+        <div class="btns-section">
+          <button class="btn-cancel" (click)="closeWindow($event)">
+            Cancelar
+          </button>
+          <div class="btn-bottom-box">
+            <button class="btn-confirm" type="submit">Publicar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

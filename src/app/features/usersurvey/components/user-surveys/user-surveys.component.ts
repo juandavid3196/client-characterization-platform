@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { UserSurveyService } from '../../services/user-survey.service';
 import { Survey } from '../../models/survey.model';
+import { SurveyService } from 'src/app/features/surveys/services/survey.service';
 
 @Component({
   selector: 'app-user-surveys',
@@ -15,7 +16,8 @@ export class UserSurveysComponent {
   constructor(
     private toastr: ToastrService,
     private router: Router,
-    private userSurveyService: UserSurveyService
+    private userSurveyService: UserSurveyService,
+    private surveyService: SurveyService
   ) {}
 
   states: string[] = [
@@ -133,8 +135,29 @@ export class UserSurveysComponent {
     return 0;
   }
 
-  solveSurvey(survey: any): void {
-    this.router.navigate(['/userpanel', survey.id]);
+  async solveSurvey(activeSurvey: any): Promise<void> {
+    try {
+      const survey: any = await this.surveyService
+        .getSurveyById(activeSurvey.id)
+        .toPromise();
+      if (survey) {
+        if (survey.state === 'Suspendida' || survey.state === 'Cerrada') {
+          const updateBody = {
+            state: survey.state,
+          };
+          const response = await this.userSurveyService
+            .updateSurvey(survey.id, updateBody)
+            .toPromise();
+          if (response) {
+            window.location.reload();
+          }
+        } else {
+          this.router.navigate(['/userpanel', survey.id]);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   openInfoWindow(element: userSurvey | null): void {

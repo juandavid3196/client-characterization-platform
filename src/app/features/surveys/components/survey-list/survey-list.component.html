@@ -90,8 +90,8 @@
           </div>
           <div class="row-box">
             <div class="actions-box">
-              <span class="btn-delete btn" (click)="deleteSurvey(survey.id)">
-                <mat-icon class="btn-icon">delete</mat-icon>
+              <span class="btn-delete btn" (click)="closeSurvey(survey.id)">
+                <mat-icon class="btn-icon">block</mat-icon>
               </span>
 
               <span
@@ -103,7 +103,9 @@
               </span>
 
               <span
-                *ngIf="survey.state === 'Suspendida'"
+                *ngIf="
+                  survey.state === 'Suspendida' || survey.state === 'Cerrada'
+                "
                 class="btn-activate btn"
                 (click)="onActivateSurvey(survey)"
               >

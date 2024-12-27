@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { UserSurveyService } from '../../services/user-survey.service';
 import { Survey } from '../../models/survey.model';
 import { SurveyService } from 'src/app/features/surveys/services/survey.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-surveys',
@@ -20,14 +21,7 @@ export class UserSurveysComponent {
     private surveyService: SurveyService
   ) {}
 
-  states: string[] = [
-    'Finalizada',
-    'Sin Resolver',
-    'En Progreso',
-    'Cancelada',
-    'Suspendida',
-    'Todas',
-  ];
+  states: string[] = ['Finalizada', 'Activa', 'Suspendida', 'Todas'];
 
   modificationDate: string[] = ['Más Reciente', 'Más Antiguo'];
   isFormVisible: boolean = false;
@@ -44,7 +38,28 @@ export class UserSurveysComponent {
   loadSurveys(): void {
     this.userSurveyService.getSurveys().subscribe((surveys) => {
       this.surveys = surveys;
-      this.filteredSurveys = surveys;
+      this.filteredSurveys = surveys.filter(
+        (survey) => survey.state !== 'Cerrada'
+      );
+      this.closeSurveyByDeadline();
+    });
+  }
+
+  closeSurveyByDeadline(): void {
+    this.filteredSurveys.forEach((element) => {
+      if (this.checkDeadline(element)) {
+        this.userSurveyService
+          .updateSurvey(element.id, { state: 'Cerrada' })
+          .subscribe((response) => {
+            if (response) {
+              Swal.fire({
+                title: 'Encuesta Cerrada',
+                text: 'La encuesta ha sido cerrada.',
+                icon: 'info',
+              });
+            }
+          });
+      }
     });
   }
 
@@ -52,6 +67,12 @@ export class UserSurveysComponent {
     this.filteredSurveys = this.surveys.filter((event) =>
       event.title.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+  }
+
+  checkDeadline(survey: any): boolean {
+    const currentDate = new Date();
+    const deadline = new Date(survey.deadline);
+    return currentDate.getTime() >= deadline.getTime();
   }
 
   formatDate(): string {
@@ -95,17 +116,9 @@ export class UserSurveysComponent {
         color = '#128524';
         background = '#ACFFBA';
         break;
-      case 'Cancelada':
-        color = '#898C08';
-        background = '#F3FFAC';
-        break;
-      case 'Sin Resolver':
-        color = '#666666';
-        background = '#E4E4E4';
-        break;
-      case 'En Progreso':
-        color = '#898C08';
-        background = '#F3FFAC';
+      case 'Activa':
+        color = 'rgb(18, 133, 36)';
+        background = 'rgb(172, 255, 186)';
         break;
       case 'Suspendida':
         color = 'rgb(117 1 112)';
@@ -149,7 +162,19 @@ export class UserSurveysComponent {
             .updateSurvey(survey.id, updateBody)
             .toPromise();
           if (response) {
-            window.location.reload();
+            if (survey.state === 'Suspendida') {
+              Swal.fire({
+                title: 'Suspendida',
+                text: 'La encuesta ha sido suspendida.',
+                icon: 'info',
+              });
+            } else {
+              Swal.fire({
+                title: 'Cerrada',
+                text: 'La encuesta ha sido cerrada.',
+                icon: 'info',
+              });
+            }
           }
         } else {
           this.router.navigate(['/userpanel', survey.id]);

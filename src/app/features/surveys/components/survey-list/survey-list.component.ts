@@ -49,8 +49,10 @@ export class SurveyListComponent {
   loadSurveys(): void {
     this.surveyService.getSurveys().subscribe((surveys) => {
       this.surveys = surveys;
-      console.log(this.surveys);
-      this.filteredSurveys = surveys;
+      this.filteredSurveys = surveys.filter(
+        (survey) => survey.state !== 'Cerrada'
+      );
+      this.closeSurveyByDeadline();
     });
   }
 
@@ -58,6 +60,30 @@ export class SurveyListComponent {
     this.filteredSurveys = this.surveys.filter((event) =>
       event.title.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+  }
+
+  checkDeadline(survey: any): boolean {
+    const currentDate = new Date();
+    const deadline = new Date(survey.deadline);
+    return currentDate.getTime() >= deadline.getTime();
+  }
+
+  closeSurveyByDeadline(): void {
+    this.filteredSurveys.forEach((element) => {
+      if (this.checkDeadline(element)) {
+        this.surveyService
+          .updateSurvey(element.id, { state: 'Cerrada' })
+          .subscribe((response) => {
+            if (response) {
+              Swal.fire({
+                title: 'Encuesta Cerrada',
+                text: 'La encuesta ha sido cerrada.',
+                icon: 'info',
+              });
+            }
+          });
+      }
+    });
   }
 
   openCreateSurveyForm(): void {
@@ -184,25 +210,30 @@ export class SurveyListComponent {
     }
   }
 
-  deleteSurvey(id: string): void {
+  closeSurvey(id: string): void {
     Swal.fire({
       title: '¿Esta seguro?',
-      text: 'No podras revertir los cambios!',
+      text: 'La encuesta sera archivada indefinidamente!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Si, Eliminar!',
+      confirmButtonText: 'Si, Cerrar!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.surveyService.deleteSurvey(id).subscribe(() => {
-          this.loadSurveys();
-        });
-        Swal.fire({
-          title: 'Eliminada!',
-          text: 'La encuesta ha sido eliminada .',
-          icon: 'success',
+        const editSurvey = {
+          state: 'Cerrada',
+        };
+        this.surveyService.updateSurvey(id, editSurvey).subscribe(() => {
+          this.userSurveyService.updateSurvey(id, editSurvey).subscribe(() => {
+            Swal.fire({
+              title: 'Cerrada!',
+              text: 'La encuesta ha sido cerrada.',
+              icon: 'success',
+            });
+            this.loadSurveys();
+          });
         });
       }
     });
@@ -303,9 +334,9 @@ export class SurveyListComponent {
         color = '#898C08';
         background = '#F3FFAC';
         break;
-      case 'Creada':
-        color = '#666666';
-        background = '#E4E4E4';
+      case 'Cerrada':
+        color = 'rgb(179 0 0)';
+        background = 'rgb(255 170 170)';
         break;
       case 'Suspendida':
         color = 'rgb(117 1 112)';

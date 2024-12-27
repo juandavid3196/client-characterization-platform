@@ -81,13 +81,7 @@
                 (click)="viewResults(survey)"
                 ><mat-icon class="btn-icon">visibility</mat-icon>
               </span>
-              <span
-                class="btn-edit btn"
-                *ngIf="
-                  survey.state === 'Sin Resolver' ||
-                  survey.state === 'En Progreso' ||
-                  survey.state === 'Activa'
-                "
+              <span class="btn-edit btn" *ngIf="survey.state === 'Activa'"
                 ><mat-icon class="btn-icon" (click)="solveSurvey(survey)"
                   >edit</mat-icon
                 >

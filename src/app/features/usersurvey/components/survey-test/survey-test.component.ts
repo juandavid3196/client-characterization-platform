@@ -56,7 +56,7 @@ export class SurveyTestComponent {
     this.isLoading = true; // Inicia el estado de carga
     try {
       const surveyState = await this.getSurveyById();
-      if (surveyState === 'created' || surveyState === 'finded') {
+      if (surveyState && this.survey.state !== 'Activa') {
         this.goToSurvey = true;
       }
       this.CheckingAnswerByDefect();
@@ -102,7 +102,7 @@ export class SurveyTestComponent {
             if (userResponse) {
               this.toastr.success('Encuesta agregada con exito');
               this.survey = userResponse;
-              return 'created';
+              return true;
             }
           }
         } else {
@@ -116,7 +116,7 @@ export class SurveyTestComponent {
               this.survey.state = response.state;
             }
           }
-          return 'finded';
+          return true;
         }
       }
     } catch (error) {
@@ -629,19 +629,22 @@ export class SurveyTestComponent {
       questionInfo: answer.item,
       answer: answer.answer,
     };
-
     this.removeRequiredQuestionMessage(body);
 
     const checkIndex = this.answerArray.findIndex(
       (q: any) => q.questionInfo.id === body.questionInfo.id
     );
 
+    //Anexar nueva respuesta o actualizarla
+
     if (checkIndex === -1) {
       this.answerArray.push(body);
     } else {
       if (this.compareAnswer(body.questionInfo.numeral, body.answer)) {
+        // uncheck the same answer
         this.answerArray.splice(checkIndex, 1);
       } else if (this.areFieldsEmpty(body.answer)) {
+        // remove the answer if it is empty
         this.answerArray.splice(checkIndex, 1);
       } else {
         this.answerArray[checkIndex].answer = body.answer;

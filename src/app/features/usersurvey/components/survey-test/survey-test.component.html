@@ -328,7 +328,7 @@
               >{{ item.description }}
             </div>
             <div class="q-scale-section">
-              <div class="scale-circle-box" *ngIf="this.item.settings.apply">
+              <div class="scale-circle-box" *ngIf="item.settings.apply">
                 <span
                   class="scale-circle {{
                     getAnswerValue(item.numeral) === 'N/A'

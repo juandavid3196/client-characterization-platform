@@ -1,7 +1,16 @@
-import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
-import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
+import { FilterSelectComponent } from '../../../../shared/components/filter-select/filter-select.component';
+import { ToggleButtonComponent } from '../../../../shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
 import { Subscription } from 'rxjs';
 import { DashboardlsService } from '../../services/dashboardls.service';
@@ -9,48 +18,55 @@ import { DashboardlsService } from '../../services/dashboardls.service';
 @Component({
   selector: 'app-checkbox-question',
   templateUrl: './checkbox-question.component.html',
-  styleUrls: ['./checkbox-question.component.scss']
+  styleUrls: ['./checkbox-question.component.scss'],
 })
 export class CheckboxQuestionComponent {
+  @ViewChild('appFilterComponent') FilterComponent:
+    | FilterSelectComponent
+    | undefined;
+  @ViewChild('appToggleButtonDefectedA') ToggleComponent:
+    | ToggleButtonComponent
+    | undefined;
+  @ViewChildren('appToggleButton')
+  toggleButtons!: QueryList<ToggleButtonComponent>;
 
-  @ViewChild('appFilterComponent') FilterComponent: FilterSelectComponent | undefined;
-  @ViewChild('appToggleButtonDefectedA') ToggleComponent: ToggleButtonComponent | undefined;
-  @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
-  
-  checkBoxForm : FormGroup;
-  addNote : boolean = false;
-  defectedAnswer : boolean = false;
-  anotherField : boolean =  false;
-  required :boolean =  false;
-  optionsAnswer : string[] = [];
-  qMessage : boolean = false;
-  aMessage : boolean = false;
-  blocked : boolean =  false;
+  checkBoxForm: FormGroup;
+  addNote: boolean = false;
+  defectedAnswer: boolean = false;
+  anotherField: boolean = false;
+  required: boolean = false;
+  optionsAnswer: string[] = [];
+  qMessage: boolean = false;
+  aMessage: boolean = false;
+  blocked: boolean = false;
   changeSection: boolean = true;
-  optionsMessage : boolean = false;
+  optionsMessage: boolean = false;
   spinner: boolean = false;
-  dashboardOptions : any[] = [];
+  dashboardOptions: any[] = [];
   formSubscription: Subscription | undefined;
-  openVideoWindow : boolean = false;
-  videoUrlType : string = '';
+  openVideoWindow: boolean = false;
+  videoUrlType: string = '';
 
-  @Input() elementData : any = {};
-  @Output() refreshList =  new EventEmitter();
+  @Input() elementData: any = {};
+  @Output() refreshList = new EventEmitter();
 
-  constructor(private fb:FormBuilder,
-     private dataBankService :DataBankService, 
-     private dashboardlsService : DashboardlsService ){
-    this.checkBoxForm = this.fb.group({  // create a fb.group for every Object 
+  constructor(
+    private fb: FormBuilder,
+    private dataBankService: DataBankService,
+    private dashboardlsService: DashboardlsService
+  ) {
+    this.checkBoxForm = this.fb.group({
+      // create a fb.group for every Object
       id: '',
       numeral: null,
       type: 'checkbox',
       text: '',
-      description:'',
-      icon:'check-icon',
-      note_text:'',
+      description: '',
+      icon: 'check-icon',
+      note_text: '',
       addedToBank: false,
       options: this.fb.array([this.fb.control('')]),
-      settings: this.fb.group({  
+      settings: this.fb.group({
         another_field: false,
         question_multimedia: '',
         options_multimedia: '',
@@ -58,18 +74,21 @@ export class CheckboxQuestionComponent {
         defected_answer: false,
         answer_value: '',
         add_note: false,
-      })
+        answer_limit: 0,
+      }),
     });
   }
 
   ngOnInit() {
     this.loadFromDataObject();
     this.initializeFormValues();
-    this.formSubscription = this.checkBoxForm.valueChanges.subscribe(value => {
-      if (this.elementData.id !== undefined) {
-        this.updateDashboardOptions(value);
+    this.formSubscription = this.checkBoxForm.valueChanges.subscribe(
+      (value) => {
+        if (this.elementData.id !== undefined) {
+          this.updateDashboardOptions(value);
+        }
       }
-    });
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,29 +96,35 @@ export class CheckboxQuestionComponent {
       this.loadFromDataObject();
     }
   }
-  
 
   private updateDashboardOptions(value: any): void {
     if (this.elementData.id !== undefined) {
-      const index = this.dashboardOptions.findIndex(e => e.id === this.elementData.id);
+      const index = this.dashboardOptions.findIndex(
+        (e) => e.id === this.elementData.id
+      );
       if (index !== -1) {
-        this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
+        this.dashboardOptions[index] = {
+          ...this.dashboardOptions[index],
+          ...value,
+        };
         this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
       }
     }
   }
 
   saveCheckBoxData(): void {
-
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
-    
+
     if (storedQuestions) {
-     
-      const index = storedQuestions.findIndex((e:any)  => e.id === this.checkBoxForm.value.id);
-      
+      const index = storedQuestions.findIndex(
+        (e: any) => e.id === this.checkBoxForm.value.id
+      );
+
       if (index !== -1) {
-  
-        storedQuestions[index] = { ...storedQuestions[index], ...this.checkBoxForm.value };
+        storedQuestions[index] = {
+          ...storedQuestions[index],
+          ...this.checkBoxForm.value,
+        };
         this.dashboardlsService.saveDashboardOptions(storedQuestions);
         console.log('Questions updated successfully in Local Storage');
       } else {
@@ -109,45 +134,48 @@ export class CheckboxQuestionComponent {
       console.error('No questions found in Local Storage');
     }
   }
-  
 
   loadFromDataObject(): void {
-    
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
 
-
     if (storedQuestions && this.elementData.id) {
-
       this.dashboardOptions = storedQuestions;
-      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
-      if(element){
+      const element = storedQuestions.find(
+        (e: any) => e.id === this.elementData.id
+      );
+      if (element) {
+        this.checkBoxForm.patchValue(element);
+        const settings = this.checkBoxForm.get('settings') as FormGroup;
+        this.qMessage = settings.get('question_multimedia')?.value
+          ? true
+          : false;
+        this.aMessage = settings.get('options_multimedia')?.value
+          ? true
+          : false;
 
-      this.checkBoxForm.patchValue(element);
-      const settings = this.checkBoxForm.get('settings') as FormGroup;
-      this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
-      this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
-  
-      // Load options
-      const optionsArray = this.checkBoxForm.get('options') as FormArray;
-      while (optionsArray.length) {
-        optionsArray.removeAt(0);
-      }
-      
-      if (element.options) {
+        // Load options
+        const optionsArray = this.checkBoxForm.get('options') as FormArray;
+        while (optionsArray.length) {
+          optionsArray.removeAt(0);
+        }
+
+        if (element.options) {
           element.options.forEach((option: string) => {
-          optionsArray.push(this.fb.control(option));
-        });
+            optionsArray.push(this.fb.control(option));
+          });
+        }
+
+        this.optionsAnswer =
+          element.options.filter(
+            (option: string | null) => option != null && option !== ''
+          ) || [];
+        this.spinner = false;
+      } else {
+        this.spinner = true;
       }
-    
-      this.optionsAnswer = element.options.filter((option: string | null) => option != null && option !== '') || [];
-      this.spinner =  false;
-    }else {
-      this.spinner = true;
-    }  
+    }
+    this.spinner = false;
   }
-    this.spinner =  false;
-  }
-  
 
   initializeFormValues(): void {
     const settings = this.checkBoxForm.get('settings') as FormGroup;
@@ -157,55 +185,50 @@ export class CheckboxQuestionComponent {
     this.required = settings.get('required')?.value;
   }
 
-
-  
   reloadAllControls() {
-    if(this.toggleButtons){
-      this.toggleButtons.forEach(toggleButton => {
+    if (this.toggleButtons) {
+      this.toggleButtons.forEach((toggleButton) => {
         toggleButton?.reloadComponent();
       });
+    }
   }
-  }
 
-  getToggleValues(values : any): void {
+  getToggleValues(values: any): void {
+    let settings = this.checkBoxForm.get('settings') as FormGroup; // access to a specific property.
 
-    let settings = this.checkBoxForm.get('settings') as FormGroup;  // access to a specific property.   
-     
-     if (settings.controls.hasOwnProperty(values.name)) { // verify a property 
+    if (settings.controls.hasOwnProperty(values.name)) {
+      // verify a property
 
-      if(this.checkInfo(values)){
+      if (this.checkInfo(values)) {
         settings.patchValue({ [values.name]: values.state }); // modify value
-        if(values.name === 'defected_answer' && values.state === false){
+        if (values.name === 'defected_answer' && values.state === false) {
           settings.patchValue({ ['answer_value']: '' });
         }
         this.initializeFormValues();
-      }else{
+      } else {
         return;
       }
-    } 
+    }
   }
 
-  checkInfo(values:any):boolean {
-    if(values.name === 'add_note' && values.state === false){
-      this.checkBoxForm.patchValue({ ['note_text']: '' }); 
+  checkInfo(values: any): boolean {
+    if (values.name === 'add_note' && values.state === false) {
+      this.checkBoxForm.patchValue({ ['note_text']: '' });
     }
     return true;
   }
 
+  getOptionValue(option: string): void {
+    let settings = this.checkBoxForm.get('settings') as FormGroup;
 
-getOptionValue(option : string): void {
-
-    let settings = this.checkBoxForm.get('settings') as FormGroup;   
-    
     if (settings.controls.hasOwnProperty('answer_value')) {
       settings.patchValue({ ['answer_value']: option });
-     }
+    }
   }
 
   get options(): FormArray {
     return this.checkBoxForm.get('options') as FormArray;
   }
-
 
   // Video Url
 
@@ -213,35 +236,40 @@ getOptionValue(option : string): void {
     this.loadUrlsData();
     this.videoUrlType = controlName;
     this.openVideoWindow = true;
-   }
- 
- 
-   loadUrlsData() : void {
-     const storedQuestions = this.dashboardlsService.getDashboardOptions();
-     
-     if (storedQuestions && this.elementData.id) {
-       this.dashboardOptions = storedQuestions;
-       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
-   
-       if (element) {
-         this.checkBoxForm.patchValue(element);
-         const settings = this.checkBoxForm.get('settings') as FormGroup;
-         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
-         this.aMessage = (settings.get('options_multimedia')?.value) ? true : false;
-       }
-     }
-   }
- 
-   closeVideoWindow() : void {
-     this.openVideoWindow = false;
-   }
+  }
 
-  resetInputFile(controlName:string) {
+  loadUrlsData(): void {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
+
+    if (storedQuestions && this.elementData.id) {
+      this.dashboardOptions = storedQuestions;
+      const element = storedQuestions.find(
+        (e: any) => e.id === this.elementData.id
+      );
+
+      if (element) {
+        this.checkBoxForm.patchValue(element);
+        const settings = this.checkBoxForm.get('settings') as FormGroup;
+        this.qMessage = settings.get('question_multimedia')?.value
+          ? true
+          : false;
+        this.aMessage = settings.get('options_multimedia')?.value
+          ? true
+          : false;
+      }
+    }
+  }
+
+  closeVideoWindow(): void {
+    this.openVideoWindow = false;
+  }
+
+  resetInputFile(controlName: string) {
     const settings = this.checkBoxForm.get('settings') as FormGroup;
     settings.patchValue({ [controlName]: '' });
-    if(controlName == 'question_multimedia'){
+    if (controlName == 'question_multimedia') {
       this.qMessage = !this.qMessage;
-    }else if(controlName == 'options_multimedia'){
+    } else if (controlName == 'options_multimedia') {
       this.aMessage = !this.aMessage;
     }
   }
@@ -251,14 +279,14 @@ getOptionValue(option : string): void {
   }
 
   updateAnswer(): void {
-    this.optionsAnswer = this.options.controls.map(control => control.value);
-    if(this.optionsAnswer[0] === ''){
+    this.optionsAnswer = this.options.controls.map((control) => control.value);
+    if (this.optionsAnswer[0] === '') {
       this.removeOption(0);
     }
   }
 
   removeOption(index: number): void {
-    if(index == 0 && this.optionsAnswer.length <= 1){
+    if (index == 0 && this.optionsAnswer.length <= 1) {
       this.options.at(0).setValue('');
       const settings = this.checkBoxForm.get('settings') as FormGroup;
       settings.patchValue({ ['answer_value']: '' });
@@ -267,10 +295,10 @@ getOptionValue(option : string): void {
       this.initializeFormValues();
       this.ToggleComponent?.reloadComponent();
       this.optionsMessage = false;
-    }else{
+    } else {
       this.options.removeAt(index);
-      this.optionsAnswer.splice(index, 1); 
-      this.FilterComponent?.verifySelectedOption(); 
+      this.optionsAnswer.splice(index, 1);
+      this.FilterComponent?.verifySelectedOption();
     }
   }
 
@@ -278,7 +306,7 @@ getOptionValue(option : string): void {
     this.optionsMessage = !this.optionsMessage;
   }
 
-  onChangeSection():void {
+  onChangeSection(): void {
     this.changeSection = !this.changeSection;
   }
 
@@ -287,7 +315,7 @@ getOptionValue(option : string): void {
     this.resetFormState();
     console.log(this.checkBoxForm.value);
   }
-  
+
   resetCheckBoxForm(): void {
     this.checkBoxForm.reset({
       id: this.elementData.id || '',
@@ -307,18 +335,18 @@ getOptionValue(option : string): void {
         defected_answer: false,
         answer_value: '',
         add_note: false,
-      }
+      },
     });
-  
+
     // Reset FormArray controls
     this.resetFormArray(this.checkBoxForm.get('options') as FormArray, ['']);
   }
-  
+
   resetFormArray(formArray: FormArray, initialValues: any[]): void {
     formArray.clear();
-    initialValues.forEach(value => formArray.push(this.fb.control(value)));
+    initialValues.forEach((value) => formArray.push(this.fb.control(value)));
   }
-  
+
   resetFormState(): void {
     this.optionsAnswer = [];
     this.qMessage = false;
@@ -327,8 +355,8 @@ getOptionValue(option : string): void {
     this.ToggleComponent?.reloadComponent();
     this.reloadAllControls();
   }
-  
-  addToBank() : void {
+
+  addToBank(): void {
     this.checkBoxForm.patchValue({ ['addedToBank']: true });
     this.dataBankService.createBank(this.checkBoxForm.value).subscribe(
       (response) => {
@@ -340,13 +368,11 @@ getOptionValue(option : string): void {
     );
   }
 
-
-
-  onSubmit() : void {
-   if(this.checkBoxForm.valid){
-    this.saveCheckBoxData();
-    this.refreshList.emit();
-   }
+  onSubmit(): void {
+    if (this.checkBoxForm.valid) {
+      this.saveCheckBoxData();
+      this.refreshList.emit();
+    }
   }
 
   ngOnDestroy(): void {
@@ -356,6 +382,4 @@ getOptionValue(option : string): void {
       this.onResetForm();
     }
   }
-
-
 }

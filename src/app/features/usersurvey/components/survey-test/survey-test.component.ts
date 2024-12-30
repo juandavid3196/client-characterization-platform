@@ -27,7 +27,6 @@ export class SurveyTestComponent {
   iframeHtml?: SafeHtml;
   finalAnswerId: string = '';
   goToSurvey: boolean = false;
-  suspended: boolean = false;
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -57,7 +56,7 @@ export class SurveyTestComponent {
     this.isLoading = true; // Inicia el estado de carga
     try {
       const surveyState = await this.getSurveyById();
-      if (surveyState === 'created') {
+      if (surveyState === 'created' || surveyState === 'finded') {
         this.goToSurvey = true;
       }
       this.CheckingAnswerByDefect();
@@ -103,15 +102,20 @@ export class SurveyTestComponent {
             if (userResponse) {
               this.toastr.success('Encuesta agregada con exito');
               this.survey = userResponse;
-              if (this.survey.state === 'Suspendida') {
-                this.suspended = true;
-              }
               return 'created';
             }
           }
         } else {
+          const response: any = await this.surveyService
+            .getSurveyById(id)
+            .toPromise();
           this.getAnswers(survey.id);
           this.survey = survey;
+          if (response) {
+            if (survey.state !== 'Finalizada') {
+              this.survey.state = response.state;
+            }
+          }
           return 'finded';
         }
       }

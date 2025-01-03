@@ -27,6 +27,7 @@ export class SurveyTestComponent {
   iframeHtml?: SafeHtml;
   finalAnswerId: string = '';
   goToSurvey: boolean = false;
+  questionLimitMessage: number = 0;
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -413,18 +414,25 @@ export class SurveyTestComponent {
     }
   }
 
+  GetAnswerValueCheckbox(item: any, option: string): boolean {
+    for (let e of this.answerArray) {
+      if (
+        e.questionInfo.numeral === item.numeral &&
+        e.answer.option === option
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getTextFieldValue(numeral: string): string {
     const questionAnswer = this.answerArray.find(
       (e: any) => e.questionInfo.numeral === numeral
     );
     if (questionAnswer !== undefined) {
       if (
-        questionAnswer.questionInfo.type === 'checkbox' &&
-        questionAnswer.answer.another_field !== '' &&
-        questionAnswer.answer.another_field !== undefined
-      ) {
-        return questionAnswer.answer.another_field;
-      } else if (
         questionAnswer.questionInfo.type === 'open' &&
         questionAnswer.answer !== '' &&
         questionAnswer.answer != undefined
@@ -433,6 +441,17 @@ export class SurveyTestComponent {
       }
     } else {
       return '';
+    }
+    return '';
+  }
+
+  getTextFieldValueCheckbox(numeral: string): string {
+    const questionAnswer = this.answerArray.find(
+      (e: any) =>
+        e.questionInfo.numeral === numeral && e.answer.another_field !== ''
+    );
+    if (questionAnswer !== undefined) {
+      return questionAnswer.answer.another_field;
     }
     return '';
   }
@@ -641,15 +660,98 @@ export class SurveyTestComponent {
       this.answerArray.push(body);
     } else {
       if (this.compareAnswer(body.questionInfo.numeral, body.answer)) {
-        // uncheck the same answer
+        // uncheck the same answer -> Field Checkbox
         this.answerArray.splice(checkIndex, 1);
       } else if (this.areFieldsEmpty(body.answer)) {
-        // remove the answer if it is empty
+        // remove the answer if it is empty -> Field extra Checkbox, Open Question
         this.answerArray.splice(checkIndex, 1);
       } else {
         this.answerArray[checkIndex].answer = body.answer;
       }
     }
     this.checkUndefinedAnswer();
+  }
+
+  setAnswerCheckbox(answer: any): void {
+    let body = {
+      questionInfo: answer.item,
+      answer: answer.answer,
+    };
+
+    console.log(body.answer);
+    this.removeRequiredQuestionMessage(body);
+
+    // Verify answers limit allowed
+    const answerLimit = body.questionInfo.settings.answer_limit;
+
+    let count = 0;
+
+    this.answerArray.map((answer: any) => {
+      if (
+        answer.questionInfo.numeral === body.questionInfo.numeral &&
+        answer.answer.option
+      ) {
+        count += 1;
+      }
+    });
+
+    //Answer limit message
+
+    if (count >= answerLimit) {
+      this.questionLimitMessage = body.questionInfo.numeral;
+    } else {
+      this.questionLimitMessage = 0;
+    }
+
+    //Anexar nueva respuesta o actualizarla
+
+    if (body.answer.option) {
+      const checkIndex = this.answerArray.findIndex(
+        (q: any) =>
+          q.answer.option === body.answer.option &&
+          q.questionInfo.numeral === body.questionInfo.numeral
+      );
+
+      if (checkIndex === -1 && count < answerLimit) {
+        this.answerArray.push(body);
+      } else {
+        const checkEqual = this.answerArray.findIndex((q: any) => {
+          return (
+            q.answer.option === body.answer.option &&
+            q.questionInfo.numeral === body.questionInfo.numeral
+          );
+        });
+
+        if (checkEqual !== -1) {
+          this.answerArray.splice(checkEqual, 1);
+        }
+      }
+    } else if (body.answer.another_field) {
+      //Cheking anoter field
+      const checkIndexAnotherField = this.answerArray.findIndex(
+        (q: any) =>
+          q.answer.another_field &&
+          q.questionInfo.numeral === body.questionInfo.numeral
+      );
+
+      if (checkIndexAnotherField !== -1 && body.answer.another_field !== '') {
+        this.answerArray[checkIndexAnotherField].answer = body.answer;
+      } else {
+        this.answerArray.push(body);
+      }
+    } else {
+      const checkIndexAnotherField = this.answerArray.findIndex(
+        (q: any) =>
+          q.answer.another_field &&
+          q.questionInfo.numeral === body.questionInfo.numeral
+      );
+
+      if (checkIndexAnotherField !== -1) {
+        this.answerArray.splice(checkIndexAnotherField, 1);
+      }
+    }
+
+    this.checkUndefinedAnswer();
+    console.log(this.answerArray);
   }
 }

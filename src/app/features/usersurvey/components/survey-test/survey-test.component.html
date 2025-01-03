@@ -119,11 +119,9 @@
                     type="checkbox"
                     name="{{ item.id }}"
                     id="{{ item.numeral }}-{{ i }}"
-                    [checked]="
-                      option != '' && option === getAnswerValue(item.numeral)
-                    "
+                    [checked]="GetAnswerValueCheckbox(item, option)"
                     (click)="
-                      setAnswer({
+                      setAnswerCheckbox({
                         item: item,
                         answer: { option: option, another_field: '' }
                       })
@@ -143,9 +141,9 @@
                 type="text"
                 id="{{ item.numeral }}-{{ item.id }}"
                 name="{{ item.id }}--{{ item.numeral }}"
-                [value]="getTextFieldValue(item.numeral)"
+                [value]="getTextFieldValueCheckbox(item.numeral)"
                 (input)="
-                  setAnswer({
+                  setAnswerCheckbox({
                     item: item,
                     answer: {
                       option: '',
@@ -164,6 +162,14 @@
             >
               <img src="assets/icons/warning-icon.svg" alt="" /> Pregunta
               Obligatoria
+            </div>
+            <div
+              class="allowed-limit-message-view"
+              *ngIf="item.numeral == questionLimitMessage"
+            >
+              <img src="assets/icons/warning-icon.svg" alt="" /> el numero
+              maximo de respuestas para la pregunta {{ item.numeral }} es de
+              {{ item.settings.answer_limit }}
             </div>
           </div>
         </div>

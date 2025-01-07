@@ -28,6 +28,10 @@ export class SurveyTestComponent {
   finalAnswerId: string = '';
   goToSurvey: boolean = false;
   questionLimitMessage: number = 0;
+  openSectionVideo: boolean = false;
+  openImage: boolean = false;
+  sectionId: string = '';
+  invalidImage: boolean = false;
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -478,13 +482,33 @@ export class SurveyTestComponent {
     this.openVideoType = type;
     if (type === 'question') {
       this.getVideoLabel(item.settings.question_multimedia);
+    } else if (type === 'section') {
+      this.openSectionVideo = true;
+      this.sectionId = item.id;
+      this.getVideoLabel(item.video);
     } else {
       this.getVideoLabel(item.settings.options_multimedia);
     }
   }
 
+  openSectionImage(item: any): void {
+    this.invalidImage = false;
+    this.openImage = true;
+    this.sectionId = item.id;
+    this.verifyImage(item.imageUrl);
+  }
+
   closeVideo(): void {
     this.openVideoNumeral = 'close';
+  }
+
+  closeVideoSection(): void {
+    this.openSectionVideo = false;
+  }
+
+  closeSectionImage(): void {
+    this.openImage = false;
+    this.invalidImage = false;
   }
 
   getVideoLabel(label: string): void {
@@ -499,6 +523,19 @@ export class SurveyTestComponent {
       return false;
     }
     return true;
+  }
+
+  verifyImage(video: string): void {
+    const url = video;
+
+    if (url) {
+      const img = new Image();
+      img.onload = () => (this.invalidImage = false);
+      img.onerror = () => (this.invalidImage = true);
+      img.src = url;
+    } else {
+      this.invalidImage = false;
+    }
   }
 
   deepEqual(obj1: any, obj2: any): boolean {

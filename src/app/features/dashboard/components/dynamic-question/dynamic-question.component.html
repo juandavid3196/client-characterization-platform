@@ -56,46 +56,107 @@
               *ngFor="let category of categories.controls; let i = index"
               [formGroupName]="i"
             >
+              <h4>Categoría {{ i + 1 }}</h4>
               <input
                 type="text"
                 formControlName="title"
                 placeholder="Titulo"
                 (blur)="editCategory(i, $event)"
-                class="category-description"
               />
               <input
                 type="text"
                 formControlName="description"
                 placeholder="Descripción"
+                class="category-description"
                 (blur)="editCategory(i, $event)"
               />
               <textarea
-                type="text"
                 formControlName="category_video"
                 placeholder="Iframe Video Categoria"
                 (blur)="editCategory(i, $event)"
-                rows="6"
+                rows="5"
               ></textarea>
               <textarea
-                type="text"
                 formControlName="category_image"
-                placeholder="URL imagne"
+                placeholder="URL imagen"
                 (blur)="editCategory(i, $event)"
-                rows="6"
+                rows="5"
               ></textarea>
 
+              <!-- Subcategorías -->
+
+              <div formArrayName="subcategories">
+                <h4>Subcategorías</h4>
+                <div
+                  *ngFor="
+                    let subcategory of getSubcategories(i).controls;
+                    let j = index
+                  "
+                  [formGroupName]="j"
+                  class="subcategories-container"
+                >
+                  <!-- Campo para título de la subcategoría -->
+
+                  <input
+                    formControlName="sub_title"
+                    placeholder="Titulo subcategoria"
+                    (blur)="editSubcategory(i, j, $event)"
+                  />
+
+                  <input
+                    formControlName="sub_description"
+                    placeholder="Descripción subcategoria"
+                    (blur)="editSubcategory(i, j, $event)"
+                  />
+                  <textarea
+                    formControlName="subcategory_video"
+                    placeholder="Iframe Video Categoria"
+                    (blur)="editCategory(i, $event)"
+                    rows="5"
+                  ></textarea>
+                  <textarea
+                    formControlName="subcategory_image"
+                    placeholder="URL imagen"
+                    (blur)="editCategory(i, $event)"
+                    rows="5"
+                  ></textarea>
+                  <div class="actions-box">
+                    <span class="action-btn">
+                      <img
+                        src="assets/icons/plus-icon.svg"
+                        alt=""
+                        (click)="addSubcategory(i)"
+                      />
+                      Añadir subcategoria
+                    </span>
+                    <span class="action-btn">
+                      <img
+                        src="assets/icons/minus-icon.svg"
+                        alt=""
+                        (click)="deleteSubcategory(i, j)"
+                      />
+                      Eliminar subcategoria
+                    </span>
+                  </div>
+                </div>
+              </div>
               <div class="actions-box">
-                <img
-                  src="assets/icons/plus-icon.svg"
-                  alt=""
-                  (click)="addCategory()"
-                />
-                <img
-                  src="assets/icons/minus-icon.svg"
-                  alt=""
-                  (click)="deleteCategory(i)"
-                />
-                <button class="btn btn-category">Añadir Subcategorias</button>
+                <span class="action-btn">
+                  <img
+                    src="assets/icons/plus-icon.svg"
+                    alt=""
+                    (click)="addCategory()"
+                  />
+                  Añadir categoria
+                </span>
+                <span class="action-btn">
+                  <img
+                    src="assets/icons/minus-icon.svg"
+                    alt=""
+                    (click)="deleteCategory(i)"
+                  />
+                  Eliminar categoria
+                </span>
               </div>
             </div>
           </div>

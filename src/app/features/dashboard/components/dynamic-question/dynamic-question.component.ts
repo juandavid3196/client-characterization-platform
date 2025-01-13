@@ -106,15 +106,30 @@ export class DynamicQuestionComponent {
   }
 
   deleteCategory(index: number) {
-    this.categories.removeAt(index);
+    if (this.categories.length === 1) {
+      const optionGroup = this.categories.at(0) as FormGroup;
+      optionGroup.patchValue({
+        text: '',
+        description: '',
+        category_video: '',
+        category_image: '',
+      });
+      const rowsArray = optionGroup.get('subcategories') as FormArray;
+      while (rowsArray.length) {
+        rowsArray.removeAt(0);
+      }
+      rowsArray.push(this.fb.control(''));
+    } else {
+      this.categories.removeAt(index);
+    }
   }
 
   //Handle Subcategory
 
   createSubcategory(): FormGroup {
     return this.fb.group({
-      title: ['', Validators.required],
-      description: [''],
+      sub_title: ['', Validators.required],
+      sub_description: [''],
       subcategory_video: [''],
       subcategory_image: [''],
     });
@@ -136,13 +151,20 @@ export class DynamicQuestionComponent {
   editSubcategory(
     categoryIndex: number,
     subcategoryIndex: number,
-    newValues: any
+    event: Event
   ) {
+    const inputElement = event.target as HTMLInputElement;
+    const newValue = inputElement.value;
+
     const subcategories = this.getSubcategories(categoryIndex);
-    subcategories.at(subcategoryIndex).patchValue({
-      ...subcategories.at(subcategoryIndex).value, // Mantén los valores actuales
-      ...newValues, // Sobrescribe solo los campos que desees actualizar
-    });
+    const subcategory = subcategories.at(subcategoryIndex);
+
+    if (subcategory) {
+      subcategory.patchValue({
+        ...subcategory.value,
+        title: newValue,
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

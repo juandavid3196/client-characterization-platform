@@ -27,22 +27,7 @@ export const questionConfigs = [
     description: '',
     icon: 'dynamic-icon',
     note_text: '',
-    categories: [
-      {
-        title: '',
-        description: '',
-        category_video: '',
-        category_image: '',
-        subcategories: [
-          {
-            title: '',
-            description: '',
-            subcategory_video: '',
-            subcategory_image: '',
-          },
-        ],
-      },
-    ],
+    categories: [''],
     addedToBank: false,
     settings: {
       question_multimedia: '',

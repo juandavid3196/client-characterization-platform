@@ -12,9 +12,7 @@ import { AdminpanelModule } from './features/adminpanel/adminpanel.module';
 import { UserSurveyModule } from './features/usersurvey/user-survey.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -24,10 +22,9 @@ import { UserSurveyModule } from './features/usersurvey/user-survey.module';
     HttpClientModule,
     DashboardModule,
     AdminpanelModule,
-    UserSurveyModule
-
+    UserSurveyModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,0 +1,197 @@
+<div class="main-container">
+  <app-spiner *ngIf="spinner"></app-spiner>
+  <app-answer-menu
+    *ngIf="openVideoWindow"
+    [elementData]="elementData"
+    [videoType]="videoUrlType"
+    (formClose)="closeVideoWindow()"
+    (refreshData)="loadUrlsData()"
+  ></app-answer-menu>
+  <div class="top-options-section">
+    <span
+      (click)="onChangeSection()"
+      class="{{ changeSection ? 'section-active' : '' }} "
+      >Editar</span
+    >
+    <span
+      (click)="onChangeSection()"
+      class="{{ !changeSection ? 'section-active' : '' }} "
+      >Vista</span
+    >
+  </div>
+  <div class="edit-section" *ngIf="changeSection">
+    <div class="question-container">
+      <form [formGroup]="dynamicForm" (ngSubmit)="onSubmit()">
+        <div class="question-section">
+          <div class="question-s-number">
+            <span class="number">{{ dynamicForm.value.numeral }}</span>
+          </div>
+
+          <div class="question-s-container">
+            <input
+              type="text"
+              class="q-s-title"
+              placeholder="Ingrese la Pregunta"
+              formControlName="text"
+            />
+            <input
+              type="text"
+              class="q-s-description"
+              placeholder="Descripción"
+              formControlName="description"
+            />
+          </div>
+        </div>
+        <div class="note-section" *ngIf="addNote">
+          <input
+            type="text"
+            placeholder="Añadir Nota (Solo para el creador de la encuesta)"
+            formControlName="note_text"
+          />
+        </div>
+        <div class="options-section">
+          <div formArrayName="categories" class="options-s-container">
+            <div
+              class="options-form-container"
+              *ngFor="let category of categories.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <input
+                type="text"
+                formControlName="title"
+                placeholder="Titulo"
+                (blur)="editCategory(i, $event)"
+                class="category-description"
+              />
+              <input
+                type="text"
+                formControlName="description"
+                placeholder="Descripción"
+                (blur)="editCategory(i, $event)"
+              />
+              <textarea
+                type="text"
+                formControlName="category_video"
+                placeholder="Iframe Video Categoria"
+                (blur)="editCategory(i, $event)"
+                rows="6"
+              ></textarea>
+              <textarea
+                type="text"
+                formControlName="category_image"
+                placeholder="URL imagne"
+                (blur)="editCategory(i, $event)"
+                rows="6"
+              ></textarea>
+
+              <div class="actions-box">
+                <img
+                  src="assets/icons/plus-icon.svg"
+                  alt=""
+                  (click)="addCategory()"
+                />
+                <img
+                  src="assets/icons/minus-icon.svg"
+                  alt=""
+                  (click)="deleteCategory(i)"
+                />
+                <button class="btn btn-category">Añadir Subcategorias</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-s-top">
+            <div class="eyelash-box">Opciones</div>
+          </div>
+          <div class="settings-s-container" formGroupName="settings">
+            <div class="c-section">
+              <div class="container-box">
+                <span class="label">Añadir video para pregunta</span>
+                <div class="answer-box">
+                  <div class="file-container">
+                    <button
+                      class="btn"
+                      (click)="addVideoUrl('question_multimedia')"
+                    >
+                      Añadir Video
+                    </button>
+                    <span class="file-message" *ngIf="qMessage"
+                      >URL Añadida</span
+                    >
+                  </div>
+                  <div class="clean-file-container" *ngIf="qMessage">
+                    <span
+                      class="btn-clean-file"
+                      (click)="resetInputFile('question_multimedia')"
+                      ><img src="assets/icons/reset-icon.svg" alt=""
+                    /></span>
+                  </div>
+                </div>
+              </div>
+              <div class="container-box">
+                <span class="label">Añadir Nota</span>
+                <app-toggle-button
+                  name="add_note"
+                  #appToggleButton
+                  (toggleValues)="getToggleValues($event)"
+                  [elementData]="dynamicForm.value"
+                ></app-toggle-button>
+              </div>
+              <div class="container-box">
+                <span class="label">Obligatorio</span>
+                <app-toggle-button
+                  name="required"
+                  #appToggleButton
+                  (toggleValues)="getToggleValues($event)"
+                  [elementData]="dynamicForm.value"
+                ></app-toggle-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-section">
+          <div class="btn-s-left">
+            <button
+              class="btn btn-bank {{
+                this.dynamicForm.value.addedToBank ? 'btn-bank-blocked' : ''
+              }} "
+              (click)="addToBank()"
+            >
+              {{ this.dynamicForm.value.addedToBank ? "Agregada" : "Agregar"
+              }}<img src="assets/icons/bank-blue-icon.svg" alt="" />
+            </button>
+          </div>
+          <div class="btn-s-right">
+            <button class="btn-clean btn" type="button" (click)="onResetForm()">
+              Restaurar <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="view-section" *ngIf="!changeSection">
+    <div class="checkbox-view-container">
+      <div class="checkbox-view-box">
+        <span class="q-number">pregunta {{ dynamicForm.value.numeral }}</span>
+        <span class="q-text">{{ dynamicForm.value.text }}</span>
+        <div class="q-description">
+          <span
+            class="dark-description"
+            *ngIf="dynamicForm.value.description != ''"
+            >Descripción: </span
+          >{{ dynamicForm.value.description }}
+        </div>
+        <span class="note-message"
+          ><span class="dark-message" *ngIf="addNote">Nota </span
+          >{{ dynamicForm.value.note_text }}</span
+        >
+        <div class="required-message-view" *ngIf="required">
+          <img src="assets/icons/warning-icon.svg" alt="" /> Pregunta
+          Obligatoria ACTIVADA
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

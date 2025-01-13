@@ -18,8 +18,7 @@ import { YesNoQuestionComponent } from './components/yes-no-question/yes-no-ques
 import { AnswerMenuComponent } from './components/answer-menu/answer-menu.component';
 import { OpenQuestionComponent } from './components/open-question/open-question.component';
 import { DeadlineWindowComponent } from './deadline-window/deadline-window.component';
-
-
+import { DynamicQuestionComponent } from './components/dynamic-question/dynamic-question.component';
 
 @NgModule({
   declarations: [
@@ -36,15 +35,15 @@ import { DeadlineWindowComponent } from './deadline-window/deadline-window.compo
     AnswerMenuComponent,
     OpenQuestionComponent,
     DeadlineWindowComponent,
-  
+    DynamicQuestionComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
     MatIconModule,
     DashboardRoutingModule,
-   ReactiveFormsModule,
-   FormsModule
-  ]
+    ReactiveFormsModule,
+    FormsModule,
+  ],
 })
-export class DashboardModule { }
+export class DashboardModule {}

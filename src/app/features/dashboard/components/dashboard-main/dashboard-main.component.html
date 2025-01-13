@@ -173,6 +173,11 @@
           [elementData]="elementSelected"
           (refreshList)="onRefreshList()"
         ></app-open-question>
+        <app-dynamic-question
+          *ngSwitchCase="'dynamic'"
+          [elementData]="elementSelected"
+          (refreshList)="onRefreshList()"
+        ></app-dynamic-question>
       </ng-container>
     </div>
   </main>

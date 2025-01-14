@@ -56,37 +56,71 @@
               *ngFor="let category of categories.controls; let i = index"
               [formGroupName]="i"
             >
-              <h4>Categoría {{ i + 1 }}</h4>
+              <h4>
+                Categoria <span class="sub-title"> {{ i + 1 }}</span>
+              </h4>
+
               <input
                 type="text"
                 formControlName="title"
                 placeholder="Titulo"
                 (blur)="editCategory(i, $event)"
               />
-              <input
-                type="text"
+              <textarea
                 formControlName="description"
                 placeholder="Descripción"
                 class="category-description"
                 (blur)="editCategory(i, $event)"
-              />
+              ></textarea>
               <textarea
                 formControlName="category_video"
-                placeholder="Iframe Video Categoria"
+                placeholder="Iframe video categoria"
                 (blur)="editCategory(i, $event)"
                 rows="5"
               ></textarea>
+              <div
+                class="error-message"
+                *ngIf="
+                  categories
+                    .at(i)
+                    .get('category_video')
+                    ?.hasError('invalidIframe') &&
+                  categories.at(i).get('category_video')?.touched
+                "
+              >
+                <mat-icon class="error-icon">error</mat-icon>
+                El iframe no es válido. Asegúrate de que sea un iframe de
+                YouTube.
+              </div>
               <textarea
                 formControlName="category_image"
                 placeholder="URL imagen"
                 (blur)="editCategory(i, $event)"
                 rows="5"
               ></textarea>
+              <div
+                class="error-message"
+                *ngIf="
+                  categories
+                    .at(i)
+                    .get('category_image')
+                    ?.hasError('invalidUrl') &&
+                  categories.at(i).get('category_image')?.touched
+                "
+              >
+                <mat-icon class="error-icon">error</mat-icon>
+                La URL no es válida. Asegúrate de que sea una URL válida.
+              </div>
+              <span
+                class="action-btn-delete category-delete"
+                (click)="deleteCategory(i)"
+              >
+                <img src="assets/icons/minus-icon.svg" alt="" />
+              </span>
 
               <!-- Subcategorías -->
 
-              <div formArrayName="subcategories">
-                <h4>Subcategorías</h4>
+              <div formArrayName="subcategories" class="subcategories-section">
                 <div
                   *ngFor="
                     let subcategory of getSubcategories(i).controls;
@@ -96,6 +130,10 @@
                   class="subcategories-container"
                 >
                   <!-- Campo para título de la subcategoría -->
+                  <h4>
+                    Subcategoría
+                    <span class="sub-title"> {{ j + 1 }}</span>
+                  </h4>
 
                   <input
                     formControlName="sub_title"
@@ -114,50 +152,67 @@
                     (blur)="editCategory(i, $event)"
                     rows="5"
                   ></textarea>
+                  <div
+                    class="error-message"
+                    *ngIf="
+                      getSubcategories(i)
+                        .at(j)
+                        .get('subcategory_video')
+                        ?.hasError('invalidIframe') &&
+                      getSubcategories(i).at(j).get('subcategory_video')
+                        ?.touched
+                    "
+                  >
+                    <mat-icon class="error-icon">error</mat-icon>
+                    El iframe no es válido. Asegúrate de que sea un iframe de
+                    YouTube.
+                  </div>
                   <textarea
                     formControlName="subcategory_image"
                     placeholder="URL imagen"
                     (blur)="editCategory(i, $event)"
                     rows="5"
                   ></textarea>
+                  <div
+                    class="error-message"
+                    *ngIf="
+                      getSubcategories(i)
+                        .at(j)
+                        .get('subcategory_image')
+                        ?.hasError('invalidUrl') &&
+                      getSubcategories(i).at(j).get('subcategory_image')
+                        ?.touched
+                    "
+                  >
+                    <mat-icon class="error-icon">error</mat-icon>
+                    La URL no es válida. Asegúrate de que sea una URL válida.
+                  </div>
+                  <span
+                    class="action-btn-delete"
+                    (click)="deleteSubcategory(i, j)"
+                  >
+                    <img src="assets/icons/minus-icon.svg" alt="" />
+                  </span>
+
                   <div class="actions-box">
-                    <span class="action-btn">
-                      <img
-                        src="assets/icons/plus-icon.svg"
-                        alt=""
-                        (click)="addSubcategory(i)"
-                      />
+                    <span class="action-btn" (click)="addSubcategory(i, j)">
+                      <img src="assets/icons/plus-icon.svg" alt="" />
                       Añadir subcategoria
                     </span>
-                    <span class="action-btn">
-                      <img
-                        src="assets/icons/minus-icon.svg"
-                        alt=""
-                        (click)="deleteSubcategory(i, j)"
-                      />
-                      Eliminar subcategoria
-                    </span>
                   </div>
+                  <span class="limit-line-subcategory"></span>
                 </div>
               </div>
               <div class="actions-box">
-                <span class="action-btn">
-                  <img
-                    src="assets/icons/plus-icon.svg"
-                    alt=""
-                    (click)="addCategory()"
-                  />
-                  Añadir categoria
-                </span>
-                <span class="action-btn">
-                  <img
-                    src="assets/icons/minus-icon.svg"
-                    alt=""
-                    (click)="deleteCategory(i)"
-                  />
-                  Eliminar categoria
+                <span
+                  class="action-btn add-category-btn"
+                  (click)="addCategory(i)"
+                >
+                  <img src="assets/icons/plus-icon.svg" alt="" />
+                  Nueva categoria
                 </span>
               </div>
+              <span class="limit-line"></span>
             </div>
           </div>
         </div>
@@ -235,7 +290,7 @@
   <div class="view-section" *ngIf="!changeSection">
     <div class="checkbox-view-container">
       <div class="checkbox-view-box">
-        <span class="q-number">pregunta {{ dynamicForm.value.numeral }}</span>
+        <span class="q-number">{{ dynamicForm.value.numeral }}</span>
         <span class="q-text">{{ dynamicForm.value.text }}</span>
         <div class="q-description">
           <span
@@ -248,6 +303,56 @@
           ><span class="dark-message" *ngIf="addNote">Nota </span
           >{{ dynamicForm.value.note_text }}</span
         >
+        <div class="question-view-container">
+          <div
+            class="question-view-box"
+            *ngFor="let category of categories.controls; let i = index"
+          >
+            <div class="category-fields">
+              <span class="category-point"></span>
+              <div class="category-info-box">
+                <span class="category-title">
+                  {{ category.get("title")?.value }}
+                </span>
+                <span class="category-description">
+                  {{ category.get("description")?.value }}
+                </span>
+              </div>
+              <span class="dynamic-view-btn">
+                <mat-icon>slideshow</mat-icon>
+              </span>
+              <span class="dynamic-view-btn"><mat-icon>image</mat-icon></span>
+            </div>
+
+            <div
+              class="category-container"
+              *ngFor="
+                let subcategory of getSubcategories(i).controls;
+                let j = index
+              "
+            >
+              <div class="category-fields">
+                <div class="checkbox-box">
+                  <input type="checkbox" id="{{ j }}" [disabled]="true" />
+                  <label for="{{ j }}"></label>
+                </div>
+                <div class="category-info-box">
+                  <span class="category-title">
+                    {{ subcategory.get("sub_title")?.value }}
+                  </span>
+                  <span class="category-description">
+                    {{ subcategory.get("sub_description")?.value }}
+                  </span>
+                </div>
+                <span class="dynamic-view-btn">
+                  <mat-icon>slideshow</mat-icon></span
+                >
+                <span class="dynamic-view-btn"><mat-icon>image</mat-icon></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="required-message-view" *ngIf="required">
           <img src="assets/icons/warning-icon.svg" alt="" /> Pregunta
           Obligatoria ACTIVADA

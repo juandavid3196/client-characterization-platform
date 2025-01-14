@@ -8,8 +8,14 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FilterSelectComponent } from '../../../../shared/components/filter-select/filter-select.component';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ToggleButtonComponent } from '../../../../shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
 import { Subscription } from 'rxjs';
@@ -70,16 +76,38 @@ export class DynamicQuestionComponent {
         this.updateDashboardOptions(value);
       }
     });
+    this.onQuestionSelect();
+  }
+
+  //Validators
+
+  // Validador para el iframe de YouTube
+  validateIframeYoutube(control: any) {
+    if (!control.value) return null;
+    const iframeRegex =
+      /<iframe.*src="https:\/\/www\.youtube\.com\/embed\/.*".*<\/iframe>/;
+    return iframeRegex.test(control.value) ? null : { invalidIframe: true };
+  }
+
+  // Validador personalizado
+  validateUrl(regex: RegExp) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null; // Campo vacío es válido
+      }
+      return regex.test(value) ? null : { invalidUrl: true }; // Aplica la validación solo si hay contenido
+    };
   }
 
   // Handle categories
 
   createCategory(): FormGroup {
     return this.fb.group({
-      title: ['', Validators.required],
+      title: [''],
       description: [''],
-      category_video: [''],
-      category_image: [''],
+      category_video: ['', [this.validateIframeYoutube]],
+      category_image: ['', [this.validateUrl(/https?:\/\/[^\s$.?#].[^\s]*$/)]],
       subcategories: this.fb.array([this.createSubcategory()]),
     });
   }
@@ -88,8 +116,8 @@ export class DynamicQuestionComponent {
     return this.dynamicForm.get('categories') as FormArray;
   }
 
-  addCategory() {
-    this.categories.push(this.createCategory());
+  addCategory(categoryIndex: number) {
+    this.categories.insert(categoryIndex + 1, this.createCategory());
   }
 
   editCategory(index: number, event: Event) {
@@ -124,14 +152,30 @@ export class DynamicQuestionComponent {
     }
   }
 
+  onQuestionSelect() {
+    const categories = this.dynamicForm.get('categories') as FormArray;
+
+    if (categories.length === 0) {
+      categories.push(this.createCategory());
+    }
+
+    const firstCategory = categories.at(0).get('subcategories') as FormArray;
+    if (firstCategory.length === 0) {
+      firstCategory.push(this.createSubcategory());
+    }
+  }
+
   //Handle Subcategory
 
   createSubcategory(): FormGroup {
     return this.fb.group({
-      sub_title: ['', Validators.required],
+      sub_title: [''],
       sub_description: [''],
-      subcategory_video: [''],
-      subcategory_image: [''],
+      subcategory_video: ['', [this.validateIframeYoutube]],
+      subcategory_image: [
+        '',
+        [this.validateUrl(/https?:\/\/[^\s$.?#].[^\s]*$/)],
+      ],
     });
   }
 
@@ -139,13 +183,27 @@ export class DynamicQuestionComponent {
     return this.categories.at(categoryIndex).get('subcategories') as FormArray;
   }
 
-  addSubcategory(categoryIndex: number) {
-    this.getSubcategories(categoryIndex).push(this.createSubcategory());
+  addSubcategory(categoryIndex: number, subcategoryIndex: number) {
+    this.getSubcategories(categoryIndex).insert(
+      subcategoryIndex + 1,
+      this.createSubcategory()
+    );
   }
 
   deleteSubcategory(categoryIndex: number, subcategoryIndex: number) {
-    const subcategories = this.getSubcategories(categoryIndex);
-    subcategories.removeAt(subcategoryIndex);
+    if (this.getSubcategories(categoryIndex).length === 1) {
+      const optionGroup = this.getSubcategories(categoryIndex).at(
+        0
+      ) as FormGroup;
+      optionGroup.patchValue({
+        sub_text: '',
+        sub_description: '',
+        subcategory_video: '',
+        subcategory_image: '',
+      });
+    } else {
+      this.getSubcategories(categoryIndex).removeAt(subcategoryIndex);
+    }
   }
 
   editSubcategory(

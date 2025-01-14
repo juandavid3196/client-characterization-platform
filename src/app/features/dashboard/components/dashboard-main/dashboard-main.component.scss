@@ -92,7 +92,7 @@
 
   main {
     display: flex;
-    height: 75%;
+    height: -webkit-fill-available;
 
     aside {
       width: 30%;

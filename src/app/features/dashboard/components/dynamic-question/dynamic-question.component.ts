@@ -120,7 +120,7 @@ export class DynamicQuestionComponent {
     this.categories.insert(categoryIndex + 1, this.createCategory());
   }
 
-  editCategory(index: number, event: Event) {
+  editCategory(index: number, field: string, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const newValue = inputElement.value;
 
@@ -128,7 +128,7 @@ export class DynamicQuestionComponent {
     if (category) {
       category.patchValue({
         ...category.value,
-        title: newValue,
+        [field]: newValue,
       });
     }
   }
@@ -209,6 +209,7 @@ export class DynamicQuestionComponent {
   editSubcategory(
     categoryIndex: number,
     subcategoryIndex: number,
+    field: string,
     event: Event
   ) {
     const inputElement = event.target as HTMLInputElement;
@@ -220,7 +221,7 @@ export class DynamicQuestionComponent {
     if (subcategory) {
       subcategory.patchValue({
         ...subcategory.value,
-        title: newValue,
+        [field]: newValue,
       });
     }
   }

@@ -64,18 +64,18 @@
                 type="text"
                 formControlName="title"
                 placeholder="Titulo"
-                (blur)="editCategory(i, $event)"
+                (blur)="editCategory(i, 'title', $event)"
               />
               <textarea
                 formControlName="description"
                 placeholder="Descripción"
                 class="category-description"
-                (blur)="editCategory(i, $event)"
+                (blur)="editCategory(i, 'description', $event)"
               ></textarea>
               <textarea
                 formControlName="category_video"
                 placeholder="Iframe video categoria"
-                (blur)="editCategory(i, $event)"
+                (blur)="editCategory(i, 'category_video', $event)"
                 rows="5"
               ></textarea>
               <div
@@ -95,7 +95,7 @@
               <textarea
                 formControlName="category_image"
                 placeholder="URL imagen"
-                (blur)="editCategory(i, $event)"
+                (blur)="editCategory(i, 'category_image', $event)"
                 rows="5"
               ></textarea>
               <div
@@ -132,24 +132,24 @@
                   <!-- Campo para título de la subcategoría -->
                   <h4>
                     Subcategoría
-                    <span class="sub-title"> {{ j + 1 }}</span>
+                    <span class="sub-title"> {{ i + 1 }}.{{ j + 1 }}</span>
                   </h4>
 
                   <input
                     formControlName="sub_title"
                     placeholder="Titulo subcategoria"
-                    (blur)="editSubcategory(i, j, $event)"
+                    (blur)="editSubcategory(i, j, 'sub_title', $event)"
                   />
 
                   <input
                     formControlName="sub_description"
                     placeholder="Descripción subcategoria"
-                    (blur)="editSubcategory(i, j, $event)"
+                    (blur)="editSubcategory(i, j, 'sub_description', $event)"
                   />
                   <textarea
                     formControlName="subcategory_video"
                     placeholder="Iframe Video Categoria"
-                    (blur)="editCategory(i, $event)"
+                    (blur)="editSubcategory(i, j, 'subcategory_video', $event)"
                     rows="5"
                   ></textarea>
                   <div
@@ -170,7 +170,7 @@
                   <textarea
                     formControlName="subcategory_image"
                     placeholder="URL imagen"
-                    (blur)="editCategory(i, $event)"
+                    (blur)="editSubcategory(i, j, 'subcategory_image', $event)"
                     rows="5"
                   ></textarea>
                   <div
@@ -290,14 +290,18 @@
   <div class="view-section" *ngIf="!changeSection">
     <div class="checkbox-view-container">
       <div class="checkbox-view-box">
-        <span class="q-number">{{ dynamicForm.value.numeral }}</span>
-        <span class="q-text">{{ dynamicForm.value.text }}</span>
-        <div class="q-description">
-          <span
-            class="dark-description"
-            *ngIf="dynamicForm.value.description != ''"
-            >Descripción: </span
-          >{{ dynamicForm.value.description }}
+        <div class="question-data-box">
+          <span class="q-number">{{ dynamicForm.value.numeral }}</span>
+          <div class="question-text-box">
+            <span class="q-text">{{ dynamicForm.value.text }}</span>
+            <div
+              *ngIf="dynamicForm.value.description != ''"
+              class="q-description"
+            >
+              <span class="dark-description">Descripción: </span
+              >{{ dynamicForm.value.description }}
+            </div>
+          </div>
         </div>
         <span class="note-message"
           ><span class="dark-message" *ngIf="addNote">Nota </span
@@ -308,8 +312,14 @@
             class="question-view-box"
             *ngFor="let category of categories.controls; let i = index"
           >
-            <div class="category-fields">
-              <span class="category-point"></span>
+            <div
+              class="category-fields"
+              *ngIf="category.get('title')?.value !== ''"
+            >
+              <div class="checkbox-box">
+                <input type="checkbox" id="{{ i }}" [disabled]="true" />
+                <label for="{{ i }}"></label>
+              </div>
               <div class="category-info-box">
                 <span class="category-title">
                   {{ category.get("title")?.value }}
@@ -331,7 +341,10 @@
                 let j = index
               "
             >
-              <div class="category-fields">
+              <div
+                class="category-fields subcategory-fields"
+                *ngIf="subcategory.get('sub_title')?.value !== ''"
+              >
                 <div class="checkbox-box">
                   <input type="checkbox" id="{{ j }}" [disabled]="true" />
                   <label for="{{ j }}"></label>

@@ -518,29 +518,43 @@
         border-radius: 5px;
         height: -webkit-fill-available;
 
-        .q-number {
-          color: black;
-          font-weight: 500;
-          font-size: 18px;
-          padding: 5px 10px;
-          border-radius: 5px;
-          border: 0.5px solid #0d99ff;
-          width: fit-content;
-        }
+        .question-data-box {
+          display: flex;
+          align-items: center;
+          gap: 20px;
 
-        .q-text {
-          color: #333e48;
-          font-size: 17px;
-          font-weight: 500;
-        }
-
-        .q-description {
-          font-size: 16px;
-          font-weight: 400;
-          color: #5a5a5a;
-
-          .dark-description {
+          .q-number {
+            color: black;
             font-weight: 500;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 0.5px solid #0d99ff;
+            width: fit-content;
+          }
+
+          .question-text-box {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+
+            .q-text {
+              color: #333e48;
+              font-size: 17px;
+              font-weight: 500;
+              margin-right: auto;
+            }
+
+            .q-description {
+              font-size: 16px;
+              font-weight: 400;
+              color: #5a5a5a;
+
+              .dark-description {
+                font-weight: 500;
+              }
+            }
           }
         }
 
@@ -557,13 +571,12 @@
         .question-view-container {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 40px;
 
           .question-view-box,
           .category-container {
             display: flex;
             gap: 20px;
-            align-items: center;
             flex-direction: column;
 
             .category-fields {
@@ -621,6 +634,10 @@
                 justify-content: center;
                 align-items: center;
               }
+            }
+
+            .subcategory-fields {
+              padding-left: 30px;
             }
           }
         }

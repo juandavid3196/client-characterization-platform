@@ -5,7 +5,6 @@ import {
   Output,
   QueryList,
   SimpleChanges,
-  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import {
@@ -14,7 +13,6 @@ import {
   FormBuilder,
   FormGroup,
   ValidationErrors,
-  Validators,
 } from '@angular/forms';
 import { ToggleButtonComponent } from '../../../../shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
@@ -273,7 +271,11 @@ export class DynamicQuestionComponent {
   async loadFromQuestionData(): Promise<void> {
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
 
-    if (storedQuestions && this.elementData.id) {
+    if (
+      Array.isArray(storedQuestions) &&
+      storedQuestions.length > 0 &&
+      this.elementData?.id
+    ) {
       this.dashboardOptions = storedQuestions;
       const element = storedQuestions.find(
         (e: any) => e.id === this.elementData.id
@@ -284,45 +286,51 @@ export class DynamicQuestionComponent {
 
         // Configurar el estado de qMessage
         const settings = this.dynamicForm.get('settings') as FormGroup;
-        this.qMessage = !!settings.get('question_multimedia')?.value;
+        this.qMessage = settings?.get('question_multimedia')?.value ?? false;
 
         // Gestionar las categorías
         const categoriesArray = this.dynamicForm.get('categories') as FormArray;
-        this.clearFormArray(categoriesArray);
+        categoriesArray.clear();
 
-        if (element.categories && Array.isArray(element.categories)) {
+        if (Array.isArray(element.categories)) {
           element.categories.forEach((option: any) => {
             const categoriesGroup = this.createCategory();
-            categoriesGroup.patchValue(option);
+            categoriesGroup.patchValue({
+              ...option,
+              subcategories: undefined,
+            });
 
-            // Gestionar subcategorías
             const subcategoriesArray = categoriesGroup.get(
               'subcategories'
             ) as FormArray;
-            this.clearFormArray(subcategoriesArray);
+            subcategoriesArray.clear();
 
-            if (option.subcategories && Array.isArray(option.subcategories)) {
+            if (Array.isArray(option.subcategories)) {
               option.subcategories.forEach((row: any) => {
-                subcategoriesArray.push(this.fb.control(row));
+                const subcategoryGroup = this.fb.group({
+                  sub_title: [row.sub_title || ''],
+                  sub_description: [row.sub_description || ''],
+                  subcategory_video: [row.subcategory_video || ''],
+                  subcategory_image: [row.subcategory_image || ''],
+                });
+                subcategoriesArray.push(subcategoryGroup);
               });
             }
 
             categoriesArray.push(categoriesGroup);
           });
+        } else {
+          console.warn('categories no es un array:', element.categories);
         }
 
         this.spinner = false;
       } else {
+        console.warn('Elemento no encontrado:', this.elementData.id);
         this.spinner = true;
       }
     } else {
+      console.warn('Datos no disponibles en el local storage o id no válido.');
       this.spinner = true;
-    }
-  }
-
-  private clearFormArray(formArray: FormArray): void {
-    while (formArray.length) {
-      formArray.removeAt(0);
     }
   }
 
@@ -414,12 +422,13 @@ export class DynamicQuestionComponent {
     this.dynamicForm.reset({
       id: this.elementData.id || '',
       numeral: this.elementData.numeral || '',
-      type: 'open',
+      type: 'dynamic',
       text: '',
       description: '',
-      icon: 'open-q-icon',
+      icon: 'dynamic-q-icon',
       note_text: '',
       addedToBank: false,
+      categories: this.fb.array([this.createCategory()]),
       settings: this.fb.group({
         question_multimedia: '',
         required: false,

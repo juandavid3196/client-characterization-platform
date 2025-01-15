@@ -68,6 +68,7 @@
               />
               <textarea
                 formControlName="description"
+                [value]="category.get('description')?.value"
                 placeholder="Descripción"
                 class="category-description"
                 (blur)="editCategory(i, 'description', $event)"
@@ -141,11 +142,13 @@
                     (blur)="editSubcategory(i, j, 'sub_title', $event)"
                   />
 
-                  <input
+                  <textarea
                     formControlName="sub_description"
                     placeholder="Descripción subcategoria"
                     (blur)="editSubcategory(i, j, 'sub_description', $event)"
-                  />
+                    rows="3"
+                  ></textarea>
+
                   <textarea
                     formControlName="subcategory_video"
                     placeholder="Iframe Video Categoria"
@@ -310,22 +313,19 @@
         <div class="question-view-container">
           <div
             class="question-view-box"
-            *ngFor="let category of categories.controls; let i = index"
+            *ngFor="let category of dynamicForm.value.categories; let i = index"
           >
-            <div
-              class="category-fields"
-              *ngIf="category.get('title')?.value !== ''"
-            >
+            <div class="category-fields" *ngIf="category.title !== ''">
               <div class="checkbox-box">
                 <input type="checkbox" id="{{ i }}" [disabled]="true" />
                 <label for="{{ i }}"></label>
               </div>
               <div class="category-info-box">
                 <span class="category-title">
-                  {{ category.get("title")?.value }}
+                  {{ category.title }}
                 </span>
                 <span class="category-description">
-                  {{ category.get("description")?.value }}
+                  {{ category.description }}
                 </span>
               </div>
               <span class="dynamic-view-btn">
@@ -337,13 +337,14 @@
             <div
               class="category-container"
               *ngFor="
-                let subcategory of getSubcategories(i).controls;
+                let subcategory of dynamicForm.value.categories[i]
+                  .subcategories;
                 let j = index
               "
             >
               <div
                 class="category-fields subcategory-fields"
-                *ngIf="subcategory.get('sub_title')?.value !== ''"
+                *ngIf="subcategory.sub_title !== ''"
               >
                 <div class="checkbox-box">
                   <input type="checkbox" id="{{ j }}" [disabled]="true" />
@@ -351,10 +352,10 @@
                 </div>
                 <div class="category-info-box">
                   <span class="category-title">
-                    {{ subcategory.get("sub_title")?.value }}
+                    {{ subcategory.sub_title }}
                   </span>
                   <span class="category-description">
-                    {{ subcategory.get("sub_description")?.value }}
+                    {{ subcategory.sub_description }}
                   </span>
                 </div>
                 <span class="dynamic-view-btn">

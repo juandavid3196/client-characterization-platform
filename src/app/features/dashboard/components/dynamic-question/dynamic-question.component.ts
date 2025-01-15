@@ -135,7 +135,7 @@ export class DynamicQuestionComponent {
     if (this.categories.length === 1) {
       const optionGroup = this.categories.at(0) as FormGroup;
       optionGroup.patchValue({
-        text: '',
+        title: '',
         description: '',
         category_video: '',
         category_image: '',
@@ -194,7 +194,7 @@ export class DynamicQuestionComponent {
         0
       ) as FormGroup;
       optionGroup.patchValue({
-        sub_text: '',
+        sub_title: '',
         sub_description: '',
         subcategory_video: '',
         subcategory_image: '',

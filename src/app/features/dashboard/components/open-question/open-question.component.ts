@@ -1,7 +1,16 @@
-import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {FilterSelectComponent} from '../../../../shared/components/filter-select/filter-select.component'
-import {ToggleButtonComponent} from '../../../../shared/components/toggle-button/toggle-button.component'
+import { FilterSelectComponent } from '../../../../shared/components/filter-select/filter-select.component';
+import { ToggleButtonComponent } from '../../../../shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
 import { Subscription } from 'rxjs';
 import { DashboardlsService } from '../../services/dashboardls.service';
@@ -9,54 +18,58 @@ import { DashboardlsService } from '../../services/dashboardls.service';
 @Component({
   selector: 'app-open-question',
   templateUrl: './open-question.component.html',
-  styleUrls: ['./open-question.component.scss']
+  styleUrls: ['./open-question.component.scss'],
 })
 export class OpenQuestionComponent {
-  @ViewChildren('appToggleButton') toggleButtons!: QueryList<ToggleButtonComponent>;
-  
-  openForm : FormGroup;
-  addNote : boolean =  false;
-  required :boolean = false;
-  qMessage : boolean = false;
+  @ViewChildren('appToggleButton')
+  toggleButtons!: QueryList<ToggleButtonComponent>;
+
+  openForm: FormGroup;
+  addNote: boolean = false;
+  openFormSetting: boolean = false;
+  required: boolean = false;
+  qMessage: boolean = false;
   changeSection: boolean = true;
-  optionsMessage : boolean = false;
-  optionsMenu :  boolean = false;
+  optionsMessage: boolean = false;
+  optionsMenu: boolean = false;
   spinner: boolean = false;
-  dashboardOptions : any[] = [];
+  dashboardOptions: any[] = [];
   formSubscription: Subscription | undefined;
-  openVideoWindow : boolean = false;
-  videoUrlType : string = '';
-  
+  openVideoWindow: boolean = false;
+  videoUrlType: string = '';
 
-  @Input() elementData : any = {};
-  @Output() refreshList =  new EventEmitter();
+  @Input() elementData: any = {};
+  @Output() refreshList = new EventEmitter();
 
-  constructor(private fb:FormBuilder,
-     private dataBankService :DataBankService, 
-     private dashboardlsService : DashboardlsService ){
-   
-      this.openForm = this.fb.group({  // create a fb.group for every Object 
+  constructor(
+    private fb: FormBuilder,
+    private dataBankService: DataBankService,
+    private dashboardlsService: DashboardlsService
+  ) {
+    this.openForm = this.fb.group({
+      // create a fb.group for every Object
       id: '',
       numeral: null,
       type: 'open',
       text: '',
-      description:'',
-      icon:'open-q-icon',
-      note_text:'',
-      text_answer:'',
+      description: '',
+      icon: 'open-q-icon',
+      note_text: '',
+      text_answer: '',
       addedToBank: false,
-      settings: this.fb.group({  
+      settings: this.fb.group({
         question_multimedia: '',
         required: false,
         add_note: false,
-      })
+        open_form: false,
+      }),
     });
   }
 
   ngOnInit() {
     this.loadFromDataObject();
     this.initializeFormValues();
-    this.formSubscription = this.openForm.valueChanges.subscribe(value => {
+    this.formSubscription = this.openForm.valueChanges.subscribe((value) => {
       if (this.elementData.id !== undefined) {
         this.updateDashboardOptions(value);
       }
@@ -68,29 +81,35 @@ export class OpenQuestionComponent {
       this.loadFromDataObject();
     }
   }
-  
 
   private updateDashboardOptions(value: any): void {
     if (this.elementData.id !== undefined) {
-      const index = this.dashboardOptions.findIndex(e => e.id === this.elementData.id);
+      const index = this.dashboardOptions.findIndex(
+        (e) => e.id === this.elementData.id
+      );
       if (index !== -1) {
-        this.dashboardOptions[index] = { ...this.dashboardOptions[index], ...value };
+        this.dashboardOptions[index] = {
+          ...this.dashboardOptions[index],
+          ...value,
+        };
         this.dashboardlsService.saveDashboardOptions(this.dashboardOptions);
       }
     }
   }
 
   saveOpenData(): void {
-
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
-    
+
     if (storedQuestions) {
-     
-      const index = storedQuestions.findIndex((e:any)  => e.id === this.openForm.value.id);
-      
+      const index = storedQuestions.findIndex(
+        (e: any) => e.id === this.openForm.value.id
+      );
+
       if (index !== -1) {
-  
-        storedQuestions[index] = { ...storedQuestions[index], ...this.openForm.value };
+        storedQuestions[index] = {
+          ...storedQuestions[index],
+          ...this.openForm.value,
+        };
         this.dashboardlsService.saveDashboardOptions(storedQuestions);
         console.log('Questions updated successfully in Local Storage');
       } else {
@@ -100,68 +119,66 @@ export class OpenQuestionComponent {
       console.error('No questions found in Local Storage');
     }
   }
-  
 
   loadFromDataObject(): void {
-    
     const storedQuestions = this.dashboardlsService.getDashboardOptions();
 
-
     if (storedQuestions && this.elementData.id) {
-
       this.dashboardOptions = storedQuestions;
-      const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
-      if(element){
-      this.openForm.patchValue(element);
-      const settings = this.openForm.get('settings') as FormGroup;
-      this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
-      this.spinner =  false;
-    }else {
-      this.spinner = true;
-    }  
+      const element = storedQuestions.find(
+        (e: any) => e.id === this.elementData.id
+      );
+      if (element) {
+        this.openForm.patchValue(element);
+        const settings = this.openForm.get('settings') as FormGroup;
+        this.qMessage = settings.get('question_multimedia')?.value
+          ? true
+          : false;
+        this.spinner = false;
+      } else {
+        this.spinner = true;
+      }
+    }
+    this.spinner = false;
   }
-    this.spinner =  false;
-  }
-  
 
   initializeFormValues(): void {
     const settings = this.openForm.get('settings') as FormGroup;
     this.addNote = settings.get('add_note')?.value;
     this.required = settings.get('required')?.value;
+    this.openFormSetting = settings.get('open_form')?.value;
+    console.log(this.openFormSetting, this.required);
   }
 
-
-  
   reloadAllControls() {
-    if(this.toggleButtons){
-      this.toggleButtons.forEach(toggleButton => {
+    if (this.toggleButtons) {
+      this.toggleButtons.forEach((toggleButton) => {
         toggleButton?.reloadComponent();
       });
+    }
   }
-  }
 
-  getToggleValues(values : any): void {
+  getToggleValues(values: any): void {
+    let settings = this.openForm.get('settings') as FormGroup; // access to a specific property.
 
-    let settings = this.openForm.get('settings') as FormGroup;  // access to a specific property.   
-     
-     if (settings.controls.hasOwnProperty(values.name)) { // verify a property 
+    if (settings.controls.hasOwnProperty(values.name)) {
+      // verify a property
 
-      if(this.checkInfo(values)){
+      if (this.checkInfo(values)) {
         settings.patchValue({ [values.name]: values.state }); // modify value
         this.initializeFormValues();
-      }else{
+      } else {
         return;
       }
-    } 
+    }
   }
 
-  checkInfo(values:any):boolean {
-    if(values.name === 'add_note' && values.state === false){
-      this.openForm.patchValue({ ['note_text']: '' }); 
+  checkInfo(values: any): boolean {
+    if (values.name === 'add_note' && values.state === false) {
+      this.openForm.patchValue({ ['note_text']: '' });
     }
     return true;
   }
-
 
   //Video URL
 
@@ -169,38 +186,38 @@ export class OpenQuestionComponent {
     this.loadUrlsData();
     this.videoUrlType = controlName;
     this.openVideoWindow = true;
-   }
- 
- 
-   loadUrlsData() : void {
-     const storedQuestions = this.dashboardlsService.getDashboardOptions();
-     
-     if (storedQuestions && this.elementData.id) {
-       this.dashboardOptions = storedQuestions;
-       const element = storedQuestions.find((e: any) => e.id === this.elementData.id);
-   
-       if (element) {
-         this.openForm.patchValue(element);
-         const settings = this.openForm.get('settings') as FormGroup;
-         this.qMessage = (settings.get('question_multimedia')?.value) ? true : false;
-       }
-     }
-   }
- 
-   closeVideoWindow() : void {
-     this.openVideoWindow = false;
-   }
+  }
 
+  loadUrlsData(): void {
+    const storedQuestions = this.dashboardlsService.getDashboardOptions();
 
-  resetInputFile(controlName:string) {
+    if (storedQuestions && this.elementData.id) {
+      this.dashboardOptions = storedQuestions;
+      const element = storedQuestions.find(
+        (e: any) => e.id === this.elementData.id
+      );
+
+      if (element) {
+        this.openForm.patchValue(element);
+        const settings = this.openForm.get('settings') as FormGroup;
+        this.qMessage = settings.get('question_multimedia')?.value
+          ? true
+          : false;
+      }
+    }
+  }
+
+  closeVideoWindow(): void {
+    this.openVideoWindow = false;
+  }
+
+  resetInputFile(controlName: string) {
     const settings = this.openForm.get('settings') as FormGroup;
     settings.patchValue({ [controlName]: '' });
     this.qMessage = !this.qMessage;
   }
 
-
-
-  onChangeSection():void {
+  onChangeSection(): void {
     this.changeSection = !this.changeSection;
   }
 
@@ -208,33 +225,32 @@ export class OpenQuestionComponent {
     this.resetopenForm();
     this.resetFormState();
   }
-  
+
   resetopenForm(): void {
     this.openForm.reset({
       id: this.elementData.id || '',
       numeral: this.elementData.numeral || '',
       type: 'open',
       text: '',
-      description:'',
-      icon:'open-q-icon',
-      note_text:'',
+      description: '',
+      icon: 'open-q-icon',
+      note_text: '',
       addedToBank: false,
-      settings: this.fb.group({  
+      settings: this.fb.group({
         question_multimedia: '',
         required: false,
         add_note: false,
-      })
-    }); 
+      }),
+    });
   }
-  
-  
+
   resetFormState(): void {
-    this.qMessage =  false;
+    this.qMessage = false;
     this.initializeFormValues();
     this.reloadAllControls();
   }
-  
-  addToBank() : void {
+
+  addToBank(): void {
     this.openForm.patchValue({ ['addedToBank']: true });
     this.dataBankService.createBank(this.openForm.value).subscribe(
       (response) => {
@@ -246,13 +262,11 @@ export class OpenQuestionComponent {
     );
   }
 
-
-
-  onSubmit() : void {
-   if(this.openForm.valid){
-    this.saveOpenData();
-    this.refreshList.emit();
-   }
+  onSubmit(): void {
+    if (this.openForm.valid) {
+      this.saveOpenData();
+      this.refreshList.emit();
+    }
   }
 
   ngOnDestroy(): void {

@@ -437,6 +437,9 @@
 
               .text-section {
                 width: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
                 textarea {
                   min-height: 150px;
                   resize: none;
@@ -450,6 +453,16 @@
                 textarea:focus {
                   outline: none;
                   border: 0.2px solid #0d99ff;
+                }
+
+                .btn-form {
+                  background-color: #0d99ff;
+                  border-radius: 5px;
+                  width: fit-content;
+                  padding: 7px 20px;
+                  color: white;
+                  font-size: 15px;
+                  cursor: pointer;
                 }
               }
 

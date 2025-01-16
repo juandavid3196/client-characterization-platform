@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 })
 export class SurveyTestComponent {
   survey: any = {};
+  questionSelected: any = {};
   isLoading: boolean = false;
   answerArray: any[] = [];
   questionsToWarn: string[] = [];
@@ -32,6 +33,8 @@ export class SurveyTestComponent {
   openImage: boolean = false;
   sectionId: string = '';
   invalidImage: boolean = false;
+  openQuestionForm: boolean = false;
+  formQuestionBody: any = {};
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
   constructor(
@@ -168,6 +171,31 @@ export class SurveyTestComponent {
 
   zoomOut() {
     this.zoomDirective.zoomOut();
+  }
+
+  // Question form
+
+  onQuestionForm(item: any): void {
+    this.openQuestionForm = !this.openQuestionForm;
+    this.questionSelected = item;
+
+    this.getQuestionFormAnswer(item);
+  }
+
+  getQuestionFormAnswer(item: any): void {
+    const response = this.answerArray.find(
+      (res) =>
+        res.questionInfo.numeral === item.numeral &&
+        (res.answer.video || res.answer.imageUrl)
+    );
+
+    if (response) {
+      this.formQuestionBody = response.answer;
+    }
+  }
+
+  closeQuestionForm(): void {
+    this.openQuestionForm = !this.openQuestionForm;
   }
 
   getMaxLengthValue(item: any): number[] {
@@ -685,6 +713,8 @@ export class SurveyTestComponent {
       questionInfo: answer.item,
       answer: answer.answer,
     };
+
+    console.log(body);
     this.removeRequiredQuestionMessage(body);
 
     const checkIndex = this.answerArray.findIndex(
@@ -715,7 +745,6 @@ export class SurveyTestComponent {
       answer: answer.answer,
     };
 
-    console.log(body.answer);
     this.removeRequiredQuestionMessage(body);
 
     // Verify answers limit allowed
@@ -789,6 +818,5 @@ export class SurveyTestComponent {
     }
 
     this.checkUndefinedAnswer();
-    console.log(this.answerArray);
   }
 }

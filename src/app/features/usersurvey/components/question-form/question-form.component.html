@@ -1,0 +1,59 @@
+<div class="info-container {{ close ? 'close' : '' }}">
+  <div class="info-container-box {{ close ? 'close' : '' }}">
+    <div class="top-section">
+      <span class="info-title">Añadir video o imagen como respuesta</span>
+      <mat-icon class="btn-close" (click)="onClose()">close</mat-icon>
+    </div>
+    <div class="main-section">
+      <form [formGroup]="sectionForm" (ngSubmit)="onSubmit()">
+        <div class="form-box">
+          <label for="video">Link video de apoyo</label>
+          <textarea
+            name="video"
+            formControlName="video"
+            placeholder="Debe insertar el Iframe de Youtube"
+            rows="7"
+          ></textarea>
+          <div
+            class="error-message"
+            *ngIf="
+              sectionForm.get('video')?.hasError('invalidIframe') &&
+              sectionForm.get('video')?.touched
+            "
+          >
+            <mat-icon class="error-icon">error</mat-icon>
+            El iframe no es válido. Asegúrate de que sea un iframe de YouTube.
+          </div>
+        </div>
+        <div class="form-box">
+          <label for="imageUrl">Link imagen de apoyo</label>
+          <textarea
+            name="imageUrl"
+            formControlName="imageUrl"
+            placeholder="Debe insertar el link de la imagen (URL)"
+            rows="7"
+          ></textarea>
+          <div
+            class="error-message"
+            *ngIf="
+              sectionForm.get('imageUrl')?.hasError('invalidUrl') &&
+              sectionForm.get('imageUrl')?.touched
+            "
+          >
+            <mat-icon class="error-icon">error</mat-icon>
+            La URL no es válida. Asegúrate de que sea una URL válida.
+          </div>
+        </div>
+        <div class="btns-section">
+          <button class="btn-cancel" (click)="onClose()">Cancelar</button>
+          <div class="btn-bottom-box">
+            <button class="btn-confirm" type="submit">Añadir</button>
+          </div>
+        </div>
+        <span class="warning-message" *ngIf="warningMessage"
+          >Alguno de los campos tiene un valor incorrecto o estan vacios</span
+        >
+      </form>
+    </div>
+  </div>
+</div>

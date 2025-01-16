@@ -7,12 +7,14 @@ import { SharedModule } from '../../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SurveyTestComponent } from './components/survey-test/survey-test.component';
 import { InfoWindowUserComponent } from './components/info-window-user/info-window-user.component';
+import { QuestionFormComponent } from './components/question-form/question-form.component';
 
 @NgModule({
   declarations: [
     UserSurveysComponent,
     SurveyTestComponent,
     InfoWindowUserComponent,
+    QuestionFormComponent,
   ],
   imports: [
     MatIconModule,

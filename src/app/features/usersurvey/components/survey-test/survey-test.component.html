@@ -1,4 +1,10 @@
 <app-spiner *ngIf="isLoading"></app-spiner>
+<app-question-form
+  *ngIf="openQuestionForm"
+  (emitAnswer)="setAnswer({ item: questionSelected, answer: $event })"
+  (formClose)="closeQuestionForm()"
+  [formQuestionInfo]="formQuestionBody"
+></app-question-form>
 
 <div class="max-container">
   <header>
@@ -21,7 +27,7 @@
     </div>
   </header>
   <div class="preview-container">
-    <div class="zoom-control-box">
+    <div class="zoom-control-box" *ngIf="!openQuestionForm">
       <span class="zoom-box"
         ><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"
       /></span>
@@ -577,6 +583,12 @@
                     setAnswer({ item: item, answer: getTextareaValue($event) })
                   "
                 ></textarea>
+                <span
+                  class="btn-form"
+                  *ngIf="item.settings.open_form"
+                  (click)="onQuestionForm(item)"
+                  >Añadir video o imagen</span
+                >
               </div>
               <div
                 class="required-message-view"

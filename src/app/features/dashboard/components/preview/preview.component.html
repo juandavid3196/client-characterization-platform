@@ -282,7 +282,7 @@
                 class="question-view-box"
                 *ngFor="let category of item.categories; let i = index"
               >
-                <div class="category-fields">
+                <div class="category-fields" *ngIf="category.title">
                   <div class="checkbox-box">
                     <input type="checkbox" id="{{ i }}" [disabled]="true" />
                     <label for="{{ i }}"></label>

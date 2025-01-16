@@ -110,6 +110,7 @@ export const questionConfigs = [
       question_multimedia: '',
       required: false,
       add_note: false,
+      open_form: false,
     },
   },
 ];

@@ -93,7 +93,7 @@ export const questionConfigs = [
       required: false,
       defected_answer: false,
       add_note: false,
-      enlarge_answer: false,
+      open_form: false,
     },
   },
   {

@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SurveyTestComponent } from './components/survey-test/survey-test.component';
 import { InfoWindowUserComponent } from './components/info-window-user/info-window-user.component';
 import { QuestionFormComponent } from './components/question-form/question-form.component';
+import { AccessibilityComponent } from './components/accessibility/accessibility.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { QuestionFormComponent } from './components/question-form/question-form.
     SurveyTestComponent,
     InfoWindowUserComponent,
     QuestionFormComponent,
+    AccessibilityComponent,
   ],
   imports: [
     MatIconModule,

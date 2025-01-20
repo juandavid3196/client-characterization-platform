@@ -5,6 +5,7 @@ import {
   FormBuilder,
   FormGroup,
   ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 
 @Component({
@@ -16,7 +17,6 @@ export class QuestionFormComponent {
   close: boolean = false;
   @Output() formClose = new EventEmitter<void>();
   @Output() emitAnswer = new EventEmitter<any>();
-  @Input() surveyData!: Survey | null;
   @Input() formQuestionInfo!: any | null;
   sectionForm!: FormGroup;
   warningMessage: boolean = false;
@@ -25,6 +25,7 @@ export class QuestionFormComponent {
     this.sectionForm = this.fb.group({
       video: ['', [this.validateIframeYoutube]],
       imageUrl: ['', [this.validateUrl(/https?:\/\/[^\s$.?#].[^\s]*$/)]],
+      text: ['', [this.maxLengthValidator(300)]],
     });
   }
 
@@ -33,6 +34,7 @@ export class QuestionFormComponent {
       this.sectionForm.patchValue({
         video: this.formQuestionInfo.video,
         imageUrl: this.formQuestionInfo.imageUrl,
+        text: this.formQuestionInfo.text,
       });
     }
   }
@@ -56,6 +58,13 @@ export class QuestionFormComponent {
     };
   }
 
+  maxLengthValidator(maxLength: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      return value && value.length > maxLength ? { maxLength: true } : null;
+    };
+  }
+
   onClose(): void {
     this.close = true;
     this.warningMessage = false;
@@ -68,7 +77,8 @@ export class QuestionFormComponent {
     if (this.sectionForm.valid) {
       if (
         this.sectionForm.value.video === '' &&
-        this.sectionForm.value.imageUrl === ''
+        this.sectionForm.value.imageUrl === '' &&
+        this.sectionForm.value.text === ''
       ) {
         this.warningMessage = !this.warningMessage;
         return;

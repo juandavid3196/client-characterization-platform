@@ -483,42 +483,51 @@
                 >{{ item.description }}
               </div>
               <div class="buttons-yesno-section">
+                <div class="hands-section">
+                  <span
+                    class="q-yesno-box {{
+                      getAnswerValue(item.numeral) === 'Si'
+                        ? 'q-yesno-box-selected'
+                        : ''
+                    }}"
+                    (click)="setAnswer({ item: item, answer: 'Si' })"
+                  >
+                    <img
+                      src="assets/icons/{{
+                        item.selected_icons === 'hands'
+                          ? 'like-hand-icon'
+                          : 'checking-icon'
+                      }}.svg"
+                      alt=""
+                    />
+                    <span class="small-message">SI</span>
+                  </span>
+                  <span
+                    class="q-yesno-box {{
+                      getAnswerValue(item.numeral) === 'No'
+                        ? 'q-yesno-box-selected'
+                        : ''
+                    }}"
+                    (click)="setAnswer({ item: item, answer: 'No' })"
+                  >
+                    <img
+                      src="assets/icons/{{
+                        item.selected_icons === 'hands'
+                          ? 'dislike-hand-icon'
+                          : 'deny-icon'
+                      }}.svg"
+                      alt=""
+                    />
+                    <span class="small-message">NO</span>
+                  </span>
+                </div>
+
                 <span
-                  class="q-yesno-box {{
-                    getAnswerValue(item.numeral) === 'Si'
-                      ? 'q-yesno-box-selected'
-                      : ''
-                  }}"
-                  (click)="setAnswer({ item: item, answer: 'Si' })"
+                  class="btn-form"
+                  *ngIf="item.settings.open_form"
+                  (click)="onQuestionForm(item)"
+                  >Ampliar respuesta</span
                 >
-                  <img
-                    src="assets/icons/{{
-                      item.selected_icons === 'hands'
-                        ? 'like-hand-icon'
-                        : 'checking-icon'
-                    }}.svg"
-                    alt=""
-                  />
-                  <span class="small-message">SI</span>
-                </span>
-                <span
-                  class="q-yesno-box {{
-                    getAnswerValue(item.numeral) === 'No'
-                      ? 'q-yesno-box-selected'
-                      : ''
-                  }}"
-                  (click)="setAnswer({ item: item, answer: 'No' })"
-                >
-                  <img
-                    src="assets/icons/{{
-                      item.selected_icons === 'hands'
-                        ? 'dislike-hand-icon'
-                        : 'deny-icon'
-                    }}.svg"
-                    alt=""
-                  />
-                  <span class="small-message">NO</span>
-                </span>
               </div>
               <div
                 class="required-message-view"
@@ -587,7 +596,7 @@
                   class="btn-form"
                   *ngIf="item.settings.open_form"
                   (click)="onQuestionForm(item)"
-                  >Añadir video o imagen</span
+                  >Ampliar respuesta</span
                 >
               </div>
               <div

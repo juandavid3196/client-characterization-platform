@@ -1,7 +1,7 @@
 <div class="info-container {{ close ? 'close' : '' }}">
   <div class="info-container-box {{ close ? 'close' : '' }}">
     <div class="top-section">
-      <span class="info-title">Añadir video o imagen como respuesta</span>
+      <span class="info-title">Ampliar respuesta</span>
       <mat-icon class="btn-close" (click)="onClose()">close</mat-icon>
     </div>
     <div class="main-section">
@@ -42,6 +42,22 @@
           >
             <mat-icon class="error-icon">error</mat-icon>
             La URL no es válida. Asegúrate de que sea una URL válida.
+          </div>
+        </div>
+        <div class="form-box">
+          <label for="text">Ampliar respuesta</label>
+          <textarea
+            name="text"
+            formControlName="text"
+            placeholder="Escriba su respuesta"
+            rows="7"
+          ></textarea>
+          <div
+            class="error-message"
+            *ngIf="sectionForm.get('text')?.errors?.['maxLength']"
+          >
+            <mat-icon class="error-icon">error</mat-icon> La respuesta no puede
+            exceder los 300 caracteres
           </div>
         </div>
         <div class="btns-section">

@@ -469,58 +469,75 @@
               .buttons-yesno-section {
                 width: auto;
                 display: flex;
-                align-items: center;
-                margin: 0 auto;
+                flex-direction: column;
                 gap: 20px;
+                align-items: center;
 
-                .q-yesno-box {
-                  height: 70px;
-                  width: 70px;
-                  border-radius: 5px;
-                  border: 1px solid #b2b2b2;
-                  background-color: #efefef;
+                .hands-section {
+                  width: auto;
                   display: flex;
-                  justify-content: center;
                   align-items: center;
-                  position: relative;
+                  margin: 0 auto;
+                  gap: 20px;
+                  .q-yesno-box {
+                    height: 70px;
+                    width: 70px;
+                    border-radius: 5px;
+                    border: 1px solid #b2b2b2;
+                    background-color: #efefef;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
 
-                  img {
-                    filter: brightness(0) saturate(100%) invert(25%) sepia(7%)
-                      saturate(90%) hue-rotate(315deg) brightness(96%)
-                      contrast(86%);
-                    height: 35px;
+                    img {
+                      filter: brightness(0) saturate(100%) invert(25%) sepia(7%)
+                        saturate(90%) hue-rotate(315deg) brightness(96%)
+                        contrast(86%);
+                      height: 35px;
+                    }
+
+                    .small-message {
+                      font-size: 12px;
+                      position: absolute;
+                      bottom: 2px;
+                      left: 2px;
+                      height: 16px;
+                      color: #7d7d7d;
+                    }
                   }
 
-                  .small-message {
-                    font-size: 12px;
-                    position: absolute;
-                    bottom: 2px;
-                    left: 2px;
-                    height: 16px;
-                    color: #7d7d7d;
+                  .q-yesno-box-selected,
+                  .q-yesno-box:hover {
+                    background-color: #d8eeff;
+                    border: 1px solid #0d99ff;
+
+                    img {
+                      filter: brightness(0) saturate(100%) invert(58%)
+                        sepia(58%) saturate(6098%) hue-rotate(186deg)
+                        brightness(102%) contrast(104%);
+                    }
+
+                    .small-message {
+                      color: #0d99ff;
+                    }
+                  }
+
+                  .q-yesno-box:hover {
+                    cursor: pointer;
+                    transform: scale(1.2);
+                    transition: transform 0.2s ease-in-out;
                   }
                 }
-
-                .q-yesno-box-selected,
-                .q-yesno-box:hover {
-                  background-color: #d8eeff;
-                  border: 1px solid #0d99ff;
-
-                  img {
-                    filter: brightness(0) saturate(100%) invert(58%) sepia(58%)
-                      saturate(6098%) hue-rotate(186deg) brightness(102%)
-                      contrast(104%);
-                  }
-
-                  .small-message {
-                    color: #0d99ff;
-                  }
-                }
-
-                .q-yesno-box:hover {
+                .btn-form {
+                  margin-right: auto;
+                  background-color: #0d99ff;
+                  border-radius: 5px;
+                  width: fit-content;
+                  padding: 7px 20px;
+                  color: white;
+                  font-size: 18px;
                   cursor: pointer;
-                  transform: scale(1.2);
-                  transition: transform 0.2s ease-in-out;
                 }
               }
 

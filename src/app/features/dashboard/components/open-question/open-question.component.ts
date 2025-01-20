@@ -5,11 +5,9 @@ import {
   Output,
   QueryList,
   SimpleChanges,
-  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FilterSelectComponent } from '../../../../shared/components/filter-select/filter-select.component';
 import { ToggleButtonComponent } from '../../../../shared/components/toggle-button/toggle-button.component';
 import { DataBankService } from '../../services/data-bank.service';
 import { Subscription } from 'rxjs';
@@ -147,7 +145,6 @@ export class OpenQuestionComponent {
     this.addNote = settings.get('add_note')?.value;
     this.required = settings.get('required')?.value;
     this.openFormSetting = settings.get('open_form')?.value;
-    console.log(this.openFormSetting, this.required);
   }
 
   reloadAllControls() {
@@ -240,6 +237,7 @@ export class OpenQuestionComponent {
         question_multimedia: '',
         required: false,
         add_note: false,
+        open_form: false,
       }),
     });
   }

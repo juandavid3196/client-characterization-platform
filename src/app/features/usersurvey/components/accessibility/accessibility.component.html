@@ -1,5 +1,16 @@
-<div class="container">
+<div class="container {{ isVisible ? 'show' : '' }}">
+  <div class="selector-container" (click)="togglePanel()">
+    <mat-icon>accessibility_new</mat-icon>
+  </div>
   <div class="options-container">
+    <div class="row">
+      <span class="letter-box">
+        <mat-icon>zoom_in</mat-icon>
+      </span>
+      <span class="letter-box">
+        <mat-icon>zoom_out</mat-icon>
+      </span>
+    </div>
     <div class="row">
       <span class="letter-box">
         <mat-icon>text_increase</mat-icon>
@@ -22,16 +33,17 @@
     </div>
     <div class="row">
       <span class="option-text">
-        <mat-icon>colors</mat-icon>
+        <mat-icon>format_paint</mat-icon>
         Modo sepia
       </span>
     </div>
     <div class="row">
       <span class="option-text">
-        <mat-icon>web_traffic</mat-icon>
+        <mat-icon>ads_click</mat-icon>
         Cursor grande
       </span>
     </div>
+
+    <div class="restore-btn">Restaurar cambios</div>
   </div>
-  <div class="selector-container"></div>
 </div>

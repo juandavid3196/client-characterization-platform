@@ -5,6 +5,7 @@
   (formClose)="closeQuestionForm()"
   [formQuestionInfo]="formQuestionBody"
 ></app-question-form>
+<app-accessibility> </app-accessibility>
 
 <div class="max-container">
   <header>
@@ -27,14 +28,6 @@
     </div>
   </header>
   <div class="preview-container">
-    <div class="zoom-control-box" *ngIf="!openQuestionForm">
-      <span class="zoom-box"
-        ><img src="assets/icons/plus-zoom-icon.svg" alt="" (click)="zoomIn()"
-      /></span>
-      <span class="zoom-box"
-        ><img src="assets/icons/minus-zoom-icon.svg" alt="" (click)="zoomOut()"
-      /></span>
-    </div>
     <div class="gotosurvey-message" *ngIf="goToSurvey">
       <span class="gts-title">
         {{

@@ -1,0 +1,123 @@
+.container {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -250px;
+  z-index: 1000;
+  background-color: #dfeaff;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  width: 250px;
+  transition: right 0.3s ease;
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+
+    .row {
+      display: flex;
+      justify-content: space-around;
+      font-size: 18px;
+      border-bottom: 0.5px solid #b6c1d1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+
+      .letter-box {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px;
+        gap: 50px;
+
+        .mat-icon {
+          cursor: pointer;
+          font-size: 35px;
+          height: auto;
+          width: auto;
+        }
+
+        .mat-icon:hover {
+          filter: brightness(0) saturate(100%) invert(23%) sepia(94%)
+            saturate(7495%) hue-rotate(226deg) brightness(102%) contrast(107%);
+        }
+      }
+
+      .option-text {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        width: -webkit-fill-available;
+        gap: 30px;
+        cursor: pointer;
+        font-size: 18px;
+
+        .mat-icon {
+          font-size: 35px;
+          height: auto;
+          width: auto;
+        }
+      }
+
+      .option-text:hover {
+        color: #0048ff;
+
+        .mat-icon {
+          filter: brightness(0) saturate(100%) invert(23%) sepia(94%)
+            saturate(7495%) hue-rotate(226deg) brightness(102%) contrast(107%);
+        }
+      }
+    }
+    .restore-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      padding: 10px 12px;
+      color: white;
+      font-weight: 500;
+      font-size: 17px;
+      background-color: #0048ff;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+
+    .restore-btn:hover {
+      background-color: #0036be;
+    }
+  }
+
+  .selector-container {
+    position: absolute;
+    left: -60px;
+    top: 50%;
+    border-radius: 50%;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0048ff;
+    border: 2px solid white;
+    transform: translate(0, -50%);
+    cursor: pointer;
+
+    .mat-icon {
+      font-size: 30px;
+      height: auto;
+      width: auto;
+      filter: brightness(0) saturate(100%) invert(100%) sepia(30%) saturate(73%)
+        hue-rotate(346deg) brightness(105%) contrast(104%);
+    }
+  }
+
+  .selector-container:hover {
+    background-color: #0036be;
+  }
+}
+
+.container.show {
+  right: 0;
+}

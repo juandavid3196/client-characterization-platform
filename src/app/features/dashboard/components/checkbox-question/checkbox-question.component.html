@@ -82,48 +82,34 @@
           <div class="settings-s-container" formGroupName="settings">
             <div class="c-section">
               <div class="container-box">
-                <span class="label">Añadir video para pregunta</span>
+                <span class="label">Añadir multimedia para la pregunta</span>
                 <div class="answer-box">
                   <div class="file-container">
                     <button
                       class="btn"
                       (click)="addVideoUrl('question_multimedia')"
                     >
-                      Añadir Video
+                      Añadir video o imagen
                     </button>
                     <span class="file-message" *ngIf="qMessage"
                       >URL Añadida</span
                     >
                   </div>
-                  <div class="clean-file-container" *ngIf="qMessage">
-                    <span
-                      class="btn-clean-file"
-                      (click)="resetInputFile('question_multimedia')"
-                      ><img src="assets/icons/reset-icon.svg" alt=""
-                    /></span>
-                  </div>
                 </div>
               </div>
               <div class="container-box">
-                <span class="label">Añadir video para las opciones</span>
+                <span class="label">Añadir multimedia para las opciones</span>
                 <div class="answer-box">
                   <div class="file-container">
                     <button
                       class="btn"
                       (click)="addVideoUrl('options_multimedia')"
                     >
-                      Añadir Video
+                      Añadir video o imagen
                     </button>
                     <span class="file-message" *ngIf="aMessage"
                       >Url añadida</span
                     >
-                  </div>
-                  <div class="clean-file-container" *ngIf="aMessage">
-                    <span
-                      class="btn-clean-file"
-                      (click)="resetInputFile('options_multimedia')"
-                      ><img src="assets/icons/reset-icon.svg" alt=""
-                    /></span>
                   </div>
                 </div>
               </div>

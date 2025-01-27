@@ -59,7 +59,8 @@ export class DynamicQuestionComponent {
       note_text: '',
       addedToBank: false,
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
         required: false,
         add_note: false,
       }),
@@ -286,7 +287,11 @@ export class DynamicQuestionComponent {
 
         // Configurar el estado de qMessage
         const settings = this.dynamicForm.get('settings') as FormGroup;
-        this.qMessage = settings?.get('question_multimedia')?.value ?? false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
 
         // Gestionar las categorías
         const categoriesArray = this.dynamicForm.get('categories') as FormArray;
@@ -392,21 +397,17 @@ export class DynamicQuestionComponent {
       if (element) {
         this.dynamicForm.patchValue(element);
         const settings = this.dynamicForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
       }
     }
   }
 
   closeVideoWindow(): void {
     this.openVideoWindow = false;
-  }
-
-  resetInputFile(controlName: string) {
-    const settings = this.dynamicForm.get('settings') as FormGroup;
-    settings.patchValue({ [controlName]: '' });
-    this.qMessage = !this.qMessage;
   }
 
   onChangeSection(): void {

@@ -5,40 +5,40 @@
   <div class="options-container">
     <div class="row">
       <span class="letter-box">
-        <mat-icon>zoom_in</mat-icon>
+        <mat-icon (click)="setMode('zoomUp')">zoom_in</mat-icon>
       </span>
       <span class="letter-box">
-        <mat-icon>zoom_out</mat-icon>
+        <mat-icon (click)="setMode('zoomDown')">zoom_out</mat-icon>
       </span>
     </div>
     <div class="row">
       <span class="letter-box">
-        <mat-icon>text_increase</mat-icon>
+        <mat-icon (click)="setMode('fontSizeUp')">text_increase</mat-icon>
       </span>
       <span class="letter-box">
-        <mat-icon>text_decrease</mat-icon>
+        <mat-icon (click)="setMode('fontSizeDown')">text_decrease</mat-icon>
       </span>
     </div>
     <div class="row">
-      <span class="option-text">
+      <span class="option-text" (click)="setMode('grayScale')">
         <mat-icon>contrast</mat-icon>
         Escala de grises
       </span>
     </div>
     <div class="row">
-      <span class="option-text">
+      <span class="option-text" (click)="setMode('invertColors')">
         <mat-icon>format_color_reset</mat-icon>
         Invertir colores
       </span>
     </div>
     <div class="row">
-      <span class="option-text">
+      <span class="option-text" (click)="setMode('sepiaMode')">
         <mat-icon>format_paint</mat-icon>
         Modo sepia
       </span>
     </div>
     <div class="row">
-      <span class="option-text">
+      <span class="option-text" (click)="setMode('bigCursor')">
         <mat-icon>ads_click</mat-icon>
         Cursor grande
       </span>

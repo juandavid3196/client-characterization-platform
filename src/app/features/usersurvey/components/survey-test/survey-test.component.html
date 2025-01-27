@@ -5,9 +5,9 @@
   (formClose)="closeQuestionForm()"
   [formQuestionInfo]="formQuestionBody"
 ></app-question-form>
-<app-accessibility> </app-accessibility>
+<app-accessibility (emitMode)="setMode($event)"> </app-accessibility>
 
-<div class="max-container">
+<div class="max-container" id="app-root">
   <header>
     <app-user-bar></app-user-bar>
     <div class="dashboard-menu">
@@ -87,7 +87,7 @@
                 </div>
               </div>
               <span class="q-text"
-                ><span class="q-number">{{ item.numeral }}</span>
+                ><span class="q-number" id="q-text">{{ item.numeral }}</span>
                 {{ item.text }}</span
               >
               <div class="q-description">

@@ -36,9 +36,9 @@ export class YesNoQuestionComponent {
   anotherField: boolean = false;
   required: boolean = false;
   qMessage: boolean = false;
+  aMessage: boolean = false;
   changeSection: boolean = true;
   optionsMessage: boolean = false;
-
   spinner: boolean = false;
   dashboardOptions: any[] = [];
   formSubscription: Subscription | undefined;
@@ -68,7 +68,10 @@ export class YesNoQuestionComponent {
       addedToBank: false,
       selected_icons: '',
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         answer_value: '',
         required: false,
         defected_answer: false,
@@ -143,9 +146,16 @@ export class YesNoQuestionComponent {
       if (element) {
         this.yesnoForm.patchValue(element);
         const settings = this.yesnoForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
         this.spinner = false;
       } else {
         this.spinner = true;
@@ -229,21 +239,22 @@ export class YesNoQuestionComponent {
       if (element) {
         this.yesnoForm.patchValue(element);
         const settings = this.yesnoForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
       }
     }
   }
 
   closeVideoWindow(): void {
     this.openVideoWindow = false;
-  }
-
-  resetInputFile(controlName: string) {
-    const settings = this.yesnoForm.get('settings') as FormGroup;
-    settings.patchValue({ [controlName]: '' });
-    this.qMessage = !this.qMessage;
   }
 
   onChangeSection(): void {
@@ -267,7 +278,10 @@ export class YesNoQuestionComponent {
       addedToBank: false,
       selected_icons: 'hands',
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         answer_value: '',
         required: false,
         defected_answer: false,

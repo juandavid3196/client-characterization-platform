@@ -27,6 +27,7 @@ export class OpenQuestionComponent {
   openFormSetting: boolean = false;
   required: boolean = false;
   qMessage: boolean = false;
+  aMessage: boolean = false;
   changeSection: boolean = true;
   optionsMessage: boolean = false;
   optionsMenu: boolean = false;
@@ -56,7 +57,10 @@ export class OpenQuestionComponent {
       text_answer: '',
       addedToBank: false,
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         required: false,
         add_note: false,
         open_form: false,
@@ -129,9 +133,16 @@ export class OpenQuestionComponent {
       if (element) {
         this.openForm.patchValue(element);
         const settings = this.openForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
         this.spinner = false;
       } else {
         this.spinner = true;
@@ -197,21 +208,22 @@ export class OpenQuestionComponent {
       if (element) {
         this.openForm.patchValue(element);
         const settings = this.openForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
       }
     }
   }
 
   closeVideoWindow(): void {
     this.openVideoWindow = false;
-  }
-
-  resetInputFile(controlName: string) {
-    const settings = this.openForm.get('settings') as FormGroup;
-    settings.patchValue({ [controlName]: '' });
-    this.qMessage = !this.qMessage;
   }
 
   onChangeSection(): void {
@@ -234,7 +246,10 @@ export class OpenQuestionComponent {
       note_text: '',
       addedToBank: false,
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         required: false,
         add_note: false,
         open_form: false,

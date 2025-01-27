@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserSurveyService } from '../../services/user-survey.service';
 import { ZoomDirective } from 'src/app/shared/directives/zoom.directive';
@@ -35,7 +35,17 @@ export class SurveyTestComponent {
   invalidImage: boolean = false;
   openQuestionForm: boolean = false;
   formQuestionBody: any = {};
+  styles: any = {
+    zoom: 1,
+    fontSize: 18,
+    grayScale: false,
+    invertColors: false,
+    sepiaMode: false,
+    bigCursor: false,
+  };
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
+
+  //Accessibility component
 
   constructor(
     private route: ActivatedRoute,
@@ -44,7 +54,8 @@ export class SurveyTestComponent {
     private userSurveyService: UserSurveyService,
     private surveyService: SurveyService,
     private answerService: AnswerService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private renderer: Renderer2
   ) {
     window.addEventListener('beforeunload', (event) => {
       this.saveSurveyAnswers();
@@ -565,6 +576,77 @@ export class SurveyTestComponent {
       this.invalidImage = false;
     }
   }
+
+  // Accessibility components modes
+
+  setMode(mode: string): void {
+    switch (mode) {
+      case 'fontSizeUp':
+        this.increaseFontScale();
+        break;
+      case 'fontSizeDown':
+        this.decreaseFontScale();
+        break;
+      case 'zoomUp':
+        this.zoomIn();
+        break;
+      case 'zoomDown':
+        this.zoomOut();
+        break;
+      case 'grayScale':
+        this.styles.grayScale = !this.styles.grayScale;
+        this.applyGlobalStyle(
+          'filter',
+          this.styles.grayScale ? 'grayscale(100%)' : 'none'
+        );
+        break;
+      case 'invertColors':
+        this.styles.invertColors = !this.styles.invertColors;
+        this.applyGlobalStyle(
+          'filter',
+          this.styles.invertColors ? 'invert(100%)' : 'none'
+        );
+        break;
+      case 'sepiaMode':
+        this.styles.sepiaMode = !this.styles.sepiaMode;
+        this.applyGlobalStyle(
+          'filter',
+          this.styles.sepiaMode ? 'sepia(100%)' : 'none'
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  applyGlobalStyle(property: string, value: string): void {
+    const appRoot = document.getElementById('app-root');
+    if (appRoot) {
+      this.renderer.setStyle(appRoot, property, value);
+    }
+  }
+
+  // Método para aumentar el tamaño de fuente
+  increaseFontScale() {
+    this.setFontScale(1.1);
+  }
+
+  // Método para reducir el tamaño de fuente
+  decreaseFontScale() {
+    this.setFontScale(0.9);
+  }
+
+  // Método para establecer un nuevo valor de --font-scale
+  setFontScale(scaleFactor: number) {
+    const root = document.documentElement;
+    const currentScale = parseFloat(
+      getComputedStyle(root).getPropertyValue('--font-scale')
+    );
+    const newScale = currentScale * scaleFactor;
+    root.style.setProperty('--font-scale', newScale.toString());
+  }
+
+  restoreAccessibilityChanges(): void {}
 
   deepEqual(obj1: any, obj2: any): boolean {
     if (obj1 === obj2) {

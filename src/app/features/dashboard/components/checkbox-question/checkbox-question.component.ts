@@ -68,8 +68,10 @@ export class CheckboxQuestionComponent {
       options: this.fb.array([this.fb.control('')]),
       settings: this.fb.group({
         another_field: false,
-        question_multimedia: '',
-        options_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         required: false,
         defected_answer: false,
         answer_value: '',
@@ -146,12 +148,16 @@ export class CheckboxQuestionComponent {
       if (element) {
         this.checkBoxForm.patchValue(element);
         const settings = this.checkBoxForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
-        this.aMessage = settings.get('options_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
 
         // Load options
         const optionsArray = this.checkBoxForm.get('options') as FormArray;
@@ -250,28 +256,22 @@ export class CheckboxQuestionComponent {
       if (element) {
         this.checkBoxForm.patchValue(element);
         const settings = this.checkBoxForm.get('settings') as FormGroup;
-        this.qMessage = settings.get('question_multimedia')?.value
-          ? true
-          : false;
-        this.aMessage = settings.get('options_multimedia')?.value
-          ? true
-          : false;
+        this.qMessage =
+          settings.get('question_video')?.value ||
+          settings.get('question_image')?.value
+            ? true
+            : false;
+        this.aMessage =
+          settings.get('answer_video')?.value ||
+          settings.get('answer_image')?.value
+            ? true
+            : false;
       }
     }
   }
 
   closeVideoWindow(): void {
     this.openVideoWindow = false;
-  }
-
-  resetInputFile(controlName: string) {
-    const settings = this.checkBoxForm.get('settings') as FormGroup;
-    settings.patchValue({ [controlName]: '' });
-    if (controlName == 'question_multimedia') {
-      this.qMessage = !this.qMessage;
-    } else if (controlName == 'options_multimedia') {
-      this.aMessage = !this.aMessage;
-    }
   }
 
   addOption(): void {
@@ -329,8 +329,10 @@ export class CheckboxQuestionComponent {
       options: [],
       settings: {
         another_field: false,
-        question_multimedia: '',
-        options_multimedia: '',
+        question_video: '',
+        question_image: '',
+        answer_video: '',
+        answer_image: '',
         required: false,
         defected_answer: false,
         answer_value: '',

@@ -1,27 +1,69 @@
-<div class="questions-container {{close ? 'close' : '' }}">
-    <div class="questions-box {{close ? 'close' : '' }}">
-        <div class="eyeslashes-section">
-            <span class="video-title"> <img class="camera-icon" src="assets/icons/camera-icon.svg" alt="">Insertar Video</span>
-            <img  class="close-icon" src="assets/icons/close-icon.svg" alt=""  (click)="onClose()" >
-        </div>
-        <main>
-                <div class="main-section">
-                    <form  [formGroup]="videoForm"  (ngSubmit)="onSubmit()">
-                        <div class="form-box">
-                            <label for="title">Inserta el Video</label>
-                            <textarea formControlName="title" name="title" placeholder="Inserta el iframe del video en Youtube "></textarea>
-                            <span class="error-message" *ngIf="errorMessage"><mat-icon class="error-icon">error</mat-icon>Debe de copiar una URL</span>
-                        </div>
-                        <div class="btns-section">
-                        <button class="btn-cancel" (click)="onClose()" >Cancelar</button>
-                        <div class="btn-bottom-box">
-                            <button class="btn-confirm" type="submit">{{editVideo ? "Editar" : "Aceptar"}}</button>
-                        </div>
-                    </div>
-                </form>
-            </div>      
-        </main>
-       
+<div class="questions-container {{ close ? 'close' : '' }}">
+  <div class="questions-box {{ close ? 'close' : '' }}">
+    <div class="eyeslashes-section">
+      <span class="video-title">
+        <img
+          class="camera-icon"
+          src="assets/icons/camera-icon.svg"
+          alt=""
+        />Insertar multimedia</span
+      >
+      <img
+        class="close-icon"
+        src="assets/icons/close-icon.svg"
+        alt=""
+        (click)="onClose()"
+      />
     </div>
+    <main>
+      <div class="main-section">
+        <form [formGroup]="multimediaForm" (ngSubmit)="onSubmit()">
+          <div class="form-box">
+            <label for="video">Inserta el Video</label>
+            <textarea
+              formControlName="video"
+              name="video"
+              placeholder="Inserta el iframe del video en Youtube "
+            ></textarea>
+            <div
+              class="error-message"
+              *ngIf="
+                multimediaForm.get('video')?.hasError('invalidIframe') &&
+                multimediaForm.get('video')?.touched
+              "
+            >
+              <mat-icon class="error-icon">error</mat-icon>
+              El iframe no es válido. Asegúrate de que sea un iframe de YouTube.
+            </div>
+          </div>
+          <div class="form-box">
+            <label for="image">Inserta la imagen</label>
+            <textarea
+              formControlName="image"
+              name="image"
+              placeholder="Inserta la URL de la imagen"
+            ></textarea>
+            <div
+              class="error-message"
+              *ngIf="
+                multimediaForm.get('image')?.hasError('invalidUrl') &&
+                multimediaForm.get('image')?.touched
+              "
+            >
+              <mat-icon class="error-icon">error</mat-icon>
+              La URL no es válida. Asegúrate de que sea una URL válida.
+            </div>
+          </div>
+          <div class="btns-section">
+            <button class="btn-cancel" (click)="onClose()">Cancelar</button>
+            <div class="btn-bottom-box">
+              <button class="btn-confirm" type="submit">
+                {{ editVideo ? "Editar" : "Aceptar" }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
 </div>
-

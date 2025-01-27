@@ -127,6 +127,22 @@
         </div>
         <div class="section-container" *ngIf="item.type === 'section'">
           <span class="section-title">{{ item.title }}</span>
+          <span class="section-description">{{ item.description }}</span>
+          <div class="video-controls-container">
+            <button class="btn-save btn" (click)="openMultimedia(item)">
+              Abrir Video e imagen de la sección
+              <img src="assets/icons/play-video-icon.svg" alt="" />
+            </button>
+            <div class="video-container" *ngIf="itemId === item.id">
+              <span class="close-icon" (click)="closeVideo()"
+                ><img src="assets/icons/close-video-icon.svg" alt=""
+              /></span>
+              <div [innerHTML]="iframeHtml"></div>
+              <span class="image-container">
+                <img src="{{ item.imageUrl }}" alt="" />
+              </span>
+            </div>
+          </div>
         </div>
         <div class="checkbox-view-container" *ngIf="item.type === 'scale'">
           <div class="checkbox-view-box">

@@ -40,6 +40,7 @@ export class QuestionsOptionsComponent {
       description: '',
       video: ['', [this.validateIframeYoutube]],
       imageUrl: ['', [this.validateUrl(/https?:\/\/[^\s$.?#].[^\s]*$/)]],
+      pop_up: false,
       type: 'section',
       icon: 'section-icon',
     });
@@ -50,6 +51,12 @@ export class QuestionsOptionsComponent {
       this.changeSection = !this.changeSection;
       this.sectionForm.patchValue(this.section);
     }
+  }
+
+  getToggleValues(values: any): void {
+    this.sectionForm.patchValue({
+      [values.name]: values.state,
+    }); // modify value
   }
 
   selectType(type: string) {

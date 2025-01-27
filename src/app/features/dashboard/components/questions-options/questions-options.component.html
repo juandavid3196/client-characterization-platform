@@ -98,6 +98,18 @@
               <mat-icon class="error-icon">error</mat-icon>
               El iframe no es válido. Asegúrate de que sea un iframe de YouTube.
             </div>
+            <div class="pop-up-section">
+              <span
+                >Mostrar video en ventana emergente (El video esta bajo la
+                descripción por defecto)</span
+              >
+              <app-toggle-button
+                name="pop_up"
+                #appToggleButton
+                (toggleValues)="getToggleValues($event)"
+                [elementData]="sectionForm.value"
+              ></app-toggle-button>
+            </div>
           </div>
           <div class="form-box">
             <label for="imageUrl">Link imagen de apoyo</label>

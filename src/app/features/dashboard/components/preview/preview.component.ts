@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { DashboardlsService } from '../../services/dashboardls.service';
 import { ZoomDirective } from 'src/app/shared/directives/zoom.directive';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-preview',
@@ -9,9 +10,14 @@ import { ZoomDirective } from 'src/app/shared/directives/zoom.directive';
 })
 export class PreviewComponent {
   dashboardData: any[] = [];
+  iframeHtml?: SafeHtml;
+  itemId: string = '';
   @ViewChild(ZoomDirective) zoomDirective!: ZoomDirective;
 
-  constructor(private dashboardlsService: DashboardlsService) {}
+  constructor(
+    private dashboardlsService: DashboardlsService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.getDashboardData();
@@ -71,5 +77,19 @@ export class PreviewComponent {
       item += 1;
     }
     return sliderOptions;
+  }
+
+  openMultimedia(item: any): void {
+    this.itemId = item.id;
+
+    this.getVideoLabel(item.video);
+  }
+
+  getVideoLabel(label: string): void {
+    this.iframeHtml = this.sanitizer.bypassSecurityTrustHtml(label);
+  }
+
+  closeVideo(): void {
+    this.itemId = '';
   }
 }

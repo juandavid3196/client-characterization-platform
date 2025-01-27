@@ -1,3 +1,20 @@
+.btn {
+  display: flex;
+  width: auto;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 5px;
+  height: 35px;
+  border-radius: 6px;
+  border: none;
+  font-size: calc(14px * var(--font-scale));
+  font-weight: 500;
+  font-family: "Poppins";
+  border: 0.2px solid #0d99ff;
+  color: #0d99ff;
+  cursor: pointer;
+}
+
 .preview-container {
   background-color: #efefef;
   padding: 10px;
@@ -630,11 +647,70 @@
 
         .section-container {
           padding: 40px 10px 20px 40px;
+          display: flex;
+          gap: 10px;
+          flex-direction: column;
 
           .section-title {
             font-size: 22px;
             font-weight: 500;
             color: #333e48;
+          }
+
+          .section-description {
+            color: gray;
+            font-size: 17px;
+          }
+
+          .video-controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            .btn-save {
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              background-color: white;
+              width: fit-content;
+              font-size: calc(14px * var(--font-scale));
+
+              img {
+                height: 20px;
+              }
+            }
+            .video-container {
+              width: fit-content;
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              gap: 15px;
+
+              .close-icon {
+                position: absolute;
+                background-color: white;
+                border-radius: 5px;
+                height: 50px;
+                width: 50px;
+                right: 0;
+                top: 0;
+
+                img {
+                  width: 50px;
+                  cursor: pointer;
+                }
+              }
+
+              .close-icon:hover {
+                transform: scale(1.2);
+              }
+
+              .image-container {
+                img {
+                  width: 560px;
+                }
+              }
+            }
           }
         }
       }

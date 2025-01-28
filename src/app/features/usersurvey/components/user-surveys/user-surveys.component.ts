@@ -175,6 +175,7 @@ export class UserSurveysComponent {
                 icon: 'info',
               });
             }
+            this.loadSurveys();
           }
         } else {
           this.router.navigate(['/userpanel', survey.id]);
@@ -186,8 +187,49 @@ export class UserSurveysComponent {
   }
 
   openInfoWindow(element: userSurvey | null): void {
+    this.checkSurveyState(element);
     this.infoWindow = !this.infoWindow;
     this.selectedSurvey = element;
-    console.log(element);
+  }
+
+  async checkSurveyState(activeSurvey: any): Promise<void> {
+    try {
+      const survey: any = await this.surveyService
+        .getSurveyById(activeSurvey.id)
+        .toPromise();
+      if (survey) {
+        if (
+          survey.state === 'Suspendida' &&
+          survey.state !== activeSurvey.state
+        ) {
+          Swal.fire({
+            title: 'Suspendida',
+            text: 'La encuesta ha sido suspendida.',
+            icon: 'info',
+          });
+        } else if (
+          survey.state === 'Cerrada' &&
+          survey.state !== activeSurvey.state
+        ) {
+          Swal.fire({
+            title: 'Cerrada',
+            text: 'La encuesta ha sido cerrada.',
+            icon: 'info',
+          });
+        } else if (
+          survey.state === 'Activa' &&
+          survey.state !== activeSurvey.state
+        ) {
+          Swal.fire({
+            title: 'Activa',
+            text: 'La encuesta ha sido reactivada.',
+            icon: 'info',
+          });
+        }
+        this.loadSurveys();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

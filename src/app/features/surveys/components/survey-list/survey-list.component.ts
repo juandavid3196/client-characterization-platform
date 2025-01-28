@@ -80,6 +80,7 @@ export class SurveyListComponent {
                 text: 'La encuesta ha sido cerrada.',
                 icon: 'info',
               });
+              this.loadSurveys();
             }
           });
       }
@@ -226,13 +227,13 @@ export class SurveyListComponent {
           state: 'Cerrada',
         };
         this.surveyService.updateSurvey(id, editSurvey).subscribe(() => {
+          this.loadSurveys();
           this.userSurveyService.updateSurvey(id, editSurvey).subscribe(() => {
             Swal.fire({
               title: 'Cerrada!',
               text: 'La encuesta ha sido cerrada.',
               icon: 'success',
             });
-            this.loadSurveys();
           });
         });
       }

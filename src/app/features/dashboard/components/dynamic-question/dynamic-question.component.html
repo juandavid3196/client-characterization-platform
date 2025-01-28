@@ -63,7 +63,7 @@
                 <h4>
                   Categoria <span class="sub-title"> {{ i + 1 }}</span>
                   <span class="category-title">{{
-                    categories.at(i).value.title
+                    categories.at(i).value.title | truncate : 40
                   }}</span>
                 </h4>
 
@@ -175,6 +175,7 @@
                         <span class="sub-title"> {{ i + 1 }}.{{ j + 1 }}</span>
                         <span class="category-title">{{
                           getSubcategories(i).at(j).value.sub_title
+                            | truncate : 40
                         }}</span>
                       </h4>
                       <span class="actions">

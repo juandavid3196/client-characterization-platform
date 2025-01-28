@@ -56,166 +56,229 @@
               *ngFor="let category of categories.controls; let i = index"
               [formGroupName]="i"
             >
-              <h4>
-                Categoria <span class="sub-title"> {{ i + 1 }}</span>
-              </h4>
-
-              <input
-                type="text"
-                formControlName="title"
-                placeholder="Titulo"
-                (blur)="editCategory(i, 'title', $event)"
-              />
-              <textarea
-                formControlName="description"
-                [value]="category.get('description')?.value"
-                placeholder="Descripción"
-                class="category-description"
-                (blur)="editCategory(i, 'description', $event)"
-              ></textarea>
-              <textarea
-                formControlName="category_video"
-                placeholder="Iframe video categoria"
-                (blur)="editCategory(i, 'category_video', $event)"
-                rows="5"
-              ></textarea>
               <div
-                class="error-message"
-                *ngIf="
-                  categories
-                    .at(i)
-                    .get('category_video')
-                    ?.hasError('invalidIframe') &&
-                  categories.at(i).get('category_video')?.touched
-                "
+                class="top-form-container"
+                (click)="showCategory(i !== categoryIndex ? i : -1)"
               >
-                <mat-icon class="error-icon">error</mat-icon>
-                El iframe no es válido. Asegúrate de que sea un iframe de
-                YouTube.
-              </div>
-              <textarea
-                formControlName="category_image"
-                placeholder="URL imagen"
-                (blur)="editCategory(i, 'category_image', $event)"
-                rows="5"
-              ></textarea>
-              <div
-                class="error-message"
-                *ngIf="
-                  categories
-                    .at(i)
-                    .get('category_image')
-                    ?.hasError('invalidUrl') &&
-                  categories.at(i).get('category_image')?.touched
-                "
-              >
-                <mat-icon class="error-icon">error</mat-icon>
-                La URL no es válida. Asegúrate de que sea una URL válida.
-              </div>
-              <span
-                class="action-btn-delete category-delete"
-                (click)="deleteCategory(i)"
-              >
-                <img src="assets/icons/minus-icon.svg" alt="" />
-              </span>
+                <h4>
+                  Categoria <span class="sub-title"> {{ i + 1 }}</span>
+                  <span class="category-title">{{
+                    categories.at(i).value.title
+                  }}</span>
+                </h4>
 
-              <!-- Subcategorías -->
-
-              <div formArrayName="subcategories" class="subcategories-section">
-                <div
-                  *ngFor="
-                    let subcategory of getSubcategories(i).controls;
-                    let j = index
-                  "
-                  [formGroupName]="j"
-                  class="subcategories-container"
-                >
-                  <!-- Campo para título de la subcategoría -->
-                  <h4>
-                    Subcategoría
-                    <span class="sub-title"> {{ i + 1 }}.{{ j + 1 }}</span>
-                  </h4>
-
-                  <input
-                    formControlName="sub_title"
-                    placeholder="Titulo subcategoria"
-                    (blur)="editSubcategory(i, j, 'sub_title', $event)"
-                  />
-
-                  <textarea
-                    formControlName="sub_description"
-                    placeholder="Descripción subcategoria"
-                    (blur)="editSubcategory(i, j, 'sub_description', $event)"
-                    rows="3"
-                  ></textarea>
-
-                  <textarea
-                    formControlName="subcategory_video"
-                    placeholder="Iframe Video Categoria"
-                    (blur)="editSubcategory(i, j, 'subcategory_video', $event)"
-                    rows="5"
-                  ></textarea>
-                  <div
-                    class="error-message"
-                    *ngIf="
-                      getSubcategories(i)
-                        .at(j)
-                        .get('subcategory_video')
-                        ?.hasError('invalidIframe') &&
-                      getSubcategories(i).at(j).get('subcategory_video')
-                        ?.touched
-                    "
-                  >
-                    <mat-icon class="error-icon">error</mat-icon>
-                    El iframe no es válido. Asegúrate de que sea un iframe de
-                    YouTube.
-                  </div>
-                  <textarea
-                    formControlName="subcategory_image"
-                    placeholder="URL imagen"
-                    (blur)="editSubcategory(i, j, 'subcategory_image', $event)"
-                    rows="5"
-                  ></textarea>
-                  <div
-                    class="error-message"
-                    *ngIf="
-                      getSubcategories(i)
-                        .at(j)
-                        .get('subcategory_image')
-                        ?.hasError('invalidUrl') &&
-                      getSubcategories(i).at(j).get('subcategory_image')
-                        ?.touched
-                    "
-                  >
-                    <mat-icon class="error-icon">error</mat-icon>
-                    La URL no es válida. Asegúrate de que sea una URL válida.
-                  </div>
+                <span class="actions">
                   <span
-                    class="action-btn-delete"
-                    (click)="deleteSubcategory(i, j)"
+                    class="btn-position"
+                    (click)="moveCategoryUp(i, $event)"
+                  >
+                    <img src="assets/icons/arrow-up-icon.svg" alt="" />
+                  </span>
+                  <span
+                    class="btn-position"
+                    (click)="moveCategoryDown(i, $event)"
+                  >
+                    <img src="assets/icons/arrow-down-icon.svg" alt="" />
+                  </span>
+                  <span
+                    class="action-btn-delete category-delete"
+                    (click)="deleteCategory(i, $event)"
                   >
                     <img src="assets/icons/minus-icon.svg" alt="" />
                   </span>
-
-                  <div class="actions-box">
-                    <span class="action-btn" (click)="addSubcategory(i, j)">
-                      <img src="assets/icons/plus-icon.svg" alt="" />
-                      Añadir subcategoria
-                    </span>
-                  </div>
-                  <span class="limit-line-subcategory"></span>
-                </div>
-              </div>
-              <div class="actions-box">
-                <span
-                  class="action-btn add-category-btn"
-                  (click)="addCategory(i)"
-                >
-                  <img src="assets/icons/plus-icon.svg" alt="" />
-                  Nueva categoria
+                  <span class="btn-position" (click)="addCategory(i, $event)">
+                    <img src="assets/icons/add-category-icon.svg" alt="" />
+                  </span>
                 </span>
               </div>
-              <span class="limit-line"></span>
+              <div
+                class="hidden-container {{
+                  categoryIndex === i ? 'visible' : ''
+                }}"
+              >
+                <input
+                  type="text"
+                  formControlName="title"
+                  placeholder="Titulo"
+                  (blur)="editCategory(i, 'title', $event)"
+                />
+                <textarea
+                  formControlName="description"
+                  [value]="category.get('description')?.value"
+                  placeholder="Descripción"
+                  class="category-description"
+                  (blur)="editCategory(i, 'description', $event)"
+                ></textarea>
+                <textarea
+                  formControlName="category_video"
+                  placeholder="Iframe video categoria"
+                  (blur)="editCategory(i, 'category_video', $event)"
+                  rows="5"
+                ></textarea>
+                <div
+                  class="error-message"
+                  *ngIf="
+                    categories
+                      .at(i)
+                      .get('category_video')
+                      ?.hasError('invalidIframe') &&
+                    categories.at(i).get('category_video')?.touched
+                  "
+                >
+                  <mat-icon class="error-icon">error</mat-icon>
+                  El iframe no es válido. Asegúrate de que sea un iframe de
+                  YouTube.
+                </div>
+                <textarea
+                  formControlName="category_image"
+                  placeholder="URL imagen"
+                  (blur)="editCategory(i, 'category_image', $event)"
+                  rows="5"
+                ></textarea>
+                <div
+                  class="error-message"
+                  *ngIf="
+                    categories
+                      .at(i)
+                      .get('category_image')
+                      ?.hasError('invalidUrl') &&
+                    categories.at(i).get('category_image')?.touched
+                  "
+                >
+                  <mat-icon class="error-icon">error</mat-icon>
+                  La URL no es válida. Asegúrate de que sea una URL válida.
+                </div>
+
+                <!-- Subcategorías -->
+
+                <div
+                  formArrayName="subcategories"
+                  class="subcategories-section"
+                >
+                  <div
+                    *ngFor="
+                      let subcategory of getSubcategories(i).controls;
+                      let j = index
+                    "
+                    [formGroupName]="j"
+                    class="subcategories-container"
+                  >
+                    <!-- Campo para título de la subcategoría -->
+                    <div
+                      class="top-form-container"
+                      (click)="
+                        showSubcategory(i, j === subcategoryIndex ? -1 : j)
+                      "
+                    >
+                      <h4>
+                        Subcategoría
+                        <span class="sub-title"> {{ i + 1 }}.{{ j + 1 }}</span>
+                        <span class="category-title">{{
+                          getSubcategories(i).at(j).value.sub_title
+                        }}</span>
+                      </h4>
+                      <span class="actions">
+                        <span
+                          class="btn-position"
+                          (click)="moveSubcategoryUp(i, j, $event)"
+                        >
+                          <img src="assets/icons/arrow-up-icon.svg" alt="" />
+                        </span>
+                        <span
+                          class="btn-position"
+                          (click)="moveSubcategoryDown(i, j, $event)"
+                        >
+                          <img src="assets/icons/arrow-down-icon.svg" alt="" />
+                        </span>
+                        <span
+                          class="action-btn-delete category-delete"
+                          (click)="deleteSubcategory(i, j, $event)"
+                        >
+                          <img src="assets/icons/minus-icon.svg" alt="" />
+                        </span>
+                        <span
+                          class="btn-position"
+                          (click)="addSubcategory(i, j, $event)"
+                        >
+                          <img
+                            src="assets/icons/add-category-icon.svg"
+                            alt=""
+                          />
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="hidden-container {{
+                        subcategoryIndex === j && categoryIndex === i
+                          ? 'visible'
+                          : ''
+                      }}"
+                    >
+                      <input
+                        formControlName="sub_title"
+                        placeholder="Titulo subcategoria"
+                        (blur)="editSubcategory(i, j, 'sub_title', $event)"
+                      />
+
+                      <textarea
+                        formControlName="sub_description"
+                        placeholder="Descripción subcategoria"
+                        (blur)="
+                          editSubcategory(i, j, 'sub_description', $event)
+                        "
+                        rows="3"
+                      ></textarea>
+
+                      <textarea
+                        formControlName="subcategory_video"
+                        placeholder="Iframe Video Categoria"
+                        (blur)="
+                          editSubcategory(i, j, 'subcategory_video', $event)
+                        "
+                        rows="5"
+                      ></textarea>
+                      <div
+                        class="error-message"
+                        *ngIf="
+                          getSubcategories(i)
+                            .at(j)
+                            .get('subcategory_video')
+                            ?.hasError('invalidIframe') &&
+                          getSubcategories(i).at(j).get('subcategory_video')
+                            ?.touched
+                        "
+                      >
+                        <mat-icon class="error-icon">error</mat-icon>
+                        El iframe no es válido. Asegúrate de que sea un iframe
+                        de YouTube.
+                      </div>
+                      <textarea
+                        formControlName="subcategory_image"
+                        placeholder="URL imagen"
+                        (blur)="
+                          editSubcategory(i, j, 'subcategory_image', $event)
+                        "
+                        rows="5"
+                      ></textarea>
+                      <div
+                        class="error-message"
+                        *ngIf="
+                          getSubcategories(i)
+                            .at(j)
+                            .get('subcategory_image')
+                            ?.hasError('invalidUrl') &&
+                          getSubcategories(i).at(j).get('subcategory_image')
+                            ?.touched
+                        "
+                      >
+                        <mat-icon class="error-icon">error</mat-icon>
+                        La URL no es válida. Asegúrate de que sea una URL
+                        válida.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

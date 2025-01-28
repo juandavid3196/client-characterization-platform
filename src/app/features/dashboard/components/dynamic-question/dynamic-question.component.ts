@@ -38,6 +38,8 @@ export class DynamicQuestionComponent {
   formSubscription: Subscription | undefined;
   openVideoWindow: boolean = false;
   videoUrlType: string = '';
+  categoryIndex!: number;
+  subcategoryIndex!: number;
 
   @Input() elementData: any = {};
   @Output() refreshList = new EventEmitter();
@@ -115,7 +117,8 @@ export class DynamicQuestionComponent {
     return this.dynamicForm.get('categories') as FormArray;
   }
 
-  addCategory(categoryIndex: number) {
+  addCategory(categoryIndex: number, event: Event) {
+    event.stopPropagation();
     this.categories.insert(categoryIndex + 1, this.createCategory());
   }
 
@@ -132,7 +135,8 @@ export class DynamicQuestionComponent {
     }
   }
 
-  deleteCategory(index: number) {
+  deleteCategory(index: number, event: Event) {
+    event.stopPropagation();
     if (this.categories.length === 1) {
       const optionGroup = this.categories.at(0) as FormGroup;
       optionGroup.patchValue({
@@ -149,6 +153,40 @@ export class DynamicQuestionComponent {
     } else {
       this.categories.removeAt(index);
     }
+  }
+
+  moveCategoryUp(categoryIndex: number, event: Event): void {
+    event.stopPropagation();
+    if (categoryIndex === 0) return;
+
+    const categories = this.dynamicForm.get('categories') as FormArray;
+
+    const category = categories.at(categoryIndex);
+    const previousCategory = categories.at(categoryIndex - 1);
+
+    categories.removeAt(categoryIndex);
+    categories.removeAt(categoryIndex - 1);
+    categories.insert(categoryIndex - 1, category);
+    categories.insert(categoryIndex, previousCategory);
+  }
+
+  moveCategoryDown(caregoryIndex: number, event: Event): void {
+    event.stopPropagation();
+    const categories = this.dynamicForm.get('categories') as FormArray;
+
+    if (caregoryIndex === categories.length - 1) return;
+
+    const category = categories.at(caregoryIndex);
+    const nextCategory = categories.at(caregoryIndex + 1);
+
+    categories.removeAt(caregoryIndex + 1);
+    categories.removeAt(caregoryIndex);
+    categories.insert(caregoryIndex, nextCategory);
+    categories.insert(caregoryIndex + 1, category);
+  }
+
+  showCategory(index: number): void {
+    this.categoryIndex = index;
   }
 
   onQuestionSelect() {
@@ -182,14 +220,24 @@ export class DynamicQuestionComponent {
     return this.categories.at(categoryIndex).get('subcategories') as FormArray;
   }
 
-  addSubcategory(categoryIndex: number, subcategoryIndex: number) {
+  addSubcategory(
+    categoryIndex: number,
+    subcategoryIndex: number,
+    event: Event
+  ) {
+    event.stopPropagation();
     this.getSubcategories(categoryIndex).insert(
       subcategoryIndex + 1,
       this.createSubcategory()
     );
   }
 
-  deleteSubcategory(categoryIndex: number, subcategoryIndex: number) {
+  deleteSubcategory(
+    categoryIndex: number,
+    subcategoryIndex: number,
+    event: Event
+  ) {
+    event.stopPropagation();
     if (this.getSubcategories(categoryIndex).length === 1) {
       const optionGroup = this.getSubcategories(categoryIndex).at(
         0
@@ -223,6 +271,49 @@ export class DynamicQuestionComponent {
         [field]: newValue,
       });
     }
+  }
+
+  moveSubcategoryUp(
+    caregoryIndex: number,
+    subcategoryIndex: number,
+    event: Event
+  ): void {
+    event.stopPropagation();
+    if (subcategoryIndex === 0) return;
+
+    const subcategories = this.getSubcategories(caregoryIndex);
+
+    const subcategory = subcategories.at(subcategoryIndex);
+    const previousSubcategory = subcategories.at(subcategoryIndex - 1);
+
+    subcategories.removeAt(subcategoryIndex);
+    subcategories.removeAt(subcategoryIndex - 1);
+    subcategories.insert(subcategoryIndex - 1, subcategory);
+    subcategories.insert(subcategoryIndex, previousSubcategory);
+  }
+
+  moveSubcategoryDown(
+    caregoryIndex: number,
+    subcategoryIndex: number,
+    event: Event
+  ): void {
+    event.stopPropagation();
+    const subcategories = this.getSubcategories(caregoryIndex);
+
+    if (subcategoryIndex === subcategories.length - 1) return;
+
+    const subcategory = subcategories.at(subcategoryIndex);
+    const nextSubcategory = subcategories.at(subcategoryIndex + 1);
+
+    subcategories.removeAt(subcategoryIndex + 1);
+    subcategories.removeAt(subcategoryIndex);
+    subcategories.insert(subcategoryIndex, nextSubcategory);
+    subcategories.insert(subcategoryIndex + 1, subcategory);
+  }
+
+  showSubcategory(categoryIndex: number, subcategoryIndex: number): void {
+    this.categoryIndex = categoryIndex;
+    this.subcategoryIndex = subcategoryIndex;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

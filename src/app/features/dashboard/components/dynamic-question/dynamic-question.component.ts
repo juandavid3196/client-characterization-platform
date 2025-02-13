@@ -149,7 +149,7 @@ export class DynamicQuestionComponent {
       while (rowsArray.length) {
         rowsArray.removeAt(0);
       }
-      rowsArray.push(this.fb.control(''));
+      rowsArray.push(this.createSubcategory());
     } else {
       this.categories.removeAt(index);
     }
@@ -522,7 +522,8 @@ export class DynamicQuestionComponent {
       addedToBank: false,
       categories: this.fb.array([this.createCategory()]),
       settings: this.fb.group({
-        question_multimedia: '',
+        question_video: '',
+        question_image: '',
         required: false,
         add_note: false,
       }),
